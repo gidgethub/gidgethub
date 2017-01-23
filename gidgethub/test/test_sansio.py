@@ -1,6 +1,6 @@
 import pytest
 
-from gidgethub import sansio
+from .. import sansio
 
 
 class TestValidate:
