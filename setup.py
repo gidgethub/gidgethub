@@ -18,7 +18,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.6',
     ],
     keywords="github sans-io",
-    packages=[NAME],
+    packages=setuptools.find_packages(),
     zip_safe=True,
     python_requires=">=3.6.0",
     setup_requires=['pytest-runner'],
