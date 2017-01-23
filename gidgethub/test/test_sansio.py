@@ -22,3 +22,8 @@ class TestValidate:
         """Success case."""
         sansio.validate(self.payload, secret=self.secret,
                         signature=self.signature)
+
+    def test_failure(self):
+        with pytest.raises(sansio.ValidationFailure):
+            sansio.validate(self.payload + b'!', secret=self.secret,
+                            signature=self.signature)
