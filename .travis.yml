@@ -1,7 +1,14 @@
 language: python
+cache: pip
 python:
   - "3.6"
   - "3.6-dev"
   - "nightly"
 
-script: pytest
+before_install:
+  - pip install pytest-cov
+script:
+  - pytest --cov=./
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
