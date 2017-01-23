@@ -1,6 +1,8 @@
 # gidgethub
 A [sans-I/O](https://sans-io.readthedocs.io/) [GitHub API](https://developer.github.com/) library
 
+[![Build Status](https://travis-ci.org/brettcannon/gidgethub.svg?branch=master)](https://travis-ci.org/brettcannon/gidgethub)
+
 ## Goals
 The key goal is to provide a library for the
 [GitHub API](https://developer.github.com/) which performs no I/O of its own (a
