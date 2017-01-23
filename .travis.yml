@@ -7,9 +7,9 @@ python:
 
 before_install:
   - pip install .
-  - pip install pytest-cov
+  - pip install -U pytest pytest-cov
 script:
-  - pytest --cov=./
+  - pytest --cov=gidgethub
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
