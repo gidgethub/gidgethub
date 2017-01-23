@@ -2,6 +2,8 @@
 A [sans-I/O](https://sans-io.readthedocs.io/) [GitHub API](https://developer.github.com/) library
 
 [![Build Status](https://travis-ci.org/brettcannon/gidgethub.svg?branch=master)](https://travis-ci.org/brettcannon/gidgethub)
+[![codecov](https://codecov.io/gh/brettcannon/gidgethub/branch/master/graph/badge.svg)](https://codecov.io/gh/brettcannon/gidgethub)
+
 
 ## Goals
 The key goal is to provide a library for the
