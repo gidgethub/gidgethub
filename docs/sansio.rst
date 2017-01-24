@@ -4,8 +4,8 @@
 .. module:: gidgethub.sansio
 
 
-Functions
----------
+Webhook events
+--------------
 
 .. function:: validate(payload: bytes, *, signature: str, secret: str) -> None
 
@@ -15,9 +15,6 @@ Functions
    :exc:`gidgethub.exceptions.ValidationFailure` is raised if the provided
    *signature* does not match the calculated signature.
 
-
-Classes
--------
 
 .. class:: Event(data: JSONDict, *, event: str, delivery_id: str)
 
