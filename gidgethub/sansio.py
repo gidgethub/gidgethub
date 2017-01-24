@@ -14,11 +14,7 @@ class ValidationFailure(GitHubException):
 
 
 def validate(payload: bytes, *, signature: str, secret: str) -> None:
-    """Validate that the webhook event body came from an approved repository.
-
-    ValidationFailure is raised if the provided signature does not match the
-    calculated signature.
-    """
+    """Validate that the webhook event body came from an approved repository."""
     # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
     signature_prefix = "sha1="
     if not signature.startswith(signature_prefix):
