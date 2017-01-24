@@ -1,5 +1,6 @@
 import pytest
 
+from .. import exceptions
 from .. import sansio
 
 
@@ -14,7 +15,7 @@ class TestValidate:
 
     def test_malformed_signature(self):
         """Error out if the signature doesn't start with "sha1="."""
-        with pytest.raises(sansio.ValidationFailure):
+        with pytest.raises(exceptions.ValidationFailure):
             sansio.validate(self.payload, secret=self.secret,
                             signature=self.hash_signature)
 
@@ -24,7 +25,7 @@ class TestValidate:
                         signature=self.signature)
 
     def test_failure(self):
-        with pytest.raises(sansio.ValidationFailure):
+        with pytest.raises(exceptions.ValidationFailure):
             sansio.validate(self.payload + b'!', secret=self.secret,
                             signature=self.signature)
 
