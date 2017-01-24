@@ -3,7 +3,7 @@ A [sans-I/O](https://sans-io.readthedocs.io/) [GitHub API](https://developer.git
 
 [![Build Status](https://travis-ci.org/brettcannon/gidgethub.svg?branch=master)](https://travis-ci.org/brettcannon/gidgethub)
 [![codecov](https://codecov.io/gh/brettcannon/gidgethub/branch/master/graph/badge.svg)](https://codecov.io/gh/brettcannon/gidgethub)
-
+[![Documentation Status](https://readthedocs.org/projects/gidgethub/badge/?version=latest)](http://gidgethub.readthedocs.io/en/latest/?badge=latest)
 
 ## Goals
 The key goal is to provide a library for the
