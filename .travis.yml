@@ -5,20 +5,12 @@ python:
   - "3.6-dev"
   - "nightly"
 
-matrix:
-  include:
-    - env:
-        - TESTING=docs
-      before_install:
-        - pip install -U sphinx
-      script:
-        - sphinx-build -nW -q -b html -b linkcheck -d docs/_build/doctrees docs docs/_build/html
-
 before_install:
   - pip install .
-  - pip install -U pytest pytest-cov
+  - pip install -U pytest pytest-cov sphinx
 script:
   - pytest --cov=gidgethub
+  - sphinx-build -nW -q -b html -b linkcheck -d docs/_build/doctrees docs docs/_build/html
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
