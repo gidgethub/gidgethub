@@ -1,8 +1,16 @@
+"""Code to help with HTTP requests, responses, and events from GitHub's developer API.
+
+This code has been constructed to perform no I/O of its own. This allows you to
+use any HTTP library you prefer while not having to implement common details
+when working with GitHub's API (e.g. validating webhook events or specifying the
+API version you want your request to work against).
+"""
 import hashlib
 import hmac
 from typing import Any, Dict
 
 from . import exceptions
+
 
 JSONDict = Dict[str, Any]
 

@@ -1,3 +1,5 @@
+"""Exceptions for gidgethub."""
+
 class GitHubException(Exception):
 
     """Base exception for this library."""
