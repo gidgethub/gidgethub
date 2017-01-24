@@ -1,5 +1,9 @@
 import hashlib
 import hmac
+from typing import Any, Dict
+
+
+JSONDict = Dict[str, Any]
 
 
 class GitHubException(Exception):
@@ -28,3 +32,14 @@ def validate(payload: bytes, *, signature: str, secret: str) -> None:
         raise ValidationFailure("payload's signature does not align with the "
                                 "secret")
 
+
+class Event:
+
+    """Details of a GitHub webhook event."""
+    # https://developer.github.com/v3/activity/events/types/
+    # https://developer.github.com/webhooks/#delivery-headers
+
+    def __init__(self, data: JSONDict, *, event: str, delivery_id: str) -> None:
+        self.data = data
+        self.event = event
+        self.delivery_id = delivery_id

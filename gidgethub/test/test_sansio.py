@@ -27,3 +27,17 @@ class TestValidate:
         with pytest.raises(sansio.ValidationFailure):
             sansio.validate(self.payload + b'!', secret=self.secret,
                             signature=self.signature)
+
+
+class TestEvent:
+
+    """Tests for gidgethub.sansio.Event."""
+
+    def test_init(self):
+        event = "event"
+        delivery_id = "delivery_id"
+        data = {"id": 42}
+        ins = sansio.Event(data, event=event, delivery_id=delivery_id)
+        assert ins.event == event
+        assert ins.delivery_id == delivery_id
+        assert ins.data == data
