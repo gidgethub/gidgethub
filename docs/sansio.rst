@@ -23,3 +23,17 @@ Classes
 
    A representation of a
    `webhook event <https://developer.github.com/webhooks/#events>`_.
+
+   .. attribute:: data: JSONDict
+
+      The data payload from the event.
+
+
+   .. attribute:: event: str
+
+      What type of event triggered the webhook.
+
+
+   .. attribute:: delivery_id: str
+
+      The unique ID of the event.
