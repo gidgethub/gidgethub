@@ -12,8 +12,8 @@ Functions
    `Validate <https://developer.github.com/webhooks/securing/#validating-payloads-from-github>`_
    that the webhook event body came from an approved repository.
 
-   :exc:`exceptions.ValidationFailure` is raised if the provided *signature*
-   does not match the calculated signature.
+   :exc:`gidgethub.exceptions.ValidationFailure` is raised if the provided
+   *signature* does not match the calculated signature.
 
 
 Classes
