@@ -36,10 +36,10 @@ def validate(payload: bytes, *, signature: str, secret: str) -> None:
 class Event:
 
     """Details of a GitHub webhook event."""
-    # https://developer.github.com/v3/activity/events/types/
-    # https://developer.github.com/webhooks/#delivery-headers
 
     def __init__(self, data: JSONDict, *, event: str, delivery_id: str) -> None:
+        # https://developer.github.com/v3/activity/events/types/
+        # https://developer.github.com/webhooks/#delivery-headers
         self.data = data
         self.event = event
         self.delivery_id = delivery_id
