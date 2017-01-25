@@ -10,7 +10,7 @@ import hmac
 import json
 from typing import Any, Dict, Mapping
 
-import gidgethub as gh
+from . import BadRequest, ValidationFailure
 
 
 JSONDict = Dict[str, Any]
@@ -21,14 +21,14 @@ def validate(payload: bytes, *, signature: str, secret: str) -> None:
     # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
     signature_prefix = "sha1="
     if not signature.startswith(signature_prefix):
-        raise gh.ValidationFailure("signature does not start with "
+        raise ValidationFailure("signature does not start with "
                                            f"{repr(signature_prefix)}")
     hash_ = hashlib.sha1()
     hash_.update(secret.encode("UTF-8"))
     hash_.update(payload)
     calculated_sig = signature_prefix + hash_.hexdigest()
     if not hmac.compare_digest(signature, calculated_sig):
-        raise gh.ValidationFailure("payload's signature does not align "
+        raise ValidationFailure("payload's signature does not align "
                                            "with the secret")
 
 
@@ -63,15 +63,15 @@ class Event:
         raised.
         """
         if headers.get("content-type") != "application/json":
-            raise gh.BadRequest(400, "expected a content-type of "
+            raise BadRequest(400, "expected a content-type of "
                                              "'application/json'")
         if "X-Hub-Signature" in headers:
                 if secret is None:
-                    raise gh.ValidationFailure("secret not provided")
+                    raise ValidationFailure("secret not provided")
                 validate(body, signature=headers["X-Hub-Signature"],
                          secret=secret)
         elif secret is not None:
-            raise gh.ValidationFailure("signature is missing")
+            raise ValidationFailure("signature is missing")
         data = json.loads(body.decode("UTF-8"))
         return cls(data, event=headers["X-GitHub-Event"],
                    delivery_id=headers["X-GitHub-Delivery"])

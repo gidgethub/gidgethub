@@ -1,6 +1,6 @@
 import pytest
 
-import gidgethub as gh
+from .. import BadRequest, ValidationFailure
 from .. import sansio
 
 
@@ -15,7 +15,7 @@ class TestValidate:
 
     def test_malformed_signature(self):
         """Error out if the signature doesn't start with "sha1="."""
-        with pytest.raises(gh.ValidationFailure):
+        with pytest.raises(ValidationFailure):
             sansio.validate(self.payload, secret=self.secret,
                             signature=self.hash_signature)
 
@@ -25,7 +25,7 @@ class TestValidate:
                         signature=self.signature)
 
     def test_failure(self):
-        with pytest.raises(gh.ValidationFailure):
+        with pytest.raises(ValidationFailure):
             sansio.validate(self.payload + b'!', secret=self.secret,
                             signature=self.signature)
 
@@ -63,24 +63,24 @@ class TestEvent:
         """Only accept data when content-type is application/json."""
         headers_no_content_type = self.headers.copy()
         del headers_no_content_type["content-type"]
-        with pytest.raises(gh.BadRequest):
+        with pytest.raises(BadRequest):
             sansio.Event.from_http(headers_no_content_type, self.data_bytes,
                                    secret=self.secret)
 
     def test_from_http_missing_secret(self):
         """Signature but no secret raises ValidationFailure."""
-        with pytest.raises(gh.ValidationFailure):
+        with pytest.raises(ValidationFailure):
             sansio.Event.from_http(self.headers, self.data_bytes)
 
     def test_from_http_missing_signature(self):
         """Secret but no signature raises ValidationFailure."""
         headers_no_sig = self.headers.copy()
         del headers_no_sig["X-Hub-Signature"]
-        with pytest.raises(gh.ValidationFailure):
+        with pytest.raises(ValidationFailure):
             sansio.Event.from_http(headers_no_sig, self.data_bytes,
                                    secret=self.secret)
 
     def test_from_http_bad_signature(self):
-        with pytest.raises(gh.ValidationFailure):
+        with pytest.raises(ValidationFailure):
             sansio.Event.from_http(self.headers, self.data_bytes,
                                    secret=self.secret + "no secret")
