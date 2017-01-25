@@ -10,7 +10,7 @@ Welcome to gidgethub's documentation!
    :maxdepth: 1
    :caption: Contents:
 
-   exceptions
+   __init__
    sansio
 
 

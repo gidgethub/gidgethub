@@ -1,7 +1,7 @@
-:mod:`gidgethub.exceptions`
+:mod:`gidgethub`
 ===========================
 
-.. automodule:: gidgethub.exceptions
+.. automodule:: gidgethub
 
 
 Classes
@@ -10,3 +10,7 @@ Classes
 .. autoclass:: GitHubException
 
 .. autoclass:: ValidationFailure
+
+.. autoclass:: HTTPException
+
+.. autoclass:: BadRequest
