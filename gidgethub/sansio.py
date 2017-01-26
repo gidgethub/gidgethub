@@ -75,3 +75,30 @@ class Event:
         data = json.loads(body.decode("UTF-8"))
         return cls(data, event=headers["X-GitHub-Event"],
                    delivery_id=headers["X-GitHub-Delivery"])
+
+
+def create_headers(requester: str, *,
+                   api_version: str = "application/vnd.github.v3+json",
+                   oauth_token: str = None) -> Dict[str, str]:
+    """Create a dict representing GitHub-specific header fields.
+
+    The user agent is set according to who the requester is. GitHub asks it be
+    either a username or project name.
+
+    The api_version corresponds to the 'accepts' field and defaults to the v3
+    version of the API. You should only need to change this value if you are
+    using a feature of the API that is under active development by GitHub.
+
+    The oauth_token allows making an authetnicated request. This can be
+    important if you need the extended rate limit provided by an authenticated
+    request.
+
+    For consistency, all keys in the returned dict will be lowercased.
+    """
+    # https://developer.github.com/v3/#user-agent-required
+    # https://developer.github.com/v3/#current-version
+    # https://developer.github.com/v3/#authentication
+    headers = {"user-agent": requester, "accept": api_version}
+    if oauth_token is not None:
+        headers["authorization"] = f"token {oauth_token}"
+    return headers

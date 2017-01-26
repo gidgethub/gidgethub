@@ -31,3 +31,16 @@ for manual validation that a event came from a supported project.
 
 .. autoclass:: Event
    :members:
+
+
+Calling the API
+---------------
+As well as receiving webhook events in response to actions occurring on GitHub,
+you can use the `GitHub API <https://developer.github.com/v3/>`_ to make calls
+to REST endpoints.
+
+
+Requests
+''''''''
+
+.. autofunction:: create_headers

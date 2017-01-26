@@ -84,3 +84,36 @@ class TestEvent:
         with pytest.raises(ValidationFailure):
             sansio.Event.from_http(self.headers, self.data_bytes,
                                    secret=self.secret + "no secret")
+
+
+class TestCreateHeaders:
+
+    """Tests for gidgethub.sansio.create_headers()."""
+
+    def test_common_case(self):
+        user_agent = "brettcannon"
+        oauth_token = "secret"
+        headers = sansio.create_headers(user_agent, oauth_token=oauth_token)
+        assert headers["user-agent"] == user_agent
+        assert headers["authorization"] == f"token {oauth_token}"
+
+    def test_api_change(self):
+        test_api = "application/vnd.github.cloak-preview+json"
+        user_agent = "brettcannon"
+        headers = sansio.create_headers(user_agent, api_version=test_api)
+        assert headers["user-agent"] == user_agent
+        assert headers["accept"] == test_api
+
+    def test_all_keys_lowercase(self):
+        """Test all header fields are lowercase."""
+        user_agent = "brettcannon"
+        test_api = "application/vnd.github.cloak-preview+json"
+        oauth_token = "secret"
+        headers = sansio.create_headers(user_agent, api_version=test_api,
+                                        oauth_token=oauth_token)
+        assert len(headers) == 3
+        for key in headers.keys():
+            assert key == key.lower()
+        assert headers["user-agent"] == user_agent
+        assert headers["accept"] == test_api
+        assert headers["authorization"] == f"token {oauth_token}"
