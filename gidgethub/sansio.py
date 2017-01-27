@@ -92,6 +92,7 @@ def accept_format(*, version: str = "v3", media: str = None,
     designed to support.
     """
     # https://developer.github.com/v3/media/
+    # https://developer.github.com/v3/#current-version
     accept = f"application/vnd.github.{version}"
     if media is not None:
         accept += f".{media}"
