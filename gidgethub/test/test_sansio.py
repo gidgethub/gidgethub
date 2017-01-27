@@ -102,7 +102,7 @@ class TestCreateHeaders:
     def test_api_change(self):
         test_api = "application/vnd.github.cloak-preview+json"
         user_agent = "brettcannon"
-        headers = sansio.create_headers(user_agent, api_version=test_api)
+        headers = sansio.create_headers(user_agent, accept=test_api)
         assert headers["user-agent"] == user_agent
         assert headers["accept"] == test_api
 
@@ -111,7 +111,7 @@ class TestCreateHeaders:
         user_agent = "brettcannon"
         test_api = "application/vnd.github.cloak-preview+json"
         oauth_token = "secret"
-        headers = sansio.create_headers(user_agent, api_version=test_api,
+        headers = sansio.create_headers(user_agent, accept=test_api,
                                         oauth_token=oauth_token)
         assert len(headers) == 3
         for key in headers.keys():
