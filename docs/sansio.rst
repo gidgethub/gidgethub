@@ -43,6 +43,8 @@ to REST endpoints.
 Requests
 ''''''''
 
+.. autofunction:: accept_format
+
 .. autofunction:: create_headers
 
 .. autoclass:: RateLimit

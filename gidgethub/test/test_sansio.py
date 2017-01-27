@@ -88,6 +88,26 @@ class TestEvent:
                                    secret=self.secret + "no secret")
 
 
+class TestAcceptFormat:
+
+    """Tests for gidgethub.sansio.accept_format()."""
+
+    def test_defaults(self):
+        assert sansio.accept_format() == "application/vnd.github.v3+json"
+
+    def test_format(self):
+        expect = "application/vnd.github.v3.raw+json"
+        assert sansio.accept_format(media="raw") == expect
+
+    def test_no_json(self):
+        expect = "application/vnd.github.v3.raw"
+        assert sansio.accept_format(media="raw", json=False) == expect
+
+    def test_version(self):
+        expect = "application/vnd.github.cloak-preview+json"
+        assert sansio.accept_format(version="cloak-preview") == expect
+
+
 class TestCreateHeaders:
 
     """Tests for gidgethub.sansio.create_headers()."""

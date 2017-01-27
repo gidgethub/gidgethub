@@ -78,19 +78,41 @@ class Event:
                    delivery_id=headers["X-GitHub-Delivery"])
 
 
+def accept_format(*, version: str = "v3", media: str = None,
+                  json: bool = True) -> str:
+    """Construct the specification of the format that a request should return.
+
+    The version argument defaults to v3 of the GitHub API and is applicable to
+    all requests. The media argument along with 'json' specifies what format
+    the request should return, e.g. requesting the rendered HTML of a comment.
+    Do note that not all of GitHub's API supports alternative formats.
+
+    The default arguments of this function will always return the latest stable
+    version of the GitHub API in the default format that this library is
+    designed to support.
+    """
+    # https://developer.github.com/v3/media/
+    accept = f"application/vnd.github.{version}"
+    if media is not None:
+        accept += f".{media}"
+    if json:
+        accept += "+json"
+    return accept
+
+
 def create_headers(requester: str, *,
-                   accept: str = "application/vnd.github.v3+json",
+                   accept: str = accept_format(),
                    oauth_token: str = None) -> Dict[str, str]:
     """Create a dict representing GitHub-specific header fields.
 
     The user agent is set according to who the requester is. GitHub asks it be
     either a username or project name.
 
-    The 'accept' parameter corresponds to the 'accept' field and defaults to the
-    v3 version of the API. You should only need to change this value if you are
-    using a different version of the API -- e.g. one that is under development
-    -- or if you are looking for a different media type, e.g. wanting the
-    rendered HTML of a Markdown file.
+    The 'accept' argument corresponds to the 'accept' field and defaults to the
+    default result of accept_format(). You should only need to change this value
+    if you are using a different version of the API -- e.g. one that is under
+    development -- or if you are looking for a different format return type,
+    e.g. wanting the rendered HTML of a Markdown file.
 
     The oauth_token allows making an authetnicated request. This can be
     important if you need the extended rate limit provided by an authenticated
