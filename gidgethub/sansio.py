@@ -5,6 +5,7 @@ use any HTTP library you prefer while not having to implement common details
 when working with GitHub's API (e.g. validating webhook events or specifying the
 API version you want your request to work against).
 """
+import datetime
 import hashlib
 import hmac
 import json
@@ -102,3 +103,29 @@ def create_headers(requester: str, *,
     if oauth_token is not None:
         headers["authorization"] = f"token {oauth_token}"
     return headers
+
+
+class RateLimit:
+
+    """The rate limit imposed upon the requester."""
+
+    # https://developer.github.com/v3/#rate-limiting
+
+    def __init__(self, *, limit: int, left: int,
+                 reset_epoch: float) -> None:
+        """Instantiate a RateLimit object.
+
+        The reset_epoch argument should be in seconds since the UTC epoch.
+        """
+        self.limit = limit
+        self.left = left
+        self.reset = datetime.datetime.fromtimestamp(reset_epoch,
+                                                     datetime.timezone.utc)
+
+    @classmethod
+    def from_http(cls, headers: Mapping[str, str]) -> "RateLimit":
+        """Gather rate limit information from HTTP headers."""
+        limit = int(headers["X-RateLimit-Limit"])
+        left = int(headers["X-RateLimit-Remaining"])
+        reset_epoch = float(headers["X-RateLimit-Reset"])
+        return cls(limit=limit, left=left, reset_epoch=reset_epoch)

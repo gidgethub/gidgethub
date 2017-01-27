@@ -44,3 +44,10 @@ Requests
 ''''''''
 
 .. autofunction:: create_headers
+
+.. autoclass:: RateLimit
+   :members:
+
+
+Responses
+'''''''''

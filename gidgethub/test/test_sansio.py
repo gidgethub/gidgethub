@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from .. import BadRequest, ValidationFailure
@@ -117,3 +119,28 @@ class TestCreateHeaders:
         assert headers["user-agent"] == user_agent
         assert headers["accept"] == test_api
         assert headers["authorization"] == f"token {oauth_token}"
+
+
+class TestRateLimit:
+
+    def test_init(self):
+        left = 42
+        rate = 64
+        reset = datetime.datetime.now(datetime.timezone.utc)
+        rate_limit = sansio.RateLimit(left=left, limit=rate,
+                                      reset_epoch=reset.timestamp())
+        assert rate_limit.left == left
+        assert rate_limit.limit == rate
+        assert rate_limit.left == left
+
+    def test_from_http(self):
+        left = 42
+        rate = 65
+        reset = datetime.datetime.now(datetime.timezone.utc)
+        headers = {"X-RateLimit-Limit": str(rate),
+                   "X-RateLimit-Remaining": str(left),
+                   "X-RateLimit-Reset": str(reset.timestamp())}
+        rate_limit = sansio.RateLimit.from_http(headers)
+        assert rate_limit.limit == rate
+        assert rate_limit.left == left
+        assert rate_limit.reset == reset
