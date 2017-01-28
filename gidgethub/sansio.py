@@ -133,25 +133,36 @@ def create_headers(requester: str, *,
 
 class RateLimit:
 
-    """The rate limit imposed upon the requester."""
+    """The rate limit imposed upon the requester.
+
+    The 'rate' attribute specifies the rate of requests per hour the client is
+    allowed to make.
+
+    The 'left' attribute specifies how many requests are left within the
+    current rate limit.
+
+    The reset_datetime attribute is a datetime object representing when
+    effectively 'left' resets to 'rate'. The datetime object is timezone-aware
+    and set to UTC.
+    """
 
     # https://developer.github.com/v3/#rate-limiting
 
-    def __init__(self, *, limit: int, left: int,
+    def __init__(self, *, rate: int, left: int,
                  reset_epoch: float) -> None:
         """Instantiate a RateLimit object.
 
         The reset_epoch argument should be in seconds since the UTC epoch.
         """
-        self.limit = limit
+        self.rate = rate
         self.left = left
-        self.reset = datetime.datetime.fromtimestamp(reset_epoch,
-                                                     datetime.timezone.utc)
+        self.reset_datetime = datetime.datetime.fromtimestamp(reset_epoch,
+                                                              datetime.timezone.utc)
 
     @classmethod
     def from_http(cls, headers: Mapping[str, str]) -> "RateLimit":
         """Gather rate limit information from HTTP headers."""
-        limit = int(headers["X-RateLimit-Limit"])
+        rate = int(headers["X-RateLimit-Limit"])
         left = int(headers["X-RateLimit-Remaining"])
         reset_epoch = float(headers["X-RateLimit-Reset"])
-        return cls(limit=limit, left=left, reset_epoch=reset_epoch)
+        return cls(rate=rate, left=left, reset_epoch=reset_epoch)

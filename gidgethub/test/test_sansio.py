@@ -147,11 +147,11 @@ class TestRateLimit:
         left = 42
         rate = 64
         reset = datetime.datetime.now(datetime.timezone.utc)
-        rate_limit = sansio.RateLimit(left=left, limit=rate,
+        rate_limit = sansio.RateLimit(left=left, rate=rate,
                                       reset_epoch=reset.timestamp())
         assert rate_limit.left == left
-        assert rate_limit.limit == rate
-        assert rate_limit.left == left
+        assert rate_limit.rate == rate
+        assert rate_limit.reset_datetime == reset
 
     def test_from_http(self):
         left = 42
@@ -161,6 +161,6 @@ class TestRateLimit:
                    "X-RateLimit-Remaining": str(left),
                    "X-RateLimit-Reset": str(reset.timestamp())}
         rate_limit = sansio.RateLimit.from_http(headers)
-        assert rate_limit.limit == rate
+        assert rate_limit.rate == rate
         assert rate_limit.left == left
-        assert rate_limit.reset == reset
+        assert rate_limit.reset_datetime == reset
