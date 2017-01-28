@@ -6,9 +6,9 @@ from .. import BadRequest, ValidationFailure
 from .. import sansio
 
 
-class TestValidate:
+class TestValidateEvent:
 
-    """Tests for gidgethub.sansio.validate()."""
+    """Tests for gidgethub.sansio.validate_event()."""
 
     secret = "123456"
     payload = "gidget".encode("UTF-8")
@@ -18,18 +18,18 @@ class TestValidate:
     def test_malformed_signature(self):
         """Error out if the signature doesn't start with "sha1="."""
         with pytest.raises(ValidationFailure):
-            sansio.validate(self.payload, secret=self.secret,
-                            signature=self.hash_signature)
+            sansio.validate_event(self.payload, secret=self.secret,
+                                  signature=self.hash_signature)
 
     def test_validation(self):
         """Success case."""
-        sansio.validate(self.payload, secret=self.secret,
-                        signature=self.signature)
+        sansio.validate_event(self.payload, secret=self.secret,
+                              signature=self.signature)
 
     def test_failure(self):
         with pytest.raises(ValidationFailure):
-            sansio.validate(self.payload + b'!', secret=self.secret,
-                            signature=self.signature)
+            sansio.validate_event(self.payload + b'!', secret=self.secret,
+                                  signature=self.signature)
 
 
 class TestEvent:

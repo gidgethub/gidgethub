@@ -17,7 +17,7 @@ from . import BadRequest, ValidationFailure
 JSONDict = Dict[str, Any]
 
 
-def validate(payload: bytes, *, signature: str, secret: str) -> None:
+def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
     """Validate that the webhook event body came from an approved repository."""
     # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
     signature_prefix = "sha1="
@@ -69,8 +69,8 @@ class Event:
         if "X-Hub-Signature" in headers:
                 if secret is None:
                     raise ValidationFailure("secret not provided")
-                validate(body, signature=headers["X-Hub-Signature"],
-                         secret=secret)
+                validate_event(body, signature=headers["X-Hub-Signature"],
+                               secret=secret)
         elif secret is not None:
             raise ValidationFailure("signature is missing")
         data = json.loads(body.decode("UTF-8"))
