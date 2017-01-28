@@ -23,8 +23,8 @@ request from GitHub and then use :meth:`Event.from_http` to create an
                                         secret=SECRET)
 
 This is not required, though, as the :class:`Event` class can be constructed
-in a traditional way. The :func:`validate` function is also provided to allow
-for manual validation that a event came from a supported project.
+in a traditional way. The :func:`validate_event` function is also provided to
+allow for manual validation that a event came from a supported project.
 
 .. autofunction:: validate_event
 
