@@ -18,7 +18,10 @@ class HTTPException(GitHubException):
 
     def __init__(self, status_code: int, *args: Any) -> None:
         self.status_code = status_code
-        super().__init__(*args)
+        if args:
+            super().__init__(*args)
+        else:
+            super().__init__(status_code)
 
 
 class BadRequest(HTTPException):
