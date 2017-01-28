@@ -26,7 +26,7 @@ This is not required, though, as the :class:`Event` class can be constructed
 in a traditional way. The :func:`validate` function is also provided to allow
 for manual validation that a event came from a supported project.
 
-.. autofunction:: validate
+.. autofunction:: validate_event
 
 
 .. autoclass:: Event
