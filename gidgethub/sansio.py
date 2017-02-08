@@ -69,7 +69,7 @@ class Event:
         if headers.get("content-type") != "application/json":
             raise BadRequest(400, "expected a content-type of "
                                              "'application/json'")
-        if "X-Hub-Signature" in headers:
+        elif "X-Hub-Signature" in headers:
                 if secret is None:
                     raise ValidationFailure("secret not provided")
                 validate_event(body, signature=headers["X-Hub-Signature"],
@@ -212,8 +212,8 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
             fields = ", ".join(repr(e["field"]) for e in errors)
             message = f"{message} for {fields}"
             raise InvalidField(errors, message)
-
-        if status_code >= 500:
+        # All the below cases are generic.
+        elif status_code >= 500:
             exc_type = GitHubBroken
         elif status_code >= 400:
             exc_type = BadRequest

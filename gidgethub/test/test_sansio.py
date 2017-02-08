@@ -90,6 +90,11 @@ class TestEvent:
             sansio.Event.from_http(self.headers, self.data_bytes,
                                    secret=self.secret + "no secret")
 
+    def test_from_http_no_signature(self):
+        headers = self.headers.copy()
+        del headers["X-Hub-Signature"]
+        event = sansio.Event.from_http(headers, self.data_bytes)
+        self.check_event(event)
 
 class TestAcceptFormat:
 
