@@ -209,7 +209,7 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
             message = None
         if status_code == 422:
             errors = data["errors"]
-            fields = ", ".join(e["field"] for e in errors)
+            fields = ", ".join(repr(e["field"]) for e in errors)
             message = f"{message} for {fields}"
             raise InvalidField(errors, message)
 

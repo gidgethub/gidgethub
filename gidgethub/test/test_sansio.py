@@ -4,8 +4,8 @@ import json
 
 import pytest
 
-from .. import (BadRequest, GitHubBroken, HTTPException, RedirectionException,
-                ValidationFailure)
+from .. import (BadRequest, GitHubBroken, HTTPException, InvalidField,
+                RedirectionException, ValidationFailure)
 from .. import sansio
 
 
@@ -193,6 +193,18 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, message)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "it went bad"
+
+    def test_422(self):
+        status_code = 422
+        errors = [{"resource": "Issue", "field": "title",
+                   "code": "missing_field"}]
+        body = json.dumps({"message": "it went bad", "errors": errors})
+        body = body.encode("utf-8")
+        headers = {"content-type": "application/json; charset=utf-8"}
+        with pytest.raises(InvalidField) as exc_info:
+            sansio.decipher_response(status_code, headers, body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert str(exc_info.value) == "it went bad for 'title'"
 
     def test_3XX(self):
         status_code = 301
