@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from .. import BadRequest, ValidationFailure
+from .. import BadRequest, GitHubBroken, ValidationFailure
 from .. import sansio
 
 
@@ -164,3 +164,14 @@ class TestRateLimit:
         assert rate_limit.rate == rate
         assert rate_limit.left == left
         assert rate_limit.reset_datetime == reset
+
+
+class TestDecipherResponse:
+
+    """Tests for gidgethub.sansio.decipher_response()."""
+
+    def test_5XX(self):
+        status_code = 502
+        with pytest.raises(GitHubBroken) as exc_info:
+            sansio.decipher_response(status_code, {}, b'')
+        assert exc_info.value.status_code == 502

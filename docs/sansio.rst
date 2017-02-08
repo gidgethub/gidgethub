@@ -53,3 +53,5 @@ Requests
 
 Responses
 '''''''''
+
+.. autofunction:: decipher_response

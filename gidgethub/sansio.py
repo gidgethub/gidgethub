@@ -8,10 +8,11 @@ API version you want your request to work against).
 import datetime
 import hashlib
 import hmac
+import http
 import json
-from typing import Any, Dict, Mapping
+from typing import Any, Dict, Mapping, Tuple
 
-from . import BadRequest, ValidationFailure
+from . import BadRequest, GitHubBroken, ValidationFailure
 
 
 JSONDict = Dict[str, Any]
@@ -166,3 +167,29 @@ class RateLimit:
         left = int(headers["X-RateLimit-Remaining"])
         reset_epoch = float(headers["X-RateLimit-Reset"])
         return cls(rate=rate, left=left, reset_epoch=reset_epoch)
+
+
+def decipher_response(status_code: int, headers: Mapping[str, str],
+                      body: bytes) -> Tuple[Any, RateLimit, str]:
+    """Decipher an HTTP response for a GitHub API request.
+
+    The parameters of this function correspond to the three main parts
+    of an HTTP response: the status code, headers, and body. Assuming
+    no errors which lead to an exception being raised, a 3-item tuple
+    is returned. The first item is the decoded body (typically a JSON
+    object, but possibly None or a string depending on the content
+    type of the body). The second item is an instance of RateLimit
+    based on what the response specified.
+
+    The last item of the tuple is the URL where to request the next
+    part of results. If there are no more results then None is
+    returned. Do be aware that the URL can be a URI template and so
+    may need to be expanded.
+
+    If the status code is anything other than 200, 201, or 204, then
+    an HTTPException is raised.
+    """
+    if status_code >= 500:
+        raise GitHubBroken(http.HTTPStatus(status_code))
+    # https://developer.github.com/v3/#client-errors
+
