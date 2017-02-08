@@ -1,8 +1,11 @@
 import datetime
+import http
+import json
 
 import pytest
 
-from .. import BadRequest, GitHubBroken, ValidationFailure
+from .. import (BadRequest, GitHubBroken, HTTPException, RedirectionException,
+                ValidationFailure)
 from .. import sansio
 
 
@@ -174,4 +177,31 @@ class TestDecipherResponse:
         status_code = 502
         with pytest.raises(GitHubBroken) as exc_info:
             sansio.decipher_response(status_code, {}, b'')
-        assert exc_info.value.status_code == 502
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+
+    def test_4XX_no_message(self):
+        status_code = 400
+        with pytest.raises(BadRequest) as exc_info:
+            sansio.decipher_response(status_code, {}, b'')
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+
+    def test_4XX_message(self):
+        status_code = 400
+        message = json.dumps({"message": "it went bad"}).encode("UTF-8")
+        headers = {"content-type": "application/json; charset=utf-8"}
+        with pytest.raises(BadRequest) as exc_info:
+            sansio.decipher_response(status_code, headers, message)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert str(exc_info.value) == "it went bad"
+
+    def test_3XX(self):
+        status_code = 301
+        with pytest.raises(RedirectionException) as exc_info:
+            sansio.decipher_response(status_code, {}, b'')
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+
+    def test_2XX_error(self):
+        status_code = 205
+        with pytest.raises(HTTPException) as exc_info:
+            sansio.decipher_response(status_code, {}, b'')
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)

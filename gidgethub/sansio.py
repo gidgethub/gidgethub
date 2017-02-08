@@ -5,6 +5,7 @@ use any HTTP library you prefer while not having to implement common details
 when working with GitHub's API (e.g. validating webhook events or specifying the
 API version you want your request to work against).
 """
+import cgi
 import datetime
 import hashlib
 import hmac
@@ -12,7 +13,8 @@ import http
 import json
 from typing import Any, Dict, Mapping, Tuple
 
-from . import BadRequest, GitHubBroken, ValidationFailure
+from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
+               RedirectionException, ValidationFailure)
 
 
 JSONDict = Dict[str, Any]
@@ -169,6 +171,16 @@ class RateLimit:
         return cls(rate=rate, left=left, reset_epoch=reset_epoch)
 
 
+def _decode_body(content_type: str, body: bytes) -> Any:
+    if not len(body) or not content_type:
+        return None
+    type_, parameters = cgi.parse_header(content_type)
+    decoded_body = body.decode(parameters["charset"])
+    if type_ == "application/json":
+        return json.loads(decoded_body)
+    return decoded_body
+
+
 def decipher_response(status_code: int, headers: Mapping[str, str],
                       body: bytes) -> Tuple[Any, RateLimit, str]:
     """Decipher an HTTP response for a GitHub API request.
@@ -189,7 +201,29 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
     If the status code is anything other than 200, 201, or 204, then
     an HTTPException is raised.
     """
-    if status_code >= 500:
-        raise GitHubBroken(http.HTTPStatus(status_code))
-    # https://developer.github.com/v3/#client-errors
+    data = _decode_body(headers.get("content-type"), body)
+    if status_code not in {200, 201, 204}:
+        try:
+            message = data["message"]
+        except (TypeError, KeyError):
+            message = None
+        if status_code == 422:
+            errors = data["errors"]
+            fields = ", ".join(e["field"] for e in errors)
+            message = f"{message} for {fields}"
+            raise InvalidField(errors, message)
 
+        if status_code >= 500:
+            exc_type = GitHubBroken
+        elif status_code >= 400:
+            exc_type = BadRequest
+        elif status_code >= 300:
+            exc_type = RedirectionException
+        else:
+            exc_type = HTTPException
+        status_code_enum = http.HTTPStatus(status_code)
+        if message:
+            args = status_code_enum, message
+        else:
+            args = status_code_enum,
+        raise exc_type(*args)
