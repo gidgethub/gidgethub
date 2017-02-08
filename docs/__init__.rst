@@ -13,4 +13,10 @@ Classes
 
 .. autoclass:: HTTPException
 
+.. autoclass:: RedirectionException
+
 .. autoclass:: BadRequest
+
+.. autoclass:: InvalidField
+
+.. autoclass:: GitHubBroken
