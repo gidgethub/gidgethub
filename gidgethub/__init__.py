@@ -50,9 +50,10 @@ class InvalidField(BadRequest):
     # field: str
     # error_code: str
 
-    def __init__(self, resource: str, field: str, error_code: str,
-                 *args: Any) -> None:
+    def __init__(self, errors, *args: Any) -> None:
         """Store the error details."""
+        self.errors = errors
+        super().__init__(http.HTTPStatus.UNPROCESSABLE_ENTITY, *args)
 
 
 class GitHubBroken(HTTPException):
