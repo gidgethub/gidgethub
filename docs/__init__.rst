@@ -7,7 +7,8 @@
 Classes
 -------
 
-.. autoclass:: GitHubException
+.. exception:: GitHubException
+   Base exception for this library.
 
 .. autoclass:: ValidationFailure
 
