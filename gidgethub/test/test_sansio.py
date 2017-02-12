@@ -253,11 +253,13 @@ class TestDecipherResponse:
         assert data["url"] == "https://api.github.com/repos/python/cpython/pulls/1"
 
     def test_201(self):
+        """Test a 201 response along with non-pagination Link header."""
         status_code = 201
         headers = {"x-ratelimit-limit": "60",
                    "x-ratelimit-remaining": "50",
                    "x-ratelimit-reset": "12345678",
-                   "content-type": "application/json; charset=utf-8"}
+                   "content-type": "application/json; charset=utf-8",
+                   "link": "<http://example.com>; test=\"unimportant\""}
         data = {
             "id": 208045946,
             "url": "https://api.github.com/repos/octocat/Hello-World/labels/bug",
