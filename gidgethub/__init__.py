@@ -42,15 +42,11 @@ class InvalidField(BadRequest):
 
     """A field in the request is invalid.
 
-    GitHub responds with a 422 HTTP response and details in the body.
-    (https://developer.github.com/v3/#client-errors)
+    Represented by a 422 HTTP Response. Details of what fields were
+    invalid are stored in the errors attribute.
     """
 
-    # resource: str
-    # field: str
-    # error_code: str
-
-    def __init__(self, errors, *args: Any) -> None:
+    def __init__(self, errors: Any, *args: Any) -> None:
         """Store the error details."""
         self.errors = errors
         super().__init__(http.HTTPStatus.UNPROCESSABLE_ENTITY, *args)
