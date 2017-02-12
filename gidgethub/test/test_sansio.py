@@ -252,9 +252,25 @@ class TestDecipherResponse:
         assert rate_limit.remaining == 53
         assert data["url"] == "https://api.github.com/repos/python/cpython/pulls/1"
 
-    @pytest.mark.skip("not implemented")
     def test_201(self):
-        pass
+        status_code = 201
+        headers = {"x-ratelimit-limit": "60",
+                   "x-ratelimit-remaining": "50",
+                   "x-ratelimit-reset": "12345678",
+                   "content-type": "application/json; charset=utf-8"}
+        data = {
+            "id": 208045946,
+            "url": "https://api.github.com/repos/octocat/Hello-World/labels/bug",
+            "name": "bug",
+            "color": "f29513",
+            "default": True
+        }
+        body = json.dumps(data).encode("UTF-8")
+        returned_data, rate_limit, more = sansio.decipher_response(status_code,
+                                                                   headers, body)
+        assert more is None
+        assert rate_limit.limit == 60
+        assert returned_data == data
 
     def test_204(self):
         """Test both a 204 response and an empty response body."""
