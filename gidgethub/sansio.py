@@ -141,11 +141,11 @@ class RateLimit:
 
     """The rate limit imposed upon the requester.
 
-    The 'rate' attribute specifies the rate of requests per hour the client is
-    allowed to make.
+    The 'limit' attribute specifies the rate of requests per hour the client is
+    limited to.
 
-    The 'left' attribute specifies how many requests are left within the
-    current rate limit.
+    The 'remaining' attribute specifies how many requests remain within the
+    current rate limit that the client can make.
 
     The reset_datetime attribute is a datetime object representing when
     effectively 'left' resets to 'rate'. The datetime object is timezone-aware
@@ -154,14 +154,14 @@ class RateLimit:
 
     # https://developer.github.com/v3/#rate-limiting
 
-    def __init__(self, *, rate: int, left: int,
+    def __init__(self, *, limit: int, remaining: int,
                  reset_epoch: float) -> None:
         """Instantiate a RateLimit object.
 
         The reset_epoch argument should be in seconds since the UTC epoch.
         """
-        self.rate = rate
-        self.left = left
+        self.limit = limit
+        self.remaining = remaining
         self.reset_datetime = datetime.datetime.fromtimestamp(reset_epoch,
                                                               datetime.timezone.utc)
 
@@ -172,10 +172,10 @@ class RateLimit:
         The mapping providing the headers is expected to support lowercase
         keys.
         """
-        rate = int(headers["x-ratelimit-limit"])
-        left = int(headers["x-ratelimit-remaining"])
+        limit = int(headers["x-ratelimit-limit"])
+        remaining = int(headers["x-ratelimit-remaining"])
         reset_epoch = float(headers["x-ratelimit-reset"])
-        return cls(rate=rate, left=left, reset_epoch=reset_epoch)
+        return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
 
 
 def _decode_body(content_type: str, body: bytes) -> Any:

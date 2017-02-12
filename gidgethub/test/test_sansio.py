@@ -157,10 +157,10 @@ class TestRateLimit:
         left = 42
         rate = 64
         reset = datetime.datetime.now(datetime.timezone.utc)
-        rate_limit = sansio.RateLimit(left=left, rate=rate,
+        rate_limit = sansio.RateLimit(remaining=left, limit=rate,
                                       reset_epoch=reset.timestamp())
-        assert rate_limit.left == left
-        assert rate_limit.rate == rate
+        assert rate_limit.remaining == left
+        assert rate_limit.limit == rate
         assert rate_limit.reset_datetime == reset
 
     def test_from_http(self):
@@ -171,8 +171,8 @@ class TestRateLimit:
                    "x-ratelimit-remaining": str(left),
                    "x-ratelimit-reset": str(reset.timestamp())}
         rate_limit = sansio.RateLimit.from_http(headers)
-        assert rate_limit.rate == rate
-        assert rate_limit.left == left
+        assert rate_limit.limit == rate
+        assert rate_limit.remaining == left
         assert rate_limit.reset_datetime == reset
 
 
@@ -249,7 +249,7 @@ class TestDecipherResponse:
         data, rate_limit, more = sansio.decipher_response(status_code, headers,
                                                           body)
         assert more is None
-        assert rate_limit.left == 53
+        assert rate_limit.remaining == 53
         assert data["url"] == "https://api.github.com/repos/python/cpython/pulls/1"
 
     @pytest.mark.skip("not implemented")
@@ -263,7 +263,7 @@ class TestDecipherResponse:
         data, rate_limit, more = sansio.decipher_response(status_code, headers,
                                                           body)
         assert more is None
-        assert rate_limit.left == 41
+        assert rate_limit.remaining == 41
         assert data is None
 
     def test_next(self):
@@ -272,21 +272,21 @@ class TestDecipherResponse:
         data, rate_limit, more = sansio.decipher_response(status_code, headers,
                                                           body)
         assert more == "https://api.github.com/repositories/4164482/pulls?page=2"
-        assert rate_limit.left == 53
+        assert rate_limit.remaining == 53
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/8053"
 
         headers, body = sample("pr_page_2", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers,
                                                           body)
         assert more == "https://api.github.com/repositories/4164482/pulls?page=3"
-        assert rate_limit.left == 50
+        assert rate_limit.remaining == 50
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/7805"
 
         headers, body = sample("pr_page_last", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers,
                                                           body)
         assert more is None
-        assert rate_limit.left == 48
+        assert rate_limit.remaining == 48
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/6395"
 
     def test_text_body(self):
@@ -296,5 +296,5 @@ class TestDecipherResponse:
         data, rate_limit, more = sansio.decipher_response(status_code, headers,
                                                           body)
         assert more is None
-        assert rate_limit.left == 43
+        assert rate_limit.remaining == 43
         assert data.startswith("diff --git")
