@@ -24,7 +24,10 @@ Classes
    :exc:`GitHubException`.
 
 
-.. autoclass:: RedirectionException
+.. exception:: RedirectionException
+
+   Exception for 3XX HTTP responses. Inherits from :exc:`HTTPException`.
+
 
 .. autoclass:: BadRequest
 
