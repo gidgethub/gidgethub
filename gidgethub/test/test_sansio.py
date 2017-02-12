@@ -256,9 +256,15 @@ class TestDecipherResponse:
     def test_201(self):
         pass
 
-    @pytest.mark.skip("not implemented")
     def test_204(self):
         """Test both a 204 response and an empty response body."""
+        status_code = 204
+        headers, body = sample("pr_merged", status_code)
+        data, rate_limit, more = sansio.decipher_response(status_code, headers,
+                                                          body)
+        assert more is None
+        assert rate_limit.left == 41
+        assert data is None
 
     def test_next(self):
         status_code = 200
