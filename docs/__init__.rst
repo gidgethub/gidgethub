@@ -18,7 +18,11 @@ Classes
    Inherits from :exc:`GitHubException`.
 
 
-.. autoclass:: HTTPException
+.. exception:: HTTPException(status_code: http.HTTPStatus, *args: Any)
+
+   A general exception to represent HTTP responses. Inherits from
+   :exc:`GitHubException`.
+
 
 .. autoclass:: RedirectionException
 
