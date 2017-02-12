@@ -182,7 +182,7 @@ def sample(directory, status_code):
     headers_path = sample_dir/f"{status_code}.json"
     with headers_path.open("r") as file:
         headers = json.load(file)
-    body = (sample_dir/"body.json").read_bytes()
+    body = (sample_dir/"body").read_bytes()
     return headers, body
 
 
@@ -252,7 +252,6 @@ class TestDecipherResponse:
         assert rate_limit.left == 53
         assert data["url"] == "https://api.github.com/repos/python/cpython/pulls/1"
 
-
     @pytest.mark.skip("not implemented")
     def test_201(self):
         pass
@@ -261,10 +260,35 @@ class TestDecipherResponse:
     def test_204(self):
         """Test both a 204 response and an empty response body."""
 
-    @pytest.mark.skip("not implemented")
     def test_next(self):
-        pass
+        status_code = 200
+        headers, body = sample("pr_page_1", status_code)
+        data, rate_limit, more = sansio.decipher_response(status_code, headers,
+                                                          body)
+        assert more == "https://api.github.com/repositories/4164482/pulls?page=2"
+        assert rate_limit.left == 53
+        assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/8053"
 
-    @pytest.mark.skip("not implemented")
+        headers, body = sample("pr_page_2", status_code)
+        data, rate_limit, more = sansio.decipher_response(status_code, headers,
+                                                          body)
+        assert more == "https://api.github.com/repositories/4164482/pulls?page=3"
+        assert rate_limit.left == 50
+        assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/7805"
+
+        headers, body = sample("pr_page_last", status_code)
+        data, rate_limit, more = sansio.decipher_response(status_code, headers,
+                                                          body)
+        assert more is None
+        assert rate_limit.left == 48
+        assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/6395"
+
     def test_text_body(self):
         """Test requsting non-JSON data like a diff."""
+        status_code = 200
+        headers, body = sample("pr_diff", status_code)
+        data, rate_limit, more = sansio.decipher_response(status_code, headers,
+                                                          body)
+        assert more is None
+        assert rate_limit.left == 43
+        assert data.startswith("diff --git")

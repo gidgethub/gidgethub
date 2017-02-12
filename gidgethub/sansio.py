@@ -11,7 +11,8 @@ import hashlib
 import hmac
 import http
 import json
-from typing import Any, Dict, Mapping, Tuple
+import re
+from typing import Any, Dict, Mapping, Optional, Tuple
 
 from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
                RedirectionException, ValidationFailure)
@@ -56,6 +57,8 @@ class Event:
                   *, secret: str = None) -> "Event":
         """Construct an event from HTTP headers and JSON body data.
 
+        The mapping providing the headers is expected to support lowercase keys.
+
         Since this method assumes the body of the HTTP request is JSON, a check
         is performed for a content-type of "application/json" (GitHub does
         support other content-types). If the content-type does not match,
@@ -69,16 +72,16 @@ class Event:
         if headers.get("content-type") != "application/json":
             raise BadRequest(400, "expected a content-type of "
                                              "'application/json'")
-        elif "X-Hub-Signature" in headers:
+        elif "x-hub-signature" in headers:
                 if secret is None:
                     raise ValidationFailure("secret not provided")
-                validate_event(body, signature=headers["X-Hub-Signature"],
+                validate_event(body, signature=headers["x-hub-signature"],
                                secret=secret)
         elif secret is not None:
             raise ValidationFailure("signature is missing")
         data = json.loads(body.decode("UTF-8"))
-        return cls(data, event=headers["X-GitHub-Event"],
-                   delivery_id=headers["X-GitHub-Delivery"])
+        return cls(data, event=headers["x-github-event"],
+                   delivery_id=headers["x-github-delivery"])
 
 
 def accept_format(*, version: str = "v3", media: str = None,
@@ -164,10 +167,14 @@ class RateLimit:
 
     @classmethod
     def from_http(cls, headers: Mapping[str, str]) -> "RateLimit":
-        """Gather rate limit information from HTTP headers."""
-        rate = int(headers["X-RateLimit-Limit"])
-        left = int(headers["X-RateLimit-Remaining"])
-        reset_epoch = float(headers["X-RateLimit-Reset"])
+        """Gather rate limit information from HTTP headers.
+
+        The mapping providing the headers is expected to support lowercase
+        keys.
+        """
+        rate = int(headers["x-ratelimit-limit"])
+        left = int(headers["x-ratelimit-remaining"])
+        reset_epoch = float(headers["x-ratelimit-reset"])
         return cls(rate=rate, left=left, reset_epoch=reset_epoch)
 
 
@@ -181,9 +188,27 @@ def _decode_body(content_type: str, body: bytes) -> Any:
     return decoded_body
 
 
+_link_re = re.compile(r'\<(?P<uri>[^>]+)\>;\s*'
+                      r'(?P<param_type>\w+)="(?P<param_value>\w+)"(,\s*)?')
+
+def _next_link(link: Optional[str]) -> Optional[str]:
+    # https://developer.github.com/v3/#pagination
+    # https://tools.ietf.org/html/rfc5988
+    if link is None:
+        return None
+    for match in _link_re.finditer(link):
+        if match.group("param_type") == "rel":
+            if match.group("param_value") == "next":
+                return match.group("uri")
+    else:
+        return None
+
+
 def decipher_response(status_code: int, headers: Mapping[str, str],
                       body: bytes) -> Tuple[Any, RateLimit, str]:
     """Decipher an HTTP response for a GitHub API request.
+
+    The mapping providing the headers is expected to support lowercase keys.
 
     The parameters of this function correspond to the three main parts
     of an HTTP response: the status code, headers, and body. Assuming
@@ -202,7 +227,9 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
     an HTTPException is raised.
     """
     data = _decode_body(headers.get("content-type"), body)
-    if status_code not in {200, 201, 204}:
+    if status_code in {200, 201, 204}:
+        return data, RateLimit.from_http(headers), _next_link(headers.get("link"))
+    else:
         try:
             message = data["message"]
         except (TypeError, KeyError):
