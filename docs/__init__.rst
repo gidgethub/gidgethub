@@ -24,12 +24,15 @@ Classes
    :exc:`GitHubException`.
 
 
-.. exception:: RedirectionException
+.. exception:: RedirectionException(status_code: http.HTTPStatus, *args: Any)
 
    Exception for 3XX HTTP responses. Inherits from :exc:`HTTPException`.
 
 
-.. autoclass:: BadRequest
+.. exception:: BadRequest(status_code: http.HTTPStatus, *args: Any)
+
+   Exception for 4XX HTTP responses. Inherits from :exc:`HTTPException`.
+
 
 .. autoclass:: InvalidField
 
