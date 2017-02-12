@@ -22,7 +22,7 @@ JSONDict = Dict[str, Any]
 
 
 def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
-    """Validate that the webhook event body came from an approved repository."""
+    """Validate the signature of a webhook event."""
     # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
     signature_prefix = "sha1="
     if not signature.startswith(signature_prefix):
