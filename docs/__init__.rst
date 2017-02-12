@@ -30,14 +30,14 @@ Classes
       The status code that the exception represents.
 
 
-.. exception:: RedirectionException(status_code: http.HTTPStatus, *args: Any)
+.. exception:: RedirectionException
 
    Exception for 3XX HTTP responses.
 
    Inherits from :exc:`HTTPException`.
 
 
-.. exception:: BadRequest(status_code: http.HTTPStatus, *args: Any)
+.. exception:: BadRequest
 
    Exception for 4XX HTTP responses.
 
@@ -53,12 +53,12 @@ Classes
    code. Details of what fields were invalid are stored in the :attr:`errors`
    attribute.
 
-   .. attribute:: errors: List[Any]
+   .. attribute:: errors
 
       A list of error details for each field which was invalid.
 
 
-.. exception:: GitHubBroken(status_code: http.HTTPStatus, *args: Any)
+.. exception:: GitHubBroken
 
    An exception representing 5XX HTTP responses.
 
