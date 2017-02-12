@@ -1,6 +1,7 @@
 import datetime
 import http
 import json
+import pathlib
 
 import pytest
 
@@ -43,19 +44,19 @@ class TestEvent:
     data_bytes = '{"action": "opened"}'.encode("UTF-8")
     secret = "123456"
     headers = {"content-type": "application/json",
-               "X-GitHub-Event": "pull_request",
-               "X-GitHub-Delivery": "72d3162e-cc78-11e3-81ab-4c9367dc0958",
-               "X-Hub-Signature": "sha1=13ed44049d52492cab0f3aa22215091d35be4d58"}
+               "x-github-event": "pull_request",
+               "x-github-delivery": "72d3162e-cc78-11e3-81ab-4c9367dc0958",
+               "x-hub-signature": "sha1=13ed44049d52492cab0f3aa22215091d35be4d58"}
 
     def check_event(self, event):
         """Check that an event matches the test data provided by the class."""
-        assert event.event == self.headers["X-GitHub-Event"]
-        assert event.delivery_id == self.headers["X-GitHub-Delivery"]
+        assert event.event == self.headers["x-github-event"]
+        assert event.delivery_id == self.headers["x-github-delivery"]
         assert event.data == self.data
 
     def test_init(self):
-        ins = sansio.Event(self.data, event=self.headers["X-GitHub-Event"],
-                           delivery_id=self.headers["X-GitHub-Delivery"])
+        ins = sansio.Event(self.data, event=self.headers["x-github-event"],
+                           delivery_id=self.headers["x-github-delivery"])
         self.check_event(ins)
 
     def test_from_http(self):
@@ -80,7 +81,7 @@ class TestEvent:
     def test_from_http_missing_signature(self):
         """Secret but no signature raises ValidationFailure."""
         headers_no_sig = self.headers.copy()
-        del headers_no_sig["X-Hub-Signature"]
+        del headers_no_sig["x-hub-signature"]
         with pytest.raises(ValidationFailure):
             sansio.Event.from_http(headers_no_sig, self.data_bytes,
                                    secret=self.secret)
@@ -92,9 +93,10 @@ class TestEvent:
 
     def test_from_http_no_signature(self):
         headers = self.headers.copy()
-        del headers["X-Hub-Signature"]
+        del headers["x-hub-signature"]
         event = sansio.Event.from_http(headers, self.data_bytes)
         self.check_event(event)
+
 
 class TestAcceptFormat:
 
@@ -165,13 +167,23 @@ class TestRateLimit:
         left = 42
         rate = 65
         reset = datetime.datetime.now(datetime.timezone.utc)
-        headers = {"X-RateLimit-Limit": str(rate),
-                   "X-RateLimit-Remaining": str(left),
-                   "X-RateLimit-Reset": str(reset.timestamp())}
+        headers = {"x-ratelimit-limit": str(rate),
+                   "x-ratelimit-remaining": str(left),
+                   "x-ratelimit-reset": str(reset.timestamp())}
         rate_limit = sansio.RateLimit.from_http(headers)
         assert rate_limit.rate == rate
         assert rate_limit.left == left
         assert rate_limit.reset_datetime == reset
+
+
+def sample(directory, status_code):
+    # pytest doesn't set __spec__.origin :(
+    sample_dir = pathlib.Path(__file__).parent/"samples"/directory
+    headers_path = sample_dir/f"{status_code}.json"
+    with headers_path.open("r") as file:
+        headers = json.load(file)
+    body = (sample_dir/"body.json").read_bytes()
+    return headers, body
 
 
 class TestDecipherResponse:
@@ -199,6 +211,14 @@ class TestDecipherResponse:
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "it went bad"
 
+    def test_404(self):
+        status_code = 404
+        headers, body = sample("pr_not_found", status_code)
+        with pytest.raises(BadRequest) as exc_info:
+            sansio.decipher_response(status_code, headers, body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert str(exc_info.value) == "Not Found"
+
     def test_422(self):
         status_code = 422
         errors = [{"resource": "Issue", "field": "title",
@@ -222,3 +242,29 @@ class TestDecipherResponse:
         with pytest.raises(HTTPException) as exc_info:
             sansio.decipher_response(status_code, {}, b'')
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
+
+    def test_200(self):
+        status_code = 200
+        headers, body = sample("pr_single", status_code)
+        data, rate_limit, more = sansio.decipher_response(status_code, headers,
+                                                          body)
+        assert more is None
+        assert rate_limit.left == 53
+        assert data["url"] == "https://api.github.com/repos/python/cpython/pulls/1"
+
+
+    @pytest.mark.skip("not implemented")
+    def test_201(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_204(self):
+        """Test both a 204 response and an empty response body."""
+
+    @pytest.mark.skip("not implemented")
+    def test_next(self):
+        pass
+
+    @pytest.mark.skip("not implemented")
+    def test_text_body(self):
+        """Test requsting non-JSON data like a diff."""

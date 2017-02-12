@@ -1,0 +1,19 @@
+{
+"server": "GitHub.com",
+"date": "Sun, 12 Feb 2017 00:25:16 GMT",
+"content-type": "application/json; charset=utf-8",
+"content-length": "87",
+"status": "404 Not Found",
+"x-ratelimit-limit": "60",
+"x-ratelimit-remaining": "47",
+"x-ratelimit-reset": "1486861579",
+"x-github-media-type": "github.v3; format=json",
+"access-control-expose-headers": "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval",
+"access-control-allow-origin": "*",
+"content-security-policy": "default-src 'none'",
+"strict-transport-security": "max-age=31536000; includeSubdomains; preload",
+"x-content-type-options": "nosniff",
+"x-frame-options": "deny",
+"x-xss-protection": "1; mode=block",
+"x-github-request-id": "FE33:1B360:A31B4E:D35207:589FAB6C"
+}
