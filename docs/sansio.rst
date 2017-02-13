@@ -29,17 +29,52 @@ without requiring the use of the :class:`Event` class.
 
 .. function:: validate_event(payload: bytes, *, signature: str, secret: str) -> None
 
-   Validate the signature of a webhook event.
+   `Validate the signature <https://developer.github.com/webhooks/securing/#validating-payloads-from-github>`_
+   of a webhook event.
 
    :exc:`~gidgethub.ValidationFailure` is raised if the signature is malformed
    or if the provided signature does not match the calculated signature using
-   ``payload`` and ``secret``. If the validation passes then no exception is
+   *payload* and *secret*. If the validation passes then no exception is
    raised (i.e. there's no need to check the return value of the function as an
    exception is raised if validation fails).
 
 
-.. autoclass:: Event
-   :members:
+.. class:: Event(data: JSONDict, *, event: str, delivery_id: str)
+
+   Representation of a GitHub webhook event.
+
+   .. attribute:: data
+
+      The `payload <https://developer.github.com/webhooks/#payloads>`_ of the
+      event.
+
+
+   .. attribute:: event
+
+      The string representation of the
+      `triggering event <https://developer.github.com/webhooks/#events>`_.
+
+
+   .. attribute:: delivery_id
+
+      The unique ID of the event.
+
+
+   .. classmethod:: from_http(headers: Mapping[str, str], body: bytes, *, secret: str = None)
+
+      Construct an :class:`Event` instance from HTTP headers and body data.
+
+      The *headers* mapping is expected to support lowercase keys.
+
+      Since this method assumes the body of the HTTP request is JSON, a check
+      is performed for a ``"content-type"`` header field of
+      ``"application/json"``. If the content type does not match,
+      :exc:`~gidgethub.BadRequest` is raised.
+
+      If the appropriate headers are provided for event validation, then
+      the *secret* argument is required. Any failure in validation
+      (including not providing the *secret* argument) will lead to
+      :exc:`~gidgethub.ValidationFailure` being raised.
 
 
 Calling the GitHub API
