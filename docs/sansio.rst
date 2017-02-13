@@ -81,7 +81,8 @@ Calling the GitHub API
 ----------------------
 As well as receiving webhook events in response to actions occurring on GitHub,
 you can use the `GitHub API <https://developer.github.com/v3/>`_ to make calls
-to REST endpoints.
+to REST endpoints. This library provides support to both construct a request to
+the GitHub API as well as deciphering the response to a request.
 
 
 Requests
