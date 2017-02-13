@@ -88,7 +88,30 @@ the GitHub API as well as deciphering the response to a request.
 Requests
 ''''''''
 
-.. autofunction:: accept_format
+.. function:: accept_format(*, version: str = "v3", media: str = None, json: bool = True) -> str
+
+   Construct the specification of the format that a request should return. This
+   is used in the ``accept`` header field of a request to specify the
+   `media type <https://developer.github.com/v3/media/>`_.
+
+   The *version* argument specifies what version of the GitHub API that the
+   request applies to. Typically this only needs to be specified if you are
+   using an API that is in beta.
+
+   The *media* argument along with the *json* argument specifies what format
+   the response should take. Do note that only some GitHub API endpoints support
+   alternative formats from the default JSON format. For example, if you wanted
+   a comment body to include the rendered HTML then the function call would be
+   ``accept_format(media="html")`` to get a media type of
+   ``application/vnd.github.v3.html+json``. If you wanted the diff of a commit
+   then the function call would be ``accept_format(media="diff", json=False)``
+   to get a media type of ``application/vnd.github.v3.diff``.
+
+   The default arguments of this function will always return the
+   `latest version <https://developer.github.com/v3/#current-version>`_ of the
+   GitHub API with the default response format that this library is designed to
+   support.
+
 
 .. autofunction:: create_headers
 
