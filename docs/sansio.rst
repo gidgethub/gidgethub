@@ -23,10 +23,19 @@ request from GitHub and then use :meth:`Event.from_http` to create an
                                         secret=SECRET)
 
 This is not required, though, as the :class:`Event` class can be constructed
-in a traditional way. The :func:`validate_event` function is also provided to
-allow for manual validation that a event came from a supported project.
+in a more traditional way. The :func:`validate_event` function is also provided
+to allow for manual validation that a event came from a supported project
+without requiring the use of the :class:`Event` class.
 
-.. autofunction:: validate_event
+.. function:: validate_event(payload: bytes, *, signature: str, secret: str) -> None
+
+   Validate the signature of a webhook event.
+
+   :exc:`~gidgethub.ValidationFailure` is raised if the signature is malformed
+   or if the provided signature does not match the calculated signature using
+   ``payload`` and ``secret``. If the validation passes then no exception is
+   raised (i.e. there's no need to check the return value of the function as an
+   exception is raised if validation fails).
 
 
 .. autoclass:: Event
