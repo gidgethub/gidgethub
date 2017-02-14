@@ -88,6 +88,15 @@ the GitHub API as well as deciphering the response to a request.
 Requests
 ''''''''
 
+This module provides functions to help in the construction of a URL request
+by helping to automate the GitHub-specific aspects of a REST call.::
+
+  import requests
+
+  headers = create_headers("brettcannon", oauth_token=auth)
+  url = "https://api.github.com/repos/brettcannon/gidgethub/issues/1"
+  response = requests.get(url, headers=headers)
+
 .. function:: accept_format(*, version: str = "v3", media: str = None, json: bool = True) -> str
 
    Construct the specification of the format that a request should return. This
