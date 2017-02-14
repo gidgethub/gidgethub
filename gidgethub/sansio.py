@@ -121,8 +121,8 @@ def create_headers(requester: str, *,
     development -- or if you are looking for a different format return type,
     e.g. wanting the rendered HTML of a Markdown file.
 
-    The oauth_token allows making an authetnicated request. This can be
-    important if you need the extended rate limit provided by an authenticated
+    The oauth_token allows making an authenticated request. This can be
+    important if you need the expanded rate limit provided by an authenticated
     request.
 
     For consistency, all keys in the returned dict will be lowercased.

@@ -113,7 +113,26 @@ Requests
    support.
 
 
-.. autofunction:: create_headers
+.. function:: create_headers(requester: str, *, accept: str = accept_format(), oauth_token: str = None) -> Dict[str, str]
+
+   Create a dict representing GitHub-specific header fields.
+
+   The user agent is set according to who the *requester* is.
+   `GitHub asks <https://developer.github.com/v3/#user-agent-required>`_ it be
+   either a username or project name.
+
+   The *accept* argument corresponds to the ``'accept'`` field and defaults to
+   the default result of :func:`accept_format`. You should only need to change
+   this value if you are using a different version of the API -- e.g. one that
+   is under development -- or if you are looking for a different format for the
+   response, e.g. wanting the rendered HTML of a Markdown file.
+
+   The *oauth_token* allows making an
+   `authenticated request <https://developer.github.com/v3/#authentication>`_.
+   This can be important if you need the expanded rate limit provided by an
+   authenticated request.
+
+   For consistency, all keys in the returned dict will be lowercased.
 
 .. autoclass:: RateLimit
    :members:
