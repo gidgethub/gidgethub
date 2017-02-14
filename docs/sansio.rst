@@ -168,4 +168,26 @@ Responses
       response.
 
 
-.. autofunction:: decipher_response
+.. function:: decipher_response(status_code: int, headers: Mapping[str, str], body: bytes) -> Tuple[Any, RateLimit, str]
+
+    Decipher an HTTP response for a GitHub API request.
+
+    The mapping providing the headers is expected to support lowercase keys.
+
+    The parameters of this function correspond to the three main parts
+    of an HTTP response: the status code, headers, and body. Assuming
+    no errors which lead to an exception being raised, a 3-item tuple
+    is returned. The first item is the decoded body (typically a JSON
+    object, but possibly ``None`` or a string depending on the content
+    type of the body). The second item is a :class:`RateLimit` instance
+    based on what the response specified.
+
+    The last item of the tuple is the URL where to request the
+    `next set of results <https://developer.github.com/v3/#pagination>`_.
+    If there are no more results then ``None`` is returned. Do be aware
+    that the URL
+    `can be a URI template <https://developer.github.com/v3/#link-header>`_
+    and so may need to be expanded.
+
+    If the status code is anything other than ``200``, ``201``, or ``204``,
+    then an appropriate :exc:`~gidgethub.HTTPException` is raised.
