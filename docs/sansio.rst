@@ -89,13 +89,14 @@ Requests
 ''''''''
 
 This module provides functions to help in the construction of a URL request
-by helping to automate the GitHub-specific aspects of a REST call.::
+by helping to automate the GitHub-specific aspects of a REST call.
+::
 
   import requests
 
-  headers = create_headers("brettcannon", oauth_token=auth)
+  request_headers = create_headers("brettcannon", oauth_token=auth)
   url = "https://api.github.com/repos/brettcannon/gidgethub/issues/1"
-  response = requests.get(url, headers=headers)
+  response = requests.get(url, headers=request_headers)
 
 .. function:: accept_format(*, version: str = "v3", media: str = None, json: bool = True) -> str
 
@@ -147,6 +148,26 @@ by helping to automate the GitHub-specific aspects of a REST call.::
 Responses
 '''''''''
 
+Decipher a response from the GitHub API gather together all of the details
+that are provided to you. Continuing from the example in the Requests_ section::
+
+  # Assuming `response` contains a requests.Response object.
+  import datetime
+
+
+  status_code = response.status_code
+  headers = response.headers
+  body = response.content
+  data, rate, more = decipher_response(status_code, headers, body)
+  # Response details are in `data`.
+  if more:
+      if not rate.remaining:
+          now = datetime.datetime.now(datetime.tzinfo.utc)
+          wait = rate.reset_datetime - now
+          time.sleep(wait.total_seconds())
+      response_more = requests.get(more, headers=request_headers)
+      # Decipher `response_more` ...
+
 .. class:: RateLimit(*, limit: int, remaining: int, reset_epoch: float)
 
    The `rate limit <https://developer.github.com/v3/#rate-limiting>`_ imposed
@@ -196,7 +217,7 @@ Responses
     If there are no more results then ``None`` is returned. Do be aware
     that the URL
     `can be a URI template <https://developer.github.com/v3/#link-header>`_
-    and so may need to be expanded.
+    and so it may need to be expanded.
 
     If the status code is anything other than ``200``, ``201``, or ``204``,
     then an appropriate :exc:`~gidgethub.HTTPException` is raised.
