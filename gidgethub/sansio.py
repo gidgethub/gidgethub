@@ -13,6 +13,9 @@ import http
 import json
 import re
 from typing import Any, Dict, Mapping, Optional, Tuple
+import urllib.parse
+
+import uritemplate
 
 from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
                RedirectionException, ValidationFailure)
@@ -254,3 +257,18 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
         else:
             args = status_code_enum,
         raise exc_type(*args)
+
+
+DOMAIN = "https://api.github.com"
+
+def format_url(url: str, url_vars: Dict[str, str]) -> str:
+    """Construct a URL for the GitHub API.
+
+    The URL may be absolute or relative. In the latter case the appropriate
+    domain will be added. This is to help when copying the relative URL directly
+    from the GitHub developer documentation.
+
+    The dict provided in url_vars is used in URI template formatting.
+    """
+    url = urllib.parse.urljoin(DOMAIN, url)  # Works even if 'url' is fully-qualified.
+    return uritemplate.expand(url, var_dict=url_vars)

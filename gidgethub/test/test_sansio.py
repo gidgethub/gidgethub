@@ -316,3 +316,29 @@ class TestDecipherResponse:
         assert more is None
         assert rate_limit.remaining == 43
         assert data.startswith("diff --git")
+
+
+class TestFormatUrl:
+
+    def test_absolute_url(self):
+        original_url = "https://api.github.com/notifications"
+        url = sansio.format_url(original_url, {})
+        assert url == original_url
+
+    def test_relative_url(self):
+        url = sansio.format_url("/notifications", {})
+        assert url == "https://api.github.com/notifications"
+
+    def test_template(self):
+        template_url = "https://api.github.com/users/octocat/gists{/gist_id}"
+        template_data = {"gist_id": "1234"}
+        # Substituting an absolute URL.
+        url = sansio.format_url(template_url, template_data)
+        assert url == "https://api.github.com/users/octocat/gists/1234"
+        # No substituting an absolute URL.
+        url = sansio.format_url(template_url, {})
+        assert url == "https://api.github.com/users/octocat/gists"
+        # Substituting a relative URL.
+        url = sansio.format_url("/users/octocat/gists{/gist_id}",
+                                template_data)
+        assert url == "https://api.github.com/users/octocat/gists/1234"

@@ -221,3 +221,18 @@ that are provided to you. Continuing from the example in the Requests_ section::
 
     If the status code is anything other than ``200``, ``201``, or ``204``,
     then an appropriate :exc:`~gidgethub.HTTPException` is raised.
+
+
+Utilities
+---------
+
+.. function:: format_url(url: str, url_vars: Dict[str, str]) -> str
+
+    Construct a URL for the GitHub API.
+
+    The URL may be absolute or relative. In the latter case the appropriate
+    domain will be added. This is to help when copying the relative URL directly
+    from the GitHub developer documentation.
+
+    The dict provided in *url_vars* is used in
+    `URI template formatting <https://developer.github.com/v3/#hypermedia>`_.
