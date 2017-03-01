@@ -163,6 +163,23 @@ class TestRateLimit:
         assert rate_limit.limit == rate
         assert rate_limit.reset_datetime == reset
 
+    def test_bool(self):
+        now = datetime.datetime.now(datetime.timezone.utc)
+        year_from_now = now + datetime.timedelta(365)
+        year_ago = now - datetime.timedelta(365)
+        # Requests left.
+        rate = sansio.RateLimit(remaining=1, limit=1,
+                                reset_epoch=year_from_now.timestamp())
+        assert rate
+        # Reset passed.
+        rate = sansio.RateLimit(remaining=0, limit=1,
+                                reset_epoch=year_ago.timestamp())
+        assert rate
+        # No requests and reset not passed.
+        rate = sansio.RateLimit(remaining=0, limit=1,
+                                reset_epoch=year_from_now.timestamp())
+        assert not rate
+
     def test_from_http(self):
         left = 42
         rate = 65

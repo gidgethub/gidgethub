@@ -153,6 +153,10 @@ class RateLimit:
     The reset_datetime attribute is a datetime object representing when
     effectively 'left' resets to 'rate'. The datetime object is timezone-aware
     and set to UTC.
+
+    The boolean value of an instance whether another request can be made. This
+    is determined based on whether there are any remaining requests or if the
+    reset datetime has passed.
     """
 
     # https://developer.github.com/v3/#rate-limiting
@@ -167,6 +171,14 @@ class RateLimit:
         self.remaining = remaining
         self.reset_datetime = datetime.datetime.fromtimestamp(reset_epoch,
                                                               datetime.timezone.utc)
+
+    def __bool__(self) -> bool:
+        """True if requests are remaining or the reset datetime has passed."""
+        if self.remaining > 0:
+            return True
+        else:
+            now = datetime.datetime.now(datetime.timezone.utc)
+            return now > self.reset_datetime
 
     @classmethod
     def from_http(cls, headers: Mapping[str, str]) -> "RateLimit":

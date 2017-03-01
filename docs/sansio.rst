@@ -170,32 +170,36 @@ that are provided to you. Continuing from the example in the Requests_ section::
 
 .. class:: RateLimit(*, limit: int, remaining: int, reset_epoch: float)
 
-   The `rate limit <https://developer.github.com/v3/#rate-limiting>`_ imposed
-   upon the requester.
+    The `rate limit <https://developer.github.com/v3/#rate-limiting>`_ imposed
+    upon the requester.
 
-   The *reset_epoch* argument is expected to be UTC seconds from the epoch.
+    The *reset_epoch* argument is expected to be UTC seconds from the epoch.
 
-
-   .. attribute:: limit
-
-      The maximum limit of requests per hour the requester can make.
-
-
-   .. attribute: remaining
-
-      How many requests are left for the request until their quota is reset.
+    The boolean value of an instance whether another request can be made. This
+    is determined based on whether there are any remaining requests or if the
+    reset datetime has passed.
 
 
-   .. attribute:: reset_datetime
+    .. attribute:: limit
 
-      The :class:`datetime.datetime` object representing when the requester's
-      quota is refreshed. The object is timezone-aware to UTC.
+        The maximum limit of requests per hour the requester can make.
 
 
-   .. classmethod: from_http(headers: Mapping[str, str]) -> RateLimit
+    .. attribute: remaining
 
-      Create a :class:`RateLimit` instance from the HTTP headers of a GitHub API
-      response.
+        How many requests are left for the request until their quota is reset.
+
+
+    .. attribute:: reset_datetime
+
+        The :class:`datetime.datetime` object representing when the requester's
+        quota is refreshed. The object is timezone-aware to UTC.
+
+
+    .. classmethod: from_http(headers: Mapping[str, str]) -> RateLimit
+
+        Create a :class:`RateLimit` instance from the HTTP headers of a GitHub API
+        response.
 
 
 .. function:: decipher_response(status_code: int, headers: Mapping[str, str], body: bytes) -> Tuple[Any, RateLimit, str]
