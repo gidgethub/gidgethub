@@ -1,11 +1,11 @@
 :mod:`gidgethub`
 ===========================
 
-.. automodule:: gidgethub
+.. module:: gidgethub
 
 
-Classes
--------
+Exceptions
+----------
 
 .. exception:: GitHubException
 

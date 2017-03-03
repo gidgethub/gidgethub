@@ -1,8 +1,7 @@
 :mod:`gidgethub.sansio` --- sans-I/O support
 ============================================
 
-.. automodule:: gidgethub.sansio
-
+.. module:: gidgethub.sansio
 
 Webhook events
 --------------
