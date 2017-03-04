@@ -1,5 +1,5 @@
-:mod:`gidgethub`
-===========================
+:mod:`gidgethub` --- Exceptions
+===============================
 
 .. module:: gidgethub
 
