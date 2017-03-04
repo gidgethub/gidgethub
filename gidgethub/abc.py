@@ -1,7 +1,7 @@
 """Provide an abstract base class for easier requests."""
 import abc
 import datetime
-from typing import Any, Dict, Mapping, Tuple
+from typing import Any, AsyncIterable, Dict, Mapping, Tuple
 
 from . import sansio
 
@@ -55,3 +55,14 @@ class GitHubAPI(abc.ABC):
         """Send a GET request for a single item to the specified endpoint."""
         data, _ = await self._make_request("GET", url, url_vars, b'', accept)
         return data
+
+    async def getiter(self, url: str, url_vars: Dict[str, str] = {}, *,
+                      accept: str = sansio.accept_format()) -> AsyncIterable[Any]:
+        """Return an async iterable for all the items at a specified endpoint."""
+        data, more = await self._make_request("GET", url, url_vars, b'', accept)
+        for item in data:
+            yield item
+        if more:
+            # `yield from` is not supported in coroutines.
+            async for item in self.getiter(more, url_vars, accept=accept):
+                yield item

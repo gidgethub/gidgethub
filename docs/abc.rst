@@ -61,7 +61,7 @@ be taken care.
         `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
 
 
-    .. coroutine:: getitem(self, url: str, url_vars: Dict[str, str] = {}, *, accept=sansio.accept_format()) -> Any
+    .. coroutine:: getitem(url: str, url_vars: Dict[str, str] = {}, *, accept=sansio.accept_format()) -> Any
 
         Get a single item from GitHub.
 
@@ -69,3 +69,13 @@ be taken care.
         to :func:`gidgethub.sansio.decipher_response`. As this method
         is only to be used for single items, no checking for pagination
         is performed.
+
+    .. coroutine:: getiter(url: str, url_vars: Dict[str, str] = {}, *,
+                      accept: str = sansio.accept_format()) -> AsyncIterable[Any]
+
+        Get all items from a GitHub API endpoint.
+
+        An asynchronous iterable is returned which will yield all items
+        from the endpoint (i.e. use ``async for`` on the result). Any
+        `pagination <https://developer.github.com/v3/#pagination>`_
+        will automatically be followed.

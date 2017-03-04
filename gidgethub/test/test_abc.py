@@ -18,13 +18,22 @@ def call_async():
         loop.close()
 
 
+async def exhaust_async_generator(coro):
+    values = []
+    async for item in coro:
+        values.append(item)
+    return values
+
+
 class MockGitHubAPI(gh_abc.GitHubAPI):
 
     DEFAULT_HEADERS = {"x-ratelimit-limit": "2", "x-ratelimit-remaining": "1",
                        "x-ratelimit-reset": "0"}
 
     def __init__(self, status_code=200, headers=DEFAULT_HEADERS, body=b''):
-        self._response = status_code, headers, body
+        self.response_code = status_code
+        self.response_headers = headers
+        self.response_body = body
         super().__init__("test_abc", oauth_token="oauth token")
 
     async def _request(self, method, url, headers, body=None):
@@ -33,7 +42,13 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         self.url = url
         self.headers = headers
         self.body = body
-        return self._response
+        response_headers = self.response_headers.copy()
+        try:
+            # Don't loop forever.
+            del self.response_headers["link"]
+        except KeyError:
+            pass
+        return self.response_code, response_headers, self.response_body
 
     async def _sleep(self, seconds):
         """Sleep for the specified number of seconds."""
@@ -130,3 +145,22 @@ def test_getitem(call_async):
                        body=json.dumps(original_data).encode("utf8"))
     data = call_async(gh.getitem("/fake"))
     assert data == original_data
+
+def test_getiter(call_async):
+    """Test that getiter() returns an async iterable as well as URI expansion."""
+    original_data = [1, 2]
+    next_url = "https://api.github.com/fake{/extra}?page=2"
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=UTF-8"
+    headers["link"] = f'<{next_url}>; rel="next"'
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(original_data).encode("utf8"))
+    async_gen = gh.getiter("/fake", {"extra": "stuff"})
+    data = call_async(exhaust_async_generator(async_gen))
+    assert gh.url == "https://api.github.com/fake/stuff?page=2"
+    assert len(data) == 4
+    assert data[0] == 1
+    assert data[1] == 2
+    assert data[2] == 1
+    assert data[3] == 2
+
