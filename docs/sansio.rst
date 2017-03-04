@@ -238,4 +238,4 @@ Utilities
     from the GitHub developer documentation.
 
     The dict provided in *url_vars* is used in
-    `URI template formatting <https://developer.github.com/v3/#hypermedia>`_.
+    `URI template expansion <https://developer.github.com/v3/#hypermedia>`_.
