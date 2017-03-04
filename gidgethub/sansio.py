@@ -73,7 +73,7 @@ class Event:
         raised.
         """
         if headers.get("content-type") != "application/json":
-            raise BadRequest(400, "expected a content-type of "
+            raise BadRequest(http.HTTPStatus(400), "expected a content-type of "
                                              "'application/json'")
         elif "x-hub-signature" in headers:
                 if secret is None:
@@ -249,6 +249,7 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
             message = data["message"]
         except (TypeError, KeyError):
             message = None
+        exc_type = HTTPException  # For mypy.
         if status_code == 422:
             errors = data["errors"]
             fields = ", ".join(repr(e["field"]) for e in errors)
@@ -264,6 +265,7 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
         else:
             exc_type = HTTPException
         status_code_enum = http.HTTPStatus(status_code)
+        args: Tuple
         if message:
             args = status_code_enum, message
         else:
