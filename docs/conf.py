@@ -97,6 +97,7 @@ html_theme = 'alabaster'
 html_theme_options = {
     "github_user": "brettcannon",
     "github_repo": "gidgethub",
+    "github_type": "star",
     "github_banner": True,
     "travis_button": True,
     "codecov_button": True,
