@@ -144,6 +144,7 @@ def test_getitem(call_async):
     gh = MockGitHubAPI(headers=headers,
                        body=json.dumps(original_data).encode("utf8"))
     data = call_async(gh.getitem("/fake"))
+    assert gh.method == "GET"
     assert data == original_data
 
 def test_getiter(call_async):
@@ -157,6 +158,7 @@ def test_getiter(call_async):
                        body=json.dumps(original_data).encode("utf8"))
     async_gen = gh.getiter("/fake", {"extra": "stuff"})
     data = call_async(exhaust_async_generator(async_gen))
+    assert gh.method == "GET"
     assert gh.url == "https://api.github.com/fake/stuff?page=2"
     assert len(data) == 4
     assert data[0] == 1
