@@ -19,12 +19,21 @@ be taken care.
     initialized with the requester's name and (optionally) their
     OAuth token.
 
-    All methods that make a request to GitHub have some common
-    arguments. The *url_vars* argument is used to perform
+    There are common arguments across methods that make requests to
+    GitHub. The *url_vars* argument is used to perform
     `URI template expansion <https://developer.github.com/v3/#hypermedia>`_.
     The *accept* argument specifies what response format is acceptable
     and can be constructed by using
-    :func:`gidgethub.sansio.accept_format`.
+    :func:`gidgethub.sansio.accept_format`. For methods that send data
+    to GitHub, there is a *data* argument which accepts an object
+    which can be serialized to JSON (because ``None`` is a legitimate
+    JSON value, ``""`` is used to represent no data).
+
+    The returned value for GitHub requests is the decoded body of the
+    response according to :func:`gidgethub.sansio.decipher_response`.
+    If the status code returned by the HTTP request is anything other
+    than ``200``, ``201``, or ``204``, then an appropriate
+    :exc:`~gidgethub.HTTPException` is raised.
 
 
     .. attribute:: requester
@@ -46,18 +55,23 @@ be taken care.
         HTTP request.
 
 
-    .. abstractcoroutine:: _request(self, method: str, url: str, headers: Mapping[str, str], body: bytes = None) -> Tuple[int, Mapping[str, str], bytes]
+    .. abstractcoroutine:: _request(self, method: str, url: str, headers: Mapping[str, str], body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]
 
-        Abstract :term:`coroutine` to make an HTTP request. The
-        expected return value is a tuple consisting of the status
-        code, headers, and body of the HTTP response.
+        An abstract :term:`coroutine` to make an HTTP request. The
+        given *headers* will have lower-case keys and include not only
+        GitHub-specific fields but also ``content-length`` (and
+        ``content-type`` if appropriate).
+
+        The expected return value is a tuple consisting of the status
+        code, headers, and the body of the HTTP response. The headers
+        dictionary is expected to work with lower-case keys.
 
 
     .. abstractcoroutine:: _sleep(seconds: float) -> None
 
         An abstract :term:`coroutine` which causes the coroutine to
         sleep for the specified number of seconds. This is used to
-        prevent the user from going over their request
+        help prevent the user from going over their request
         `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
 
 
@@ -65,10 +79,10 @@ be taken care.
 
         Get a single item from GitHub.
 
-        The returned value is the decoded body of the response according
-        to :func:`gidgethub.sansio.decipher_response`. As this method
-        is only to be used for single items, no checking for pagination
-        is performed.
+        .. note::
+            For ``GET`` calls that can return multiple values and
+            potentially require pagination, see ``getiter()``.
+
 
     .. coroutine:: getiter(url: str, url_vars: Dict[str, str] = {}, *,
                       accept: str = sansio.accept_format()) -> AsyncIterable[Any]
@@ -79,3 +93,30 @@ be taken care.
         from the endpoint (i.e. use ``async for`` on the result). Any
         `pagination <https://developer.github.com/v3/#pagination>`_
         will automatically be followed.
+
+        .. note::
+            For ``GET`` calls that return only a single item, see
+            :meth:`getitem`.
+
+    .. coroutine:: post(url: str, url_vars: Dict[str, str] = {}, *, data: Any, accept: str = sansio.accept_format()) -> Any
+
+        Send a ``POST`` request to GitHub.
+
+
+    .. coroutine:: patch(url: str, url_vars: Dict[str, str] = {}, *, data: Any, accept: str = sansio.accept_format()) -> Any
+
+        Send a ``PATCH`` request to GitHub.
+
+
+    .. coroutine:: put(url: str, url_vars: Dict[str, str] = {}, *, data: Any = "", accept: str = sansio.accept_format()) -> Any
+
+        Send a ``PUT`` request to GitHub.
+
+        Be aware that some ``PUT`` endpoints such as
+        `locking an issue <https://developer.github.com/v3/issues/#lock-an-issue>`_
+        will return no content, leading to ``None`` being returned.
+
+
+    .. coroutine:: delete(url: str, url_vars: Dict[str, str] = {}, *, accept: str = sansio.accept_format()) -> None
+
+        Send a ``DELETE`` request to GitHub.

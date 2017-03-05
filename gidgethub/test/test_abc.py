@@ -36,7 +36,7 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         self.response_body = body
         super().__init__("test_abc", oauth_token="oauth token")
 
-    async def _request(self, method, url, headers, body=None):
+    async def _request(self, method, url, headers, body=b''):
         """Make an HTTP request."""
         self.method = method
         self.url = url
@@ -59,7 +59,7 @@ def test_rate_limit(call_async):
     """The sleep() method is called appropriately if the rate limit is hit."""
     # Default rate limit does not block.
     gh = MockGitHubAPI()
-    _ = call_async(gh._make_request("GET", "/rate_limit", {}, b'',
+    _ = call_async(gh._make_request("GET", "/rate_limit", {}, "",
                                     sansio.accept_format()))
     assert not hasattr(gh, "slept")
     # No reason to sleep.
@@ -68,14 +68,14 @@ def test_rate_limit(call_async):
     rate_limit = sansio.RateLimit(limit=2, remaining=1,
                                   reset_epoch=year_from_now.timestamp())
     gh.rate_limit = rate_limit
-    _ = call_async(gh._make_request("GET", "/rate_limit", {}, b'',
+    _ = call_async(gh._make_request("GET", "/rate_limit", {}, "",
                                     sansio.accept_format()))
     assert not hasattr(gh, "slept")
     # Expected to sleep.
     rate_limit = sansio.RateLimit(limit=2, remaining=0,
                                   reset_epoch=year_from_now.timestamp())
     gh.rate_limit = rate_limit
-    _ = call_async(gh._make_request("GET", "/rate_limit", {}, b'',
+    _ = call_async(gh._make_request("GET", "/rate_limit", {}, "",
                                     sansio.accept_format()))
     assert hasattr(gh, "slept")
     # Enough time has passed since year_from_now was calculated that it's safer
@@ -89,7 +89,7 @@ def test_url_formatted(call_async):
     gh = MockGitHubAPI()
     _ = call_async(gh._make_request("GET",
                                     "/users/octocat/following{/other_user}",
-                                    {"other_user": "brettcannon"}, b'',
+                                    {"other_user": "brettcannon"}, "",
                                     sansio.accept_format()))
     assert gh.url == "https://api.github.com/users/octocat/following/brettcannon"
 
@@ -98,7 +98,7 @@ def test_headers(call_async):
     """Appropriate headers are created."""
     accept = sansio.accept_format()
     gh = MockGitHubAPI()
-    _ = call_async(gh._make_request("GET", "/rate_limit", {}, b'', accept))
+    _ = call_async(gh._make_request("GET", "/rate_limit", {}, "", accept))
     assert gh.headers["user-agent"] == "test_abc"
     assert gh.headers["accept"] == accept
     assert gh.headers["authorization"] == "token oauth token"
@@ -109,7 +109,7 @@ def test_rate_limit_set(call_async):
     rate_headers = {"x-ratelimit-limit": "42", "x-ratelimit-remaining": "1",
                     "x-ratelimit-reset": "0"}
     gh = MockGitHubAPI(headers=rate_headers)
-    _ = call_async(gh._make_request("GET", "/rate_limit", {}, b'',
+    _ = call_async(gh._make_request("GET", "/rate_limit", {}, "",
                                     sansio.accept_format()))
     assert gh.rate_limit.limit == 42
 
@@ -118,10 +118,10 @@ def test_decoding(call_async):
     """Test that appropriate decoding occurs."""
     original_data = {"hello": "world"}
     headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
-    headers['content-type'] = "application/json; charset=UTF-8"
+    headers['content-type'] = "application/json; charset=utf-8"
     gh = MockGitHubAPI(headers=headers,
                        body=json.dumps(original_data).encode("utf8"))
-    data, _ = call_async(gh._make_request("GET", "/rate_limit", {}, b'',
+    data, _ = call_async(gh._make_request("GET", "/rate_limit", {}, '',
                                           sansio.accept_format()))
     assert data == original_data
 
@@ -132,7 +132,7 @@ def test_more(call_async):
     headers['link'] = ("<https://api.github.com/fake?page=2>; "
                        "rel=\"next\"")
     gh = MockGitHubAPI(headers=headers)
-    _, more = call_async(gh._make_request("GET", "/fake", {}, b'',
+    _, more = call_async(gh._make_request("GET", "/fake", {}, "",
                                           sansio.accept_format()))
     assert more == "https://api.github.com/fake?page=2"
 
@@ -166,3 +166,50 @@ def test_getiter(call_async):
     assert data[2] == 1
     assert data[3] == 2
 
+def test_post(call_async):
+    send = [1, 2, 3]
+    send_json = json.dumps(send).encode("utf-8")
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    data = call_async(gh.post("/fake", data=send))
+    assert gh.method == "POST"
+    assert gh.headers['content-type'] == "application/json; charset=utf-8"
+    assert gh.body == send_json
+    assert gh.headers['content-length'] == str(len(send_json))
+
+def test_patch(call_async):
+    send = [1, 2, 3]
+    send_json = json.dumps(send).encode("utf-8")
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    data = call_async(gh.patch("/fake", data=send))
+    assert gh.method == "PATCH"
+    assert gh.headers['content-type'] == "application/json; charset=utf-8"
+    assert gh.body == send_json
+    assert gh.headers['content-length'] == str(len(send_json))
+
+def test_put(call_async):
+    send = [1, 2, 3]
+    send_json = json.dumps(send).encode("utf-8")
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    data = call_async(gh.put("/fake", data=send))
+    assert gh.method == "PUT"
+    assert gh.headers['content-type'] == "application/json; charset=utf-8"
+    assert gh.body == send_json
+    assert gh.headers['content-length'] == str(len(send_json))
+
+def test_delete(call_async):
+    gh = MockGitHubAPI()
+    data = call_async(gh.delete("/fake"))
+    assert gh.method == "DELETE"
+    assert data is None
