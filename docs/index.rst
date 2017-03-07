@@ -62,6 +62,6 @@ to come up with a new name. So in the end I just named it after my
 cat. 😊
 
 "Gidget" sounds somewhat like an elongated version of "git"
-so that made some sense phoenetically. And with the
+so that made some sense phonetically. And with the
 `octocat <https://octodex.github.com/>`_ being the mascot of GitHub,
 it seemed fitting to have the name be somewhat feline-related.
