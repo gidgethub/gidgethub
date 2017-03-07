@@ -5,6 +5,11 @@ python:
   - "3.6-dev"
   - "nightly"
 
+matrix:
+  fast_finish: true
+  allow_failures:
+    python: "nightly"
+
 before_install:
   - pip install .
   - pip install -U pytest pytest-cov sphinx aiohttp
