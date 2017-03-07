@@ -26,13 +26,17 @@ supported or simply want the base tools, this library will still be
 useful. And the higher-level API has been designed to abstract away
 GitHub-specific details in making API calls, but it does not try to
 separate you from the GitHub API itself, e.g. to get the details of
-the ``bug`` label for this project you don't call some
-``org("brettcannon").repo("gidgethub").label("bug")`` method, instead
-you call
-``await gh.getitem("/repos/brettcannon/gidgethub/labels/bug")``. This
-makes it so that you can follow GitHub's documentation for their API
-closely. You also don't have to wait for an update to this library to
-use new features of the GitHub API.
+the ``bug`` label for this project you don't call something like::
+
+  org("brettcannon").repo("gidgethub").label("bug")``
+
+Instead, you call::
+
+  await gh.getitem("/repos/brettcannon/gidgethub/labels/bug")
+
+This makes it so that you can follow GitHub's documentation for their
+API closely. You also don't have to wait for an update to this library
+to use new features of the GitHub API.
 
 
 Installation
