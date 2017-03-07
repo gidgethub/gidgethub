@@ -28,6 +28,7 @@ setuptools.setup(
     install_requires=['uritemplate>=3.0.0'],
     extras_require={
         "docs": ["sphinx"],
-        "test": tests_require
+        "test": tests_require,
+        "aiohttp": ["aiohttp"],
     },
 )

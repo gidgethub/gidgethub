@@ -22,6 +22,7 @@ Contents
    __init__
    sansio
    abc
+   aiohttp
 
 
 About the title
