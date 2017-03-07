@@ -11,6 +11,18 @@ boilerplate between HTTP libraries, this module was created to
 abstract out the HTTP library being used so all boilerplate could
 be taken care.
 
+Users should instantiate an appropriate subclass once for any single
+set of calls to the GitHub API. Then one can use the appropriate method
+to make requests simply, e.g.::
+
+    # Assume `gh` has an implementation of GitHubAPI.
+    data = await gh.getitem("/rate_limit")
+
+This allows one to use the GitHub API directly without dealing with
+lower-level details. Most importantly, any changes to the GitHub API
+does not require an update to the library, allowing one to use
+experimental APIs without issue.
+
 
 .. class:: GitHubAPI(requester: str, *, oauth_token: str = None)
 
