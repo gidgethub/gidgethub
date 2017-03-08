@@ -9,22 +9,6 @@ from .. import abc as gh_abc
 from .. import sansio
 
 
-@pytest.fixture
-def call_asyncio():
-    loop = asyncio.new_event_loop()
-    try:
-        yield loop.run_until_complete
-    finally:
-        loop.close()
-
-
-async def exhaust_async_generator(coro):
-    values = []
-    async for item in coro:
-        values.append(item)
-    return values
-
-
 class MockGitHubAPI(gh_abc.GitHubAPI):
 
     DEFAULT_HEADERS = {"x-ratelimit-limit": "2", "x-ratelimit-remaining": "1",
@@ -55,12 +39,12 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         self.slept = seconds
 
 
-def test_rate_limit(call_asyncio):
+@pytest.mark.asyncio
+async def test_rate_limit():
     """The sleep() method is called appropriately if the rate limit is hit."""
     # Default rate limit does not block.
     gh = MockGitHubAPI()
-    _ = call_asyncio(gh._make_request("GET", "/rate_limit", {}, "",
-                                    sansio.accept_format()))
+    await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
     assert not hasattr(gh, "slept")
     # No reason to sleep.
     now = datetime.datetime.now(datetime.timezone.utc)
@@ -68,15 +52,13 @@ def test_rate_limit(call_asyncio):
     rate_limit = sansio.RateLimit(limit=2, remaining=1,
                                   reset_epoch=year_from_now.timestamp())
     gh.rate_limit = rate_limit
-    _ = call_asyncio(gh._make_request("GET", "/rate_limit", {}, "",
-                                    sansio.accept_format()))
+    await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
     assert not hasattr(gh, "slept")
     # Expected to sleep.
     rate_limit = sansio.RateLimit(limit=2, remaining=0,
                                   reset_epoch=year_from_now.timestamp())
     gh.rate_limit = rate_limit
-    _ = call_asyncio(gh._make_request("GET", "/rate_limit", {}, "",
-                                    sansio.accept_format()))
+    await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
     assert hasattr(gh, "slept")
     # Enough time has passed since year_from_now was calculated that it's safer
     # to assume that the time left is less then 365 days but more than 364 days.
@@ -84,70 +66,76 @@ def test_rate_limit(call_asyncio):
     assert gh.slept <= datetime.timedelta(365).total_seconds()
 
 
-def test_url_formatted(call_asyncio):
+@pytest.mark.asyncio
+async def test_url_formatted():
     """The URL is appropriately formatted."""
     gh = MockGitHubAPI()
-    _ = call_asyncio(gh._make_request("GET",
-                                    "/users/octocat/following{/other_user}",
-                                    {"other_user": "brettcannon"}, "",
-                                    sansio.accept_format()))
+    await gh._make_request("GET", "/users/octocat/following{/other_user}",
+                           {"other_user": "brettcannon"}, "",
+                           sansio.accept_format())
     assert gh.url == "https://api.github.com/users/octocat/following/brettcannon"
 
 
-def test_headers(call_asyncio):
+@pytest.mark.asyncio
+async def test_headers():
     """Appropriate headers are created."""
     accept = sansio.accept_format()
     gh = MockGitHubAPI()
-    _ = call_asyncio(gh._make_request("GET", "/rate_limit", {}, "", accept))
+    await gh._make_request("GET", "/rate_limit", {}, "", accept)
     assert gh.headers["user-agent"] == "test_abc"
     assert gh.headers["accept"] == accept
     assert gh.headers["authorization"] == "token oauth token"
 
 
-def test_rate_limit_set(call_asyncio):
+@pytest.mark.asyncio
+async def test_rate_limit_set():
     """The rate limit is updated after receiving a response."""
     rate_headers = {"x-ratelimit-limit": "42", "x-ratelimit-remaining": "1",
                     "x-ratelimit-reset": "0"}
     gh = MockGitHubAPI(headers=rate_headers)
-    _ = call_asyncio(gh._make_request("GET", "/rate_limit", {}, "",
-                                    sansio.accept_format()))
+    await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
     assert gh.rate_limit.limit == 42
 
 
-def test_decoding(call_asyncio):
+@pytest.mark.asyncio
+async def test_decoding():
     """Test that appropriate decoding occurs."""
     original_data = {"hello": "world"}
     headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
     headers['content-type'] = "application/json; charset=utf-8"
     gh = MockGitHubAPI(headers=headers,
                        body=json.dumps(original_data).encode("utf8"))
-    data, _ = call_asyncio(gh._make_request("GET", "/rate_limit", {}, '',
-                                          sansio.accept_format()))
+    data, _ = await gh._make_request("GET", "/rate_limit", {}, '',
+                                          sansio.accept_format())
     assert data == original_data
 
 
-def test_more(call_asyncio):
+@pytest.mark.asyncio
+async def test_more():
     """The 'next' link is returned appropriately."""
     headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
     headers['link'] = ("<https://api.github.com/fake?page=2>; "
                        "rel=\"next\"")
     gh = MockGitHubAPI(headers=headers)
-    _, more = call_asyncio(gh._make_request("GET", "/fake", {}, "",
-                                          sansio.accept_format()))
+    _, more = await gh._make_request("GET", "/fake", {}, "",
+                                          sansio.accept_format())
     assert more == "https://api.github.com/fake?page=2"
 
 
-def test_getitem(call_asyncio):
+@pytest.mark.asyncio
+async def test_getitem():
     original_data = {"hello": "world"}
     headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
     headers['content-type'] = "application/json; charset=UTF-8"
     gh = MockGitHubAPI(headers=headers,
                        body=json.dumps(original_data).encode("utf8"))
-    data = call_asyncio(gh.getitem("/fake"))
+    data = await gh.getitem("/fake")
     assert gh.method == "GET"
     assert data == original_data
 
-def test_getiter(call_asyncio):
+
+@pytest.mark.asyncio
+async def test_getiter():
     """Test that getiter() returns an async iterable as well as URI expansion."""
     original_data = [1, 2]
     next_url = "https://api.github.com/fake{/extra}?page=2"
@@ -156,8 +144,9 @@ def test_getiter(call_asyncio):
     headers["link"] = f'<{next_url}>; rel="next"'
     gh = MockGitHubAPI(headers=headers,
                        body=json.dumps(original_data).encode("utf8"))
-    async_gen = gh.getiter("/fake", {"extra": "stuff"})
-    data = call_asyncio(exhaust_async_generator(async_gen))
+    data = []
+    async for item in gh.getiter("/fake", {"extra": "stuff"}):
+        data.append(item)
     assert gh.method == "GET"
     assert gh.url == "https://api.github.com/fake/stuff?page=2"
     assert len(data) == 4
@@ -166,7 +155,9 @@ def test_getiter(call_asyncio):
     assert data[2] == 1
     assert data[3] == 2
 
-def test_post(call_asyncio):
+
+@pytest.mark.asyncio
+async def test_post():
     send = [1, 2, 3]
     send_json = json.dumps(send).encode("utf-8")
     receive = {"hello": "world"}
@@ -174,13 +165,15 @@ def test_post(call_asyncio):
     headers['content-type'] = "application/json; charset=utf-8"
     gh = MockGitHubAPI(headers=headers,
                        body=json.dumps(receive).encode("utf-8"))
-    data = call_asyncio(gh.post("/fake", data=send))
+    data = await gh.post("/fake", data=send)
     assert gh.method == "POST"
     assert gh.headers['content-type'] == "application/json; charset=utf-8"
     assert gh.body == send_json
     assert gh.headers['content-length'] == str(len(send_json))
 
-def test_patch(call_asyncio):
+
+@pytest.mark.asyncio
+async def test_patch():
     send = [1, 2, 3]
     send_json = json.dumps(send).encode("utf-8")
     receive = {"hello": "world"}
@@ -188,13 +181,15 @@ def test_patch(call_asyncio):
     headers['content-type'] = "application/json; charset=utf-8"
     gh = MockGitHubAPI(headers=headers,
                        body=json.dumps(receive).encode("utf-8"))
-    data = call_asyncio(gh.patch("/fake", data=send))
+    data = await gh.patch("/fake", data=send)
     assert gh.method == "PATCH"
     assert gh.headers['content-type'] == "application/json; charset=utf-8"
     assert gh.body == send_json
     assert gh.headers['content-length'] == str(len(send_json))
 
-def test_put(call_asyncio):
+
+@pytest.mark.asyncio
+async def test_put():
     send = [1, 2, 3]
     send_json = json.dumps(send).encode("utf-8")
     receive = {"hello": "world"}
@@ -202,14 +197,16 @@ def test_put(call_asyncio):
     headers['content-type'] = "application/json; charset=utf-8"
     gh = MockGitHubAPI(headers=headers,
                        body=json.dumps(receive).encode("utf-8"))
-    data = call_asyncio(gh.put("/fake", data=send))
+    data = await gh.put("/fake", data=send)
     assert gh.method == "PUT"
     assert gh.headers['content-type'] == "application/json; charset=utf-8"
     assert gh.body == send_json
     assert gh.headers['content-length'] == str(len(send_json))
 
-def test_delete(call_asyncio):
+
+@pytest.mark.asyncio
+async def test_delete():
     gh = MockGitHubAPI()
-    data = call_asyncio(gh.delete("/fake"))
+    data = await gh.delete("/fake")
     assert gh.method == "DELETE"
     assert data is None

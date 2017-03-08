@@ -12,7 +12,7 @@ matrix:
 
 before_install:
   - pip install .
-  - pip install -U pytest pytest-cov sphinx aiohttp
+  - pip install -U aiohttp pytest pytest-asyncio pytest-cov sphinx
 script:
   - pytest --cov=gidgethub
   # As of mypy 0.501, PEP 525 is not supported.
