@@ -34,5 +34,5 @@ class GitHubAPI(gh_abc.GitHubAPI):
 
     async def _sleep(self, seconds: float) -> None:
         d = defer.Deferred()
-        self._reactor.callLater(seconds, d, None)
+        self._reactor.callLater(seconds, d.callback, None)
         await d
