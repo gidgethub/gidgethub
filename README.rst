@@ -2,6 +2,10 @@ gidgethub
 ==========
 An asynchronous `GitHub API <https://developer.github.com/>`_ library.
 
+
+Development status
+------------------
+
 .. image:: https://travis-ci.org/brettcannon/gidgethub.svg?branch=master
     :target: https://travis-ci.org/brettcannon/gidgethub
 
