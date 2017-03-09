@@ -7,12 +7,6 @@ from .. import aiohttp as gh_aiohttp
 from .. import sansio
 
 
-async def call_aiohttp(what, *args, **kwargs):
-    async with aiohttp.ClientSession() as session:
-        gh = gh_aiohttp.GitHubAPI(session, "gidgethub")
-        return await getattr(gh, what)(*args, **kwargs)
-
-
 @pytest.mark.asyncio
 async def test_sleep():
     delay = 1
