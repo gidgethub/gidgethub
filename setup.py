@@ -1,25 +1,29 @@
+import pathlib
+
 import setuptools
 
-NAME = "gidgethub"
 
-tests_require = ['pytest>=3.0.0']
+tests_require = ['pytest>=3.0.0', 'pytest-asyncio']
+
+long_description = pathlib.Path("README.rst").read_text("utf-8")
 
 setuptools.setup(
-    name=NAME,
-    version="0.1.0.dev1",
-    description="A sans-I/O GitHub API library",
-    url="https://github.com/brettcannon/gidgethub",
+    name="gidgethub",
+    version="1.0.0.post1",
+    description="An async GitHub API library",
+    long_description=long_description,
+    url="https://gidgethub.readthedocs.io",
     author="Brett Cannon",
     author_email="brett@python.org",
     license="Apache",
     classifiers=[
         'Intended Audience :: Developers',
         "License :: OSI Approved :: Apache Software License",
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
     ],
-    keywords="github sans-io",
+    keywords="github sans-io async",
     packages=setuptools.find_packages(),
     zip_safe=True,
     python_requires=">=3.6.0",
