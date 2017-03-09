@@ -41,7 +41,9 @@ to use new features of the GitHub API.
 
 Installation
 ------------
-There's no PyPI package yet; sorry. I'll get to it.
+::
+
+  python3 -m pip install gidgethub
 
 
 Contents
