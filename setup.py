@@ -34,5 +34,6 @@ setuptools.setup(
         "docs": ["sphinx"],
         "test": tests_require,
         "aiohttp": ["aiohttp"],
+        "treq": ["treq", "twisted"],
     },
 )
