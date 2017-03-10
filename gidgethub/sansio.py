@@ -12,16 +12,13 @@ import hmac
 import http
 import json
 import re
-from typing import Any, Dict, Mapping, Optional, Tuple
+from typing import Any, Dict, Mapping, Optional, Tuple, Type
 import urllib.parse
 
 import uritemplate
 
 from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
                RedirectionException, ValidationFailure)
-
-
-JSONDict = Dict[str, Any]
 
 
 def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
@@ -44,7 +41,7 @@ class Event:
 
     """Details of a GitHub webhook event."""
 
-    def __init__(self, data: JSONDict, *, event: str, delivery_id: str) -> None:
+    def __init__(self, data: Any, *, event: str, delivery_id: str) -> None:
         # https://developer.github.com/v3/activity/events/types/
         # https://developer.github.com/webhooks/#delivery-headers
         self.data = data
@@ -250,7 +247,7 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
             message = data["message"]
         except (TypeError, KeyError):
             message = None
-        exc_type = HTTPException  # For mypy.
+        exc_type: Type[HTTPException]  # For mypy.
         if status_code == 422:
             errors = data["errors"]
             fields = ", ".join(repr(e["field"]) for e in errors)
@@ -266,7 +263,7 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
         else:
             exc_type = HTTPException
         status_code_enum = http.HTTPStatus(status_code)
-        args: Tuple
+        args: Tuple  # For mypy.
         if message:
             args = status_code_enum, message
         else:

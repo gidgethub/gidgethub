@@ -38,7 +38,7 @@ without requiring the use of the :class:`Event` class.
    exception is raised if validation fails).
 
 
-.. class:: Event(data: JSONDict, *, event: str, delivery_id: str)
+.. class:: Event(data: Any, *, event: str, delivery_id: str)
 
    Representation of a GitHub webhook event.
 
