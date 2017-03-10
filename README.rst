@@ -54,3 +54,17 @@ off of GitHub's `octocat <https://octodex.github.com/>`_ as a theme and use my
 cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 "git", I decided to go with "gidgethub".
 
+
+Changelog
+---------
+
+1.1.0
+'''''
+
+- Introduced ``gidgethub.treq`` (thanks to Cory Benfield)
+
+
+1.0.0
+'''''
+
+Initial release
