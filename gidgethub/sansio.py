@@ -72,8 +72,9 @@ class Event:
         (including not providing a secret) will lead to ValidationFailure being
         raised.
         """
-        if headers.get("content-type") != "application/json":
-            raise BadRequest(http.HTTPStatus(400), "expected a content-type of "
+        if ("content-type" not in headers
+            or not headers["content-type"].startswith("application/json")):
+            raise BadRequest(http.HTTPStatus(415), "expected a content-type of "
                                              "'application/json'")
         elif "x-hub-signature" in headers:
                 if secret is None:
@@ -82,7 +83,7 @@ class Event:
                                secret=secret)
         elif secret is not None:
             raise ValidationFailure("signature is missing")
-        data = json.loads(body.decode("UTF-8"))
+        data = _decode_body(headers["content-type"], body)
         return cls(data, event=headers["x-github-event"],
                    delivery_id=headers["x-github-delivery"])
 
@@ -197,7 +198,7 @@ def _decode_body(content_type: str, body: bytes) -> Any:
     if not len(body) or not content_type:
         return None
     type_, parameters = cgi.parse_header(content_type)
-    decoded_body = body.decode(parameters["charset"])
+    decoded_body = body.decode(parameters.get("charset", "utf-8"))
     if type_ == "application/json":
         return json.loads(decoded_body)
     return decoded_body

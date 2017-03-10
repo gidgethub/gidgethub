@@ -58,10 +58,19 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
+1.2.0 (in-development)
+''''''''''''''''''''''
+
+- ``gidgethub.sansio.Event.from_http()`` raises a ``BadRequest`` of ``415``
+  instead of ``400`` when a content-type other than ``application/json``
+  is provided.
+- More robustly decode the body in ``gidgethub.sansio.Event.from_http()``.
+
+
 1.1.0
 '''''
 
-- Introduced ``gidgethub.treq`` (thanks to Cory Benfield)
+- Introduced ``gidgethub.treq`` (thanks to Cory Benfield).
 
 
 1.0.0
