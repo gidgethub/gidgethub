@@ -21,6 +21,21 @@ from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
                RedirectionException, ValidationFailure)
 
 
+def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str]:
+    """Tease out the content-type and character encoding.
+
+    A default character encoding of UTF-8 is used, so the content-type
+    must be used to determine if any decoding is necessary to begin
+    with.
+    """
+    if not content_type:
+        return None, "utf-8"
+    else:
+        type_, parameters = cgi.parse_header(content_type)
+        encoding = parameters.get("charset", "utf-8")
+        return type_, encoding
+
+
 def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
     """Validate the signature of a webhook event."""
     # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
@@ -69,8 +84,8 @@ class Event:
         (including not providing a secret) will lead to ValidationFailure being
         raised.
         """
-        if ("content-type" not in headers
-            or not headers["content-type"].startswith("application/json")):
+        type_, encoding = _parse_content_type(headers.get("content-type"))
+        if type_ != "application/json":
             raise BadRequest(http.HTTPStatus(415), "expected a content-type of "
                                              "'application/json'")
         elif "x-hub-signature" in headers:
@@ -191,11 +206,11 @@ class RateLimit:
         return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
 
 
-def _decode_body(content_type: str, body: bytes) -> Any:
+def _decode_body(content_type: Optional[str], body: bytes) -> Any:
+    type_, encoding = _parse_content_type(content_type)
     if not len(body) or not content_type:
         return None
-    type_, parameters = cgi.parse_header(content_type)
-    decoded_body = body.decode(parameters.get("charset", "utf-8"))
+    decoded_body = body.decode(encoding)
     if type_ == "application/json":
         return json.loads(decoded_body)
     return decoded_body
