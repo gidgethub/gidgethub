@@ -18,8 +18,14 @@ class GitHubAPI(gh_abc.GitHubAPI):
                        headers: Mapping[str, str],
                        body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]:
         # We need to encode the headers to a format that Twisted will like.
+        # As a note: treq will set a content-length even if we do, so we need
+        # to strip any content-length header.
         headers = Headers(
-            {k.encode('utf-8'): [v.encode('utf-8')] for k, v in headers.items()}
+            {
+                k.encode('utf-8'): [v.encode('utf-8')]
+                for k, v in headers.items()
+                if k.lower() != 'content-length'
+            }
         )
         response = await treq.request(method, url, headers=headers, data=body)
 
