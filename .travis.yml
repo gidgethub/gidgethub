@@ -21,3 +21,7 @@ script:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
+notifications:
+  email:
+    on_success: change # default: change
+    on_failure: always # default: always
