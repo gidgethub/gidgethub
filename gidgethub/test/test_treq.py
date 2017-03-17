@@ -1,5 +1,6 @@
 import datetime
 
+from twisted.internet import reactor
 from twisted.internet.defer import ensureDeferred
 from twisted.trial.unittest import TestCase
 from twisted.web.client import Agent, HTTPConnectionPool
@@ -11,6 +12,18 @@ import treq._utils
 
 
 class TwistedPluginTestCase(TestCase):
+
+    @staticmethod
+    def create_cleanup(gh):
+        def cleanup(_):
+            # We do this just to shut up Twisted.
+            pool = treq._utils.get_global_pool()
+            pool.closeCachedConnections()
+
+            # We need to sleep to let the connections hang up.
+            return ensureDeferred(gh._sleep(0.5))
+
+        return cleanup
 
     def test_sleep(self):
         delay = 1
@@ -24,9 +37,7 @@ class TwistedPluginTestCase(TestCase):
         d.addCallback(test_done)
         return d
 
-
-    def test_request(self):
-        from twisted.internet import reactor
+    def test__request(self):
         request_headers = sansio.create_headers("gidgethub")
         gh = gh_treq.GitHubAPI("gidgethub")
         d = ensureDeferred(
@@ -39,14 +50,17 @@ class TwistedPluginTestCase(TestCase):
             data, rate_limit, _ = sansio.decipher_response(*response)
             self.assertIn("rate", data)
 
-        def cleanup(ignored):
-            # We do this just to shut up Twisted.
-            pool = treq._utils.get_global_pool()
-            pool.closeCachedConnections()
+        d.addCallback(test_done)
+        d.addCallback(self.create_cleanup(gh))
+        return d
 
-            # We need to sleep to let the connections hang up.
-            return ensureDeferred(gh._sleep(0.5))
+    def test_get(self):
+        gh = gh_treq.GitHubAPI("gidgethub")
+        d = ensureDeferred(gh.getitem("/rate_limit"))
+
+        def test_done(response):
+            self.assertIn("rate", response)
 
         d.addCallback(test_done)
-        d.addCallback(cleanup)
+        d.addCallback(self.create_cleanup(gh))
         return d
