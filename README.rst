@@ -58,7 +58,7 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-1.2.0 (in-development)
+1.2.0
 ''''''''''''''''''''''
 
 - ``gidgethub.sansio.Event.from_http()`` raises a ``BadRequest`` of ``415``
