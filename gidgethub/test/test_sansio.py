@@ -16,7 +16,7 @@ class TestValidateEvent:
 
     secret = "123456"
     payload = "gidget".encode("UTF-8")
-    hash_signature = "6ea124f8bfc2e6f5a0a40687201c351716110bec"
+    hash_signature = "8acc2ae97633ec018f118577f4872e103f24ef58"
     signature = "sha1=" + hash_signature
 
     def test_malformed_signature(self):
@@ -46,7 +46,7 @@ class TestEvent:
     headers = {"content-type": "application/json",
                "x-github-event": "pull_request",
                "x-github-delivery": "72d3162e-cc78-11e3-81ab-4c9367dc0958",
-               "x-hub-signature": "sha1=13ed44049d52492cab0f3aa22215091d35be4d58"}
+               "x-hub-signature": "sha1=c28e33b2e56e548956c446e890929a6cbec3ac89"}
 
     def check_event(self, event):
         """Check that an event matches the test data provided by the class."""

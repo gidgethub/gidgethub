@@ -68,6 +68,7 @@ Changelog
   (i.e. if the ``content-type`` doesn't specify ``charset``, assume ``UTF-8``).
 - Changed the signature of ``gidgethub.sansio.Event`` to accept ``Any`` for
   the *data* argment.
+- Fixed signature verification
 
 
 1.1.0
