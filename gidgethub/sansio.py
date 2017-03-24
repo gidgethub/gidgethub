@@ -43,10 +43,8 @@ def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
     if not signature.startswith(signature_prefix):
         raise ValidationFailure("signature does not start with "
                                            f"{repr(signature_prefix)}")
-    hash_ = hashlib.sha1()
-    hash_.update(secret.encode("UTF-8"))
-    hash_.update(payload)
-    calculated_sig = signature_prefix + hash_.hexdigest()
+    hmac_ = hmac.new(secret.encode("UTF-8"), msg=payload, digestmod="sha1")
+    calculated_sig = signature_prefix + hmac_.hexdigest()
     if not hmac.compare_digest(signature, calculated_sig):
         raise ValidationFailure("payload's signature does not align "
                                            "with the secret")
