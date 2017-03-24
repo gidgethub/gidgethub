@@ -58,6 +58,9 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
+1.3.0 (in development)
+''''''''''''''''''''''
+
 1.2.0
 ''''''''''''''''''''''
 
