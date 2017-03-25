@@ -178,8 +178,12 @@ class RateLimit:
 
         The reset_epoch argument should be in seconds since the UTC epoch.
         """
+        # Instance attribute names stem from the name GitHub uses in their
+        # API documentation.
         self.limit = limit
         self.remaining = remaining
+        # Name specifies the type to remind users that the epoch is not stored
+        # as an int as the GitHub API returns.
         self.reset_datetime = datetime.datetime.fromtimestamp(reset_epoch,
                                                               datetime.timezone.utc)
 
