@@ -86,6 +86,10 @@ experimental APIs without issue.
         help prevent from going over one's
         `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
 
+        .. versionchanged:: 2.0
+
+            Renamed from ``_sleep()``.
+
 
     .. coroutine:: getitem(url: str, url_vars: Dict[str, str] = {}, *, accept=sansio.accept_format()) -> Any
 
