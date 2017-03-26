@@ -61,7 +61,8 @@ Changelog
 2.0.0 (in development)
 ''''''''''''''''''''''
 - Renamed ``gidgethub.abc._sleep()`` to ``sleep()`` to make the method public.
-- Renamed the "test" extra to "tests" and added the "dev" extra
+- Renamed the "test" extra to "tests" and added the "dev" extra.
+- Introduced the ``RateLimitExceeded`` exception.
 
 1.2.0
 ''''''''''''''''''''''
