@@ -18,7 +18,7 @@ import urllib.parse
 import uritemplate
 
 from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
-               RedirectionException, ValidationFailure)
+               RateLimitExceeded, RedirectionException, ValidationFailure)
 
 
 def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str]:
@@ -265,16 +265,19 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
         except (TypeError, KeyError):
             message = None
         exc_type: Type[HTTPException]  # For mypy.
-        if status_code == 422:
-            errors = data["errors"]
-            fields = ", ".join(repr(e["field"]) for e in errors)
-            message = f"{message} for {fields}"
-            raise InvalidField(errors, message)
-        # All the below cases are generic.
-        elif status_code >= 500:
+        if status_code >= 500:
             exc_type = GitHubBroken
         elif status_code >= 400:
             exc_type = BadRequest
+            if status_code == 403:
+                rate_limit = RateLimit.from_http(headers)
+                if not rate_limit.remaining:
+                    raise RateLimitExceeded(rate_limit, message)
+            elif status_code == 422:
+                errors = data["errors"]
+                fields = ", ".join(repr(e["field"]) for e in errors)
+                message = f"{message} for {fields}"
+                raise InvalidField(errors, message)
         elif status_code >= 300:
             exc_type = RedirectionException
         else:

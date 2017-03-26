@@ -6,7 +6,7 @@ import pathlib
 import pytest
 
 from .. import (BadRequest, GitHubBroken, HTTPException, InvalidField,
-                RedirectionException, ValidationFailure)
+                RateLimitExceeded, RedirectionException, ValidationFailure)
 from .. import sansio
 
 
@@ -235,6 +235,29 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "Not Found"
+
+    def test_403_rate_limit_exceeded(self):
+        status_code = 403
+        headers = {"content-type": "application/json; charset=utf-8",
+                   "x-ratelimit-limit": "2",
+                   "x-ratelimit-remaining": "0",
+                   "x-ratelimit-reset": "1",
+                  }
+        body = json.dumps({"message": "oops"}).encode("UTF-8")
+        with pytest.raises(RateLimitExceeded) as exc_info:
+            sansio.decipher_response(status_code, headers, body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+
+    def test_403_forbidden(self):
+        status_code = 403
+        headers = {"content-type": "application/json; charset=utf-8",
+                   "x-ratelimit-limit": "2",
+                   "x-ratelimit-remaining": "1",
+                   "x-ratelimit-reset": "1",
+                  }
+        with pytest.raises(BadRequest) as exc_info:
+            sansio.decipher_response(status_code, headers, b'')
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
 
     def test_422(self):
         status_code = 422
