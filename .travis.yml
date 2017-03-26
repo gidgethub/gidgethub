@@ -11,7 +11,7 @@ matrix:
     python: "nightly"
 
 before_install:
-  - pip install ".[docs,test,aiohttp,treq]"
+  - pip install -U ".[docs,test,aiohttp,treq]"
   - pip install -U pytest-cov sphinx
 script:
   - pytest --cov=gidgethub
