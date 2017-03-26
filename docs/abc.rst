@@ -47,6 +47,13 @@ experimental APIs without issue.
     than ``200``, ``201``, or ``204``, then an appropriate
     :exc:`~gidgethub.HTTPException` is raised.
 
+    .. versionchanged:: 2.0
+        Methods no longer automatically sleep when there is a chance
+        of exceeding the
+        `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
+        This leads to :exc:`~gidgethub.RateLimitExceeded` being raised
+        when the rate limit has been execeeded.
+
 
     .. attribute:: requester
 

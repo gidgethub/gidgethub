@@ -30,19 +30,6 @@ class GitHubAPI(abc.ABC):
                             url_vars: Dict[str, str], data: Any,
                             accept) -> Tuple[Any, str]:
         """Construct and make an HTTP request."""
-        # If the rate limit isn't known yet then assume there's enough quota.
-        if self.rate_limit is not None:
-            if self.rate_limit:
-                # Proactively assume this request is counted by GitHub so as to
-                # not have a race condition on the final request.
-                self.rate_limit.remaining -= 1
-            else:
-                # /rate_limit returns the current rate limit,
-                # but the assumption is an async application won't be making multi-threaded calls with
-                # the same oauth token so the last call will have set the rate_limit accurately.
-                now = datetime.datetime.now(datetime.timezone.utc)
-                wait = self.rate_limit.reset_datetime - now
-                await self.sleep(wait.total_seconds())
         filled_url = sansio.format_url(url, url_vars)
         request_headers = sansio.create_headers(self.requester, accept=accept,
                                                 oauth_token=self.oauth_token)
@@ -54,6 +41,8 @@ class GitHubAPI(abc.ABC):
             body = json.dumps(data).encode(charset)
             request_headers['content-type'] = f"application/json; charset={charset}"
             request_headers['content-length'] = str(len(body))
+        if self.rate_limit is not None:
+            self.rate_limit.remaining -= 1
         response = await self._request(method, filled_url, request_headers, body)
         data, self.rate_limit, more = sansio.decipher_response(*response)
         return data, more

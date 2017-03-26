@@ -63,6 +63,8 @@ Changelog
 - Renamed ``gidgethub.abc._sleep()`` to ``sleep()`` to make the method public.
 - Renamed the "test" extra to "tests" and added the "dev" extra.
 - Introduced the ``RateLimitExceeded`` exception.
+- Methods on ``GitHubAPI`` no longer automatically sleep when it's
+  possible that the call will exceed the user's rate limit.
 
 1.2.0
 ''''''''''''''''''''''
