@@ -33,6 +33,8 @@ def test_RateLimitExceeded():
     rate = sansio.RateLimit(limit=1, remaining=0, reset_epoch=1)
     exc = RateLimitExceeded(rate)
     assert exc.status_code == http.HTTPStatus.FORBIDDEN
+    exc = RateLimitExceeded(rate, "stuff happened")
+    assert str(exc) == "stuff happened"
 
 def test_InvalidField():
     errors = [{"resource": "Issue", "field": "title", "code": "missing_field"}]

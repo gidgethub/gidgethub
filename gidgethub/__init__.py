@@ -42,11 +42,14 @@ class RateLimitExceeded(BadRequest):
 
     """Request rejected due to the rate limit being exceeded."""
 
-    def __init__(self, rate_limit: "gidgethub.sansio.RateLimit"):
+    def __init__(self, rate_limit: "gidgethub.sansio.RateLimit",*args: Any) -> None:
         self.rate_limit = rate_limit
 
-        super().__init__(http.HTTPStatus.FORBIDDEN,
-                         "rate limit exceeded")
+        if not args:
+            super().__init__(http.HTTPStatus.FORBIDDEN,
+                             "rate limit exceeded")
+        else:
+            super().__init__(http.HTTPStatus.FORBIDDEN, *args)
 
 
 class InvalidField(BadRequest):
