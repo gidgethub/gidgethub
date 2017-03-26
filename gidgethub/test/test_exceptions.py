@@ -1,7 +1,8 @@
 import http
 
 from .. import (BadRequest, GitHubBroken, HTTPException, InvalidField,
-                RedirectionException)
+                RateLimitExceeded, RedirectionException)
+from .. import sansio
 
 
 class TestHTTPException:
@@ -27,6 +28,11 @@ def test_GitHubBroken():
 def test_BadRequest():
     exc = BadRequest(http.HTTPStatus.BAD_REQUEST)
     assert exc.status_code == http.HTTPStatus.BAD_REQUEST
+
+def test_RateLimitExceeded():
+    rate = sansio.RateLimit(limit=1, remaining=0, reset_epoch=1)
+    exc = RateLimitExceeded(rate)
+    assert exc.status_code == http.HTTPStatus.FORBIDDEN
 
 def test_InvalidField():
     errors = [{"resource": "Issue", "field": "title", "code": "missing_field"}]

@@ -44,6 +44,19 @@ Exceptions
    Inherits from :exc:`HTTPException`.
 
 
+.. exception:: RateLimitExceeded(rate_limit: sansio.RateLimit)
+
+    Raised when one's rate limit has been reached. A subclass of
+    :exc:`BadRequest`.
+
+    .. versionadded:: 2.0
+
+    .. attribute:: rate_limit: sansio.RateLimit
+
+        The :class:`~gidgethub.sansio.RateLimit` object with the rate
+        limit details which triggered the raising of the exception.
+
+
 .. exception:: InvalidField(errors: List[Any], *args: Any)
 
    Raised when a
