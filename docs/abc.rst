@@ -79,11 +79,11 @@ experimental APIs without issue.
         dictionary is expected to work with lower-case keys.
 
 
-    .. abstractcoroutine:: _sleep(seconds: float) -> None
+    .. abstractcoroutine:: sleep(seconds: float) -> None
 
         An abstract :term:`coroutine` which causes the coroutine to
-        sleep for the specified number of seconds. This is used to
-        help prevent the user from going over their request
+        sleep for the specified number of seconds. This is provided to
+        help prevent from going over one's
         `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
 
 

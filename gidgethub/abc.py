@@ -23,7 +23,7 @@ class GitHubAPI(abc.ABC):
         """Make an HTTP request."""
 
     @abc.abstractmethod
-    async def _sleep(self, seconds: float) -> None:
+    async def sleep(self, seconds: float) -> None:
         """Sleep for the specified number of seconds."""
 
     async def _make_request(self, method: str, url: str,
@@ -42,7 +42,7 @@ class GitHubAPI(abc.ABC):
                 # the same oauth token so the last call will have set the rate_limit accurately.
                 now = datetime.datetime.now(datetime.timezone.utc)
                 wait = self.rate_limit.reset_datetime - now
-                await self._sleep(wait.total_seconds())
+                await self.sleep(wait.total_seconds())
         filled_url = sansio.format_url(url, url_vars)
         request_headers = sansio.create_headers(self.requester, accept=accept,
                                                 oauth_token=self.oauth_token)

@@ -34,7 +34,7 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
             pass
         return self.response_code, response_headers, self.response_body
 
-    async def _sleep(self, seconds):
+    async def sleep(self, seconds):
         """Sleep for the specified number of seconds."""
         self.slept = seconds
 

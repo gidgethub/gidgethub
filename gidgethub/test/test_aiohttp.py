@@ -13,7 +13,7 @@ async def test_sleep():
     start = datetime.datetime.now()
     async with aiohttp.ClientSession() as session:
         gh = gh_aiohttp.GitHubAPI(session, "gidgethub")
-        await gh._sleep(delay)
+        await gh.sleep(delay)
     stop = datetime.datetime.now()
     assert (stop - start) > datetime.timedelta(seconds=delay)
 
