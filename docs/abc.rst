@@ -47,6 +47,13 @@ experimental APIs without issue.
     than ``200``, ``201``, or ``204``, then an appropriate
     :exc:`~gidgethub.HTTPException` is raised.
 
+    .. versionchanged:: 2.0
+        Methods no longer automatically sleep when there is a chance
+        of exceeding the
+        `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
+        This leads to :exc:`~gidgethub.RateLimitExceeded` being raised
+        when the rate limit has been execeeded.
+
 
     .. attribute:: requester
 
@@ -79,12 +86,16 @@ experimental APIs without issue.
         dictionary is expected to work with lower-case keys.
 
 
-    .. abstractcoroutine:: _sleep(seconds: float) -> None
+    .. abstractcoroutine:: sleep(seconds: float) -> None
 
         An abstract :term:`coroutine` which causes the coroutine to
-        sleep for the specified number of seconds. This is used to
-        help prevent the user from going over their request
+        sleep for the specified number of seconds. This is provided to
+        help prevent from going over one's
         `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
+
+        .. versionchanged:: 2.0
+
+            Renamed from ``_sleep()``.
 
 
     .. coroutine:: getitem(url: str, url_vars: Dict[str, str] = {}, *, accept=sansio.accept_format()) -> Any

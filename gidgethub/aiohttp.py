@@ -20,5 +20,5 @@ class GitHubAPI(gh_abc.GitHubAPI):
                                          data=body) as response:
             return response.status, response.headers, await response.read()
 
-    async def _sleep(self, seconds: float) -> None:
+    async def sleep(self, seconds: float) -> None:
         await asyncio.sleep(seconds)

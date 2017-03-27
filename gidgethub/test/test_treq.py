@@ -21,7 +21,7 @@ class TwistedPluginTestCase(TestCase):
             pool.closeCachedConnections()
 
             # We need to sleep to let the connections hang up.
-            return ensureDeferred(gh._sleep(0.5))
+            return ensureDeferred(gh.sleep(0.5))
 
         return cleanup
 
@@ -33,7 +33,7 @@ class TwistedPluginTestCase(TestCase):
         def test_done(ignored):
             stop = datetime.datetime.now()
             self.assertTrue((stop - start) > datetime.timedelta(seconds=delay))
-        d = ensureDeferred(gh._sleep(delay))
+        d = ensureDeferred(gh.sleep(delay))
         d.addCallback(test_done)
         return d
 

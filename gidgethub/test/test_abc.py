@@ -34,36 +34,9 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
             pass
         return self.response_code, response_headers, self.response_body
 
-    async def _sleep(self, seconds):
+    async def sleep(self, seconds):
         """Sleep for the specified number of seconds."""
         self.slept = seconds
-
-
-@pytest.mark.asyncio
-async def test_rate_limit():
-    """The sleep() method is called appropriately if the rate limit is hit."""
-    # Default rate limit does not block.
-    gh = MockGitHubAPI()
-    await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
-    assert not hasattr(gh, "slept")
-    # No reason to sleep.
-    now = datetime.datetime.now(datetime.timezone.utc)
-    year_from_now = now + datetime.timedelta(365)
-    rate_limit = sansio.RateLimit(limit=2, remaining=1,
-                                  reset_epoch=year_from_now.timestamp())
-    gh.rate_limit = rate_limit
-    await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
-    assert not hasattr(gh, "slept")
-    # Expected to sleep.
-    rate_limit = sansio.RateLimit(limit=2, remaining=0,
-                                  reset_epoch=year_from_now.timestamp())
-    gh.rate_limit = rate_limit
-    await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
-    assert hasattr(gh, "slept")
-    # Enough time has passed since year_from_now was calculated that it's safer
-    # to assume that the time left is less then 365 days but more than 364 days.
-    assert gh.slept > datetime.timedelta(364).total_seconds()
-    assert gh.slept <= datetime.timedelta(365).total_seconds()
 
 
 @pytest.mark.asyncio

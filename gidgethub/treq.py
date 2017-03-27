@@ -38,7 +38,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
         }
         return response.code, response_headers, await response.content()
 
-    async def _sleep(self, seconds: float) -> None:
+    async def sleep(self, seconds: float) -> None:
         d = defer.Deferred()
         self._reactor.callLater(seconds, d.callback, None)
         await d

@@ -38,6 +38,20 @@ class BadRequest(HTTPException):
     # https://developer.github.com/v3/#client-errors
 
 
+class RateLimitExceeded(BadRequest):
+
+    """Request rejected due to the rate limit being exceeded."""
+
+    def __init__(self, rate_limit: "gidgethub.sansio.RateLimit",*args: Any) -> None:
+        self.rate_limit = rate_limit
+
+        if not args:
+            super().__init__(http.HTTPStatus.FORBIDDEN,
+                             "rate limit exceeded")
+        else:
+            super().__init__(http.HTTPStatus.FORBIDDEN, *args)
+
+
 class InvalidField(BadRequest):
 
     """A field in the request is invalid.
