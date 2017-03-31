@@ -67,6 +67,7 @@ Changelog
 - Methods on ``GitHubAPI`` no longer automatically sleep when it's
   possible that the call will exceed the user's rate limit (it's now up to the
   user to prevent from going over the rate limit).
+- Made the ``[treq]`` install extra depend on ``Twisted[tls]``.
 
 
 1.2.0
