@@ -28,7 +28,7 @@ GitHub-specific details in making API calls, but it does not try to
 separate you from the GitHub API itself, e.g. to get the details of
 the ``bug`` label for this project you don't call something like::
 
-  org("brettcannon").repo("gidgethub").label("bug")``
+  org("brettcannon").repo("gidgethub").label("bug")
 
 Instead, you call::
 
