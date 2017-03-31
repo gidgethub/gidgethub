@@ -5,7 +5,7 @@ import setuptools
 docs_requires = ["sphinx"]
 tests_requires = ['pytest>=3.0.0', 'pytest-asyncio']
 aiohttp_requires = ["aiohttp"]
-treq_requires = ["treq", "twisted"]
+treq_requires = ["treq", "twisted[tls]"]
 
 long_description = pathlib.Path("README.rst").read_text("utf-8")
 
