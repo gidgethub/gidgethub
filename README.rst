@@ -58,13 +58,16 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-2.0.0 (in development)
+2.0.0
 ''''''''''''''''''''''
+
 - Renamed ``gidgethub.abc._sleep()`` to ``sleep()`` to make the method public.
 - Renamed the "test" extra to "tests" and added the "dev" extra.
 - Introduced the ``RateLimitExceeded`` exception.
 - Methods on ``GitHubAPI`` no longer automatically sleep when it's
-  possible that the call will exceed the user's rate limit.
+  possible that the call will exceed the user's rate limit (it's now up to the
+  user to prevent from going over the rate limit).
+
 
 1.2.0
 ''''''''''''''''''''''
