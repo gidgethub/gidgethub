@@ -14,11 +14,12 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
     DEFAULT_HEADERS = {"x-ratelimit-limit": "2", "x-ratelimit-remaining": "1",
                        "x-ratelimit-reset": "0"}
 
-    def __init__(self, status_code=200, headers=DEFAULT_HEADERS, body=b''):
+    def __init__(self, status_code=200, headers=DEFAULT_HEADERS, body=b'',
+                 oauth_token="oauth token"):
         self.response_code = status_code
         self.response_headers = headers
         self.response_body = body
-        super().__init__("test_abc", oauth_token="oauth token")
+        super().__init__("test_abc", oauth_token=oauth_token)
 
     async def _request(self, method, url, headers, body=b''):
         """Make an HTTP request."""
@@ -58,6 +59,18 @@ async def test_headers():
     assert gh.headers["user-agent"] == "test_abc"
     assert gh.headers["accept"] == accept
     assert gh.headers["authorization"] == "token oauth token"
+
+
+@pytest.mark.asyncio
+async def test_custom_auth_headers():
+    """ Test that custom auth headers are created. """
+    accept = sansio.accept_format()
+    authorization = "token foobar"
+    gh = MockGitHubAPI(oauth_token=None)
+    await gh._make_request("GET", "/rate_limit", {}, "", accept, authorization)
+    assert gh.headers["user-agent"] == "test_abc"
+    assert gh.headers["accept"] == accept
+    assert gh.headers["authorization"] == authorization
 
 
 @pytest.mark.asyncio

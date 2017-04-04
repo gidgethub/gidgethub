@@ -123,7 +123,8 @@ def accept_format(*, version: str = "v3", media: str = None,
 
 def create_headers(requester: str, *,
                    accept: str = accept_format(),
-                   oauth_token: str = None) -> Dict[str, str]:
+                   oauth_token: str = None,
+                   authorization: str = None) -> Dict[str, str]:
     """Create a dict representing GitHub-specific header fields.
 
     The user agent is set according to who the requester is. GitHub asks it be
@@ -145,9 +146,13 @@ def create_headers(requester: str, *,
     # accept: https://developer.github.com/v3/#current-version
     #         https://developer.github.com/v3/media/
     # authorization: https://developer.github.com/v3/#authentication
+    if oauth_token is not None and authorization is not None:
+        raise ValueError("Cannot pass both oauth_token and authorization")
     headers = {"user-agent": requester, "accept": accept}
     if oauth_token is not None:
         headers["authorization"] = f"token {oauth_token}"
+    if authorization is not None:
+        headers["authorization"] = authorization
     return headers
 
 
