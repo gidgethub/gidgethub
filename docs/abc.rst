@@ -98,7 +98,7 @@ experimental APIs without issue.
             Renamed from ``_sleep()``.
 
 
-    .. coroutine:: getitem(url: str, url_vars: Dict[str, str] = {}, *, accept=sansio.accept_format()) -> Any
+    .. coroutine:: getitem(url: str, url_vars: Dict[str, str] = {}, *, accept=sansio.accept_format(), authorization=None) -> Any
 
         Get a single item from GitHub.
 
@@ -108,7 +108,7 @@ experimental APIs without issue.
 
 
     .. coroutine:: getiter(url: str, url_vars: Dict[str, str] = {}, *,
-                      accept: str = sansio.accept_format()) -> AsyncIterable[Any]
+                      accept: str = sansio.accept_format(), authorization=None) -> AsyncIterable[Any]
 
         Get all items from a GitHub API endpoint.
 
@@ -121,17 +121,17 @@ experimental APIs without issue.
             For ``GET`` calls that return only a single item, see
             :meth:`getitem`.
 
-    .. coroutine:: post(url: str, url_vars: Dict[str, str] = {}, *, data: Any, accept: str = sansio.accept_format()) -> Any
+    .. coroutine:: post(url: str, url_vars: Dict[str, str] = {}, *, data: Any, accept: str = sansio.accept_format(), authorization=None) -> Any
 
         Send a ``POST`` request to GitHub.
 
 
-    .. coroutine:: patch(url: str, url_vars: Dict[str, str] = {}, *, data: Any, accept: str = sansio.accept_format()) -> Any
+    .. coroutine:: patch(url: str, url_vars: Dict[str, str] = {}, *, data: Any, accept: str = sansio.accept_format(), authorization=None) -> Any
 
         Send a ``PATCH`` request to GitHub.
 
 
-    .. coroutine:: put(url: str, url_vars: Dict[str, str] = {}, *, data: Any = "", accept: str = sansio.accept_format()) -> Any
+    .. coroutine:: put(url: str, url_vars: Dict[str, str] = {}, *, data: Any = "", accept: str = sansio.accept_format(), authorization=None) -> Any
 
         Send a ``PUT`` request to GitHub.
 
@@ -140,6 +140,6 @@ experimental APIs without issue.
         will return no content, leading to ``None`` being returned.
 
 
-    .. coroutine:: delete(url: str, url_vars: Dict[str, str] = {}, *, accept: str = sansio.accept_format()) -> None
+    .. coroutine:: delete(url: str, url_vars: Dict[str, str] = {}, *, accept: str = sansio.accept_format(), authorization=None) -> None
 
         Send a ``DELETE`` request to GitHub.

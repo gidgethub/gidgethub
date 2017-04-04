@@ -150,6 +150,29 @@ class TestCreateHeaders:
         assert headers["accept"] == test_api
         assert headers["authorization"] == f"token {oauth_token}"
 
+    def test_custom_auth_header(self):
+        """ Test creating a custom authorization header. """
+        user_agent = "brettcannon"
+        test_api = "application/vnd.github.cloak-preview+json"
+        authorization = "token wat"
+        headers = sansio.create_headers(user_agent, accept=test_api,
+                                        oauth_token=None,
+                                        authorization=authorization)
+        assert len(headers) == 3
+        assert headers["user-agent"] == user_agent
+        assert headers["accept"] == test_api
+        assert headers["authorization"] == authorization
+
+    def test_oauth_and_custom_auth_fails(self):
+        user_agent = "brettcannon"
+        test_api = "application/vnd.github.cloak-preview+json"
+        oauth_token = "my token"
+        authorization = "token wat"
+        with pytest.raises(ValueError):
+            sansio.create_headers(user_agent, accept=test_api,
+                                  oauth_token=oauth_token,
+                                  authorization=authorization)
+
 
 class TestRateLimit:
 

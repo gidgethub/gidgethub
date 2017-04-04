@@ -28,11 +28,12 @@ class GitHubAPI(abc.ABC):
 
     async def _make_request(self, method: str, url: str,
                             url_vars: Dict[str, str], data: Any,
-                            accept) -> Tuple[Any, str]:
+                            accept, authorization=None) -> Tuple[Any, str]:
         """Construct and make an HTTP request."""
         filled_url = sansio.format_url(url, url_vars)
         request_headers = sansio.create_headers(self.requester, accept=accept,
-                                                oauth_token=self.oauth_token)
+                                                oauth_token=self.oauth_token,
+                                                authorization=authorization)
         if data == "":
             body = b""
             request_headers["content-length"] = "0"
@@ -48,15 +49,19 @@ class GitHubAPI(abc.ABC):
         return data, more
 
     async def getitem(self, url: str, url_vars: Dict[str, str] = {}, *,
-                      accept=sansio.accept_format()) -> Any:
+                      accept=sansio.accept_format(),
+                      authorization: str = None) -> Any:
         """Send a GET request for a single item to the specified endpoint."""
-        data, _ = await self._make_request("GET", url, url_vars, "", accept)
+        data, _ = await self._make_request("GET", url, url_vars, "", accept,
+                                           authorization)
         return data
 
     async def getiter(self, url: str, url_vars: Dict[str, str] = {}, *,
-                      accept: str = sansio.accept_format()) -> AsyncIterable[Any]:
+                      accept: str = sansio.accept_format(),
+                      authorization: str = None) -> AsyncIterable[Any]:
         """Return an async iterable for all the items at a specified endpoint."""
-        data, more = await self._make_request("GET", url, url_vars, "", accept)
+        data, more = await self._make_request("GET", url, url_vars, "", accept,
+                                              authorization)
         for item in data:
             yield item
         if more:
@@ -65,21 +70,29 @@ class GitHubAPI(abc.ABC):
                 yield item
 
     async def post(self, url: str, url_vars: Dict[str, str] = {}, *,
-                   data: Any, accept: str = sansio.accept_format()) -> Any:
-        data, _ = await self._make_request("POST", url, url_vars, data, accept)
+                   data: Any, accept: str = sansio.accept_format(),
+                   authorization: str = None) -> Any:
+        data, _ = await self._make_request("POST", url, url_vars, data, accept,
+                                           authorization)
         return data
 
     async def patch(self, url: str, url_vars: Dict[str, str] = {}, *,
-                    data: Any, accept: str = sansio.accept_format()) -> Any:
-        data, _ = await self._make_request("PATCH", url, url_vars, data, accept)
+                    data: Any, accept: str = sansio.accept_format(),
+                    authorization: str = None) -> Any:
+        data, _ = await self._make_request("PATCH", url, url_vars, data,
+                                           accept, authorization)
         return data
 
     async def put(self, url: str, url_vars: Dict[str, str] = {}, *,
                   data: Any = "",
-                  accept: str = sansio.accept_format()) -> Optional[Any]:
-        data, _ = await self._make_request("PUT", url, url_vars, data, accept)
+                  accept: str = sansio.accept_format(),
+                  authorization: str = None) -> Optional[Any]:
+        data, _ = await self._make_request("PUT", url, url_vars, data, accept,
+                                           authorization)
         return data
 
     async def delete(self, url: str, url_vars: Dict[str, str] = {}, *,
-                     accept: str = sansio.accept_format()) -> None:
-        await self._make_request("DELETE", url, url_vars, "", accept)
+                     accept: str = sansio.accept_format(),
+                     authorization: str = None) -> None:
+        await self._make_request("DELETE", url, url_vars, "", accept,
+                                 authorization)
