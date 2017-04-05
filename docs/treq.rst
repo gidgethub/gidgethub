@@ -3,7 +3,7 @@
 
 .. module:: gidgethub.treq
 
-.. class:: GitHubAPI(requester: str, *, oauth_token: str = None)
+.. class:: GitHubAPI(requester, *, oauth_token=None)
 
     An implementation of :class:`gidgethub.abc.GitHubAPI` using
     `treq <https://treq.readthedocs.io>`_. Typical usage will be::

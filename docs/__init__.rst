@@ -20,12 +20,13 @@ Exceptions
    Inherits from :exc:`GitHubException`.
 
 
-.. exception:: HTTPException(status_code: http.HTTPStatus, *args: Any)
+.. exception:: HTTPException(status_code, *args)
 
    A general exception to represent HTTP responses. Inherits from
-   :exc:`GitHubException`.
+   :exc:`GitHubException`. The *status_code* is expected to be an
+   :class:`http.HTTPStatus` enum value.
 
-   .. attribute:: status_code: http.HTTPStatus
+   .. attribute:: status_code
 
       The status code that the exception represents.
 
@@ -44,20 +45,20 @@ Exceptions
    Inherits from :exc:`HTTPException`.
 
 
-.. exception:: RateLimitExceeded(rate_limit: sansio.RateLimit)
+.. exception:: RateLimitExceeded(rate_limit)
 
     Raised when one's rate limit has been reached. A subclass of
     :exc:`BadRequest`.
 
     .. versionadded:: 2.0
 
-    .. attribute:: rate_limit: sansio.RateLimit
+    .. attribute:: rate_limit
 
         The :class:`~gidgethub.sansio.RateLimit` object with the rate
         limit details which triggered the raising of the exception.
 
 
-.. exception:: InvalidField(errors: List[Any], *args: Any)
+.. exception:: InvalidField(errors, *args)
 
    Raised when a
    `field in a request is invalid <https://developer.github.com/v3/#client-errors>`_.

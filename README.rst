@@ -58,6 +58,13 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
+2.1.0 (in development)
+''''''''''''''''''''''
+- The default value for the *data* argument of ``gidgethub.abc.GitHubAPI.put()``
+  was changed from ``""`` to ``b""``.
+- All type hints were removed (due to mypy not supporting yield in an async
+  function, they were not being tested as being valid).
+
 2.0.0
 ''''''''''''''''''''''
 

@@ -3,7 +3,7 @@
 
 .. module:: gidgethub.aiohttp
 
-.. class:: GitHubAPI(session: aiohttp.ClientSession, requester: str, *, oauth_token: str = None)
+.. class:: GitHubAPI(session, requester, *, oauth_token=None)
 
     An implementation of :class:`gidgethub.abc.GitHubAPI` using
     `aiohttp <https://aiohttp.readthedocs.io>`_. Typical usage will be::
