@@ -24,7 +24,7 @@ does not require an update to the library, allowing one to use
 experimental APIs without issue.
 
 
-.. class:: GitHubAPI(requester: str, *, oauth_token: str = None)
+.. class:: GitHubAPI(requester, *, oauth_token=None)
 
     Provide an :py:term:`abstract base class` which abstracts out the
     HTTP library being used to send requests to GitHub. The class is
@@ -74,7 +74,7 @@ experimental APIs without issue.
         HTTP request.
 
 
-    .. abstractcoroutine:: _request(self, method: str, url: str, headers: Mapping[str, str], body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]
+    .. abstractcoroutine:: _request(method, url, headers, body=b'')
 
         An abstract :term:`coroutine` to make an HTTP request. The
         given *headers* will have lower-case keys and include not only
@@ -86,7 +86,7 @@ experimental APIs without issue.
         dictionary is expected to work with lower-case keys.
 
 
-    .. abstractcoroutine:: sleep(seconds: float) -> None
+    .. abstractcoroutine:: sleep(seconds)
 
         An abstract :term:`coroutine` which causes the coroutine to
         sleep for the specified number of seconds. This is provided to
@@ -98,7 +98,7 @@ experimental APIs without issue.
             Renamed from ``_sleep()``.
 
 
-    .. coroutine:: getitem(url: str, url_vars: Dict[str, str] = {}, *, accept=sansio.accept_format()) -> Any
+    .. coroutine:: getitem(url, url_vars={}, *, accept=sansio.accept_format())
 
         Get a single item from GitHub.
 
@@ -107,8 +107,7 @@ experimental APIs without issue.
             potentially require pagination, see ``getiter()``.
 
 
-    .. coroutine:: getiter(url: str, url_vars: Dict[str, str] = {}, *,
-                      accept: str = sansio.accept_format()) -> AsyncIterable[Any]
+    .. coroutine:: getiter(url, url_vars={}, *, accept=sansio.accept_format())
 
         Get all items from a GitHub API endpoint.
 
@@ -121,17 +120,17 @@ experimental APIs without issue.
             For ``GET`` calls that return only a single item, see
             :meth:`getitem`.
 
-    .. coroutine:: post(url: str, url_vars: Dict[str, str] = {}, *, data: Any, accept: str = sansio.accept_format()) -> Any
+    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format())
 
         Send a ``POST`` request to GitHub.
 
 
-    .. coroutine:: patch(url: str, url_vars: Dict[str, str] = {}, *, data: Any, accept: str = sansio.accept_format()) -> Any
+    .. coroutine:: patch(url, url_vars={}, *, data, accept=sansio.accept_format())
 
         Send a ``PATCH`` request to GitHub.
 
 
-    .. coroutine:: put(url: str, url_vars: Dict[str, str] = {}, *, data: Any = "", accept: str = sansio.accept_format()) -> Any
+    .. coroutine:: put(url, url_vars={}, *, data=b"", accept=sansio.accept_format())
 
         Send a ``PUT`` request to GitHub.
 
@@ -140,6 +139,6 @@ experimental APIs without issue.
         will return no content, leading to ``None`` being returned.
 
 
-    .. coroutine:: delete(url: str, url_vars: Dict[str, str] = {}, *, accept: str = sansio.accept_format()) -> None
+    .. coroutine:: delete(url, url_vars={}, *, accept=sansio.accept_format())
 
         Send a ``DELETE`` request to GitHub.

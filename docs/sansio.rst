@@ -15,7 +15,7 @@ request from GitHub and then use :meth:`Event.from_http` to create an
 
   SECRET = os.environ["GITHUB_SECRET"]
 
-  async def index(request: aiohttp.web.BaseRequest):
+  async def index(request):
       headers = request.headers
       body = await request.read()
       event = gidgethub.Event.from_http(headers, body,
@@ -26,7 +26,7 @@ in a more traditional way. The :func:`validate_event` function is also provided
 to allow for manual validation that a event came from a supported project
 without requiring the use of the :class:`Event` class.
 
-.. function:: validate_event(payload: bytes, *, signature: str, secret: str) -> None
+.. function:: validate_event(payload, *, signature, secret)
 
    `Validate the signature <https://developer.github.com/webhooks/securing/#validating-payloads-from-github>`_
    of a webhook event.
@@ -38,7 +38,7 @@ without requiring the use of the :class:`Event` class.
    exception is raised if validation fails).
 
 
-.. class:: Event(data: Any, *, event: str, delivery_id: str)
+.. class:: Event(data, *, event, delivery_id)
 
    Representation of a GitHub webhook event.
 
@@ -59,7 +59,7 @@ without requiring the use of the :class:`Event` class.
       The unique ID of the event.
 
 
-   .. classmethod:: from_http(headers: Mapping[str, str], body: bytes, *, secret: str = None)
+   .. classmethod:: from_http(headers, body, *, secret=None)
 
       Construct an :class:`Event` instance from HTTP headers and body data.
 
@@ -97,7 +97,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
   url = "https://api.github.com/repos/brettcannon/gidgethub/issues/1"
   response = requests.get(url, headers=request_headers)
 
-.. function:: accept_format(*, version: str = "v3", media: str = None, json: bool = True) -> str
+.. function:: accept_format(*, version="v3", media=None, json=True)
 
    Construct the specification of the format that a request should return. This
    is used in the ``accept`` header field of a request to specify the
@@ -122,7 +122,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
    support.
 
 
-.. function:: create_headers(requester: str, *, accept: str = accept_format(), oauth_token: str = None) -> Dict[str, str]
+.. function:: create_headers(requester, *, accept=accept_format(), oauth_token=None)
 
    Create a dict representing GitHub-specific header fields.
 
@@ -167,7 +167,7 @@ that are provided to you. Continuing from the example in the Requests_ section::
       response_more = requests.get(more, headers=request_headers)
       # Decipher `response_more` ...
 
-.. class:: RateLimit(*, limit: int, remaining: int, reset_epoch: float)
+.. class:: RateLimit(*, limit, remaining, reset_epoch)
 
     The `rate limit <https://developer.github.com/v3/#rate-limiting>`_ imposed
     upon the requester.
@@ -195,13 +195,13 @@ that are provided to you. Continuing from the example in the Requests_ section::
         quota is refreshed. The object is timezone-aware to UTC.
 
 
-    .. classmethod: from_http(headers: Mapping[str, str]) -> RateLimit
+    .. classmethod: from_http(headers)
 
         Create a :class:`RateLimit` instance from the HTTP headers of a GitHub API
         response.
 
 
-.. function:: decipher_response(status_code: int, headers: Mapping[str, str], body: bytes) -> Tuple[Any, RateLimit, str]
+.. function:: decipher_response(status_code, headers, body)
 
     Decipher an HTTP response for a GitHub API request.
 
@@ -229,7 +229,7 @@ that are provided to you. Continuing from the example in the Requests_ section::
 Utilities
 ---------
 
-.. function:: format_url(url: str, url_vars: Dict[str, str]) -> str
+.. function:: format_url(url, url_vars)
 
     Construct a URL for the GitHub API.
 
