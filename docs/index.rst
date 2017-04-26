@@ -41,6 +41,7 @@ to use new features of the GitHub API.
 
 Installation
 ------------
+`Gidgethub is on PyPI <https://pypi.org/project/gidgethub/>`_.
 ::
 
   python3 -m pip install gidgethub
