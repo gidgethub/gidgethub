@@ -1,4 +1,4 @@
-:mod:`gidgethub.aiohttp` --- An implementation of :mod:`gidgethub.abc` using ``aiohttp``
+:mod:`gidgethub.aiohttp` --- ``aiohttp`` support
 =========================================================================================
 
 .. module:: gidgethub.aiohttp

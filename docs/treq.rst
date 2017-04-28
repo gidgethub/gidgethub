@@ -1,4 +1,4 @@
-:mod:`gidgethub.treq` --- An implementation of :mod:`gidgethub.abc` using ``treq``
+:mod:`gidgethub.treq` --- ``treq`` support
 ==================================================================================
 
 .. module:: gidgethub.treq
