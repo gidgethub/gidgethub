@@ -19,7 +19,7 @@ Development status
 
 Installation
 ------------
-
+Gidgethub is [available on PyPI](https://pypi.org/project/gidgethub/).
 ::
 
   python3 -m pip install gidgethub
