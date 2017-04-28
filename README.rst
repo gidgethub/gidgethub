@@ -58,7 +58,7 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-2.1.0 (in development)
+2.1.0
 ''''''''''''''''''''''
 - The default value for the *data* argument of ``gidgethub.abc.GitHubAPI.put()``
   was changed from ``""`` to ``b""``.

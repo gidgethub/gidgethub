@@ -2,6 +2,7 @@ import pathlib
 
 import setuptools
 
+
 docs_requires = ["sphinx"]
 tests_requires = ['pytest>=3.0.0', 'pytest-asyncio']
 aiohttp_requires = ["aiohttp"]
@@ -11,7 +12,7 @@ long_description = pathlib.Path("README.rst").read_text("utf-8")
 
 setuptools.setup(
     name="gidgethub",
-    version="2.1.0.dev1",
+    version="2.1.0",
     description="An async GitHub API library",
     long_description=long_description,
     url="https://gidgethub.readthedocs.io",
