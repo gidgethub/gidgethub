@@ -1,5 +1,5 @@
-:mod:`gidgethub.aiohttp` --- ``aiohttp`` support
-=========================================================================================
+:mod:`gidgethub.aiohttp` --- aiohttp support
+=============================================
 
 .. module:: gidgethub.aiohttp
 

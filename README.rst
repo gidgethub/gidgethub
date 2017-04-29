@@ -58,9 +58,9 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-2.1.1 (in-progress)
+2.2.0 (in-progress)
 '''''''''''''''''''
-N/A
+- Introduce ``gidgethub.tornado``.
 
 2.1.0
 ''''''''''''''''''''''
