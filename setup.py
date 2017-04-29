@@ -4,9 +4,10 @@ import setuptools
 
 
 docs_requires = ["sphinx"]
-tests_requires = ['pytest>=3.0.0', 'pytest-asyncio']
+tests_requires = ['pytest>=3.0.0', 'pytest-asyncio', 'pytest-tornasync']
 aiohttp_requires = ["aiohttp"]
 treq_requires = ["treq", "twisted[tls]"]
+tornado_requires = ["tornado"]
 
 long_description = pathlib.Path("README.rst").read_text("utf-8")
 
@@ -38,6 +39,8 @@ setuptools.setup(
         "tests": tests_requires,
         "aiohttp": aiohttp_requires,
         "treq": treq_requires,
-        "dev": docs_requires + tests_requires + aiohttp_requires + treq_requires,
+        "tornado": tornado_requires,
+        "dev": (docs_requires + tests_requires + aiohttp_requires
+                + treq_requires + tornado_requires),
     },
 )

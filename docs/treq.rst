@@ -1,5 +1,5 @@
-:mod:`gidgethub.treq` --- ``treq`` support
-==================================================================================
+:mod:`gidgethub.treq` --- treq support
+=======================================
 
 .. module:: gidgethub.treq
 
