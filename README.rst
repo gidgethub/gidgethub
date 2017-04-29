@@ -58,16 +58,22 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-2.1.1 (in-progress)
+2.2.0
 '''''''''''''''''''
-N/A
+
+- Introduce ``gidgethub.tornado`` to support
+  `Tornado <http://www.tornadoweb.org/>`_ (thanks to
+  Matthias Bussonnier and A. Jesse Jiryu Davis for the PR reviews).
+
 
 2.1.0
 ''''''''''''''''''''''
+
 - The default value for the *data* argument of ``gidgethub.abc.GitHubAPI.put()``
   was changed from ``""`` to ``b""``.
 - All type hints were removed (due to mypy not supporting yield in an async
   function, they were not being tested as being valid).
+
 
 2.0.0
 ''''''''''''''''''''''
