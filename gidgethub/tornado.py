@@ -12,9 +12,9 @@ class GitHubAPI(gh_abc.GitHubAPI):
             body = None
         request = httpclient.HTTPRequest(url, method, headers, body)
         # Since Tornado has designed AsyncHTTPClient to be a singleton, there's
-        # not reason not to simply instantiate it everytime.
+        # no reason not to simply instantiate it every time.
         client = httpclient.AsyncHTTPClient()
-        response = await client.fetch(request)
+        response = await client.fetch(request, raise_error=False)
         return response.code, response.headers, response.body
 
     async def sleep(self, seconds):
