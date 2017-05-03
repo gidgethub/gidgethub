@@ -35,6 +35,26 @@ def _parse_content_type(content_type):
         return type_, encoding
 
 
+def _decode_body(content_type, body, *, strict=False):
+    """Decode an HTTP body based on the specified content type.
+
+    If 'strict' is true, then raise ValueError if the content type
+    is not recognized. Otherwise simply returned the body as a decoded
+    string.
+    """
+    type_, encoding = _parse_content_type(content_type)
+    if not len(body) or not content_type:
+        return None
+    decoded_body = body.decode(encoding)
+    if type_ == "application/json":
+        return json.loads(decoded_body)
+    elif type_ == "application/x-www-form-urlencoded":
+        return json.loads(urllib.parse.parse_qs(decoded_body)["payload"][0])
+    elif strict:
+        raise ValueError(f"unrecognized content type: {type_!r}")
+    return decoded_body
+
+
 def validate_event(payload, *, signature, secret):
     """Validate the signature of a webhook event."""
     # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
@@ -80,18 +100,21 @@ class Event:
         (including not providing a secret) will lead to ValidationFailure being
         raised.
         """
-        type_, encoding = _parse_content_type(headers.get("content-type"))
-        if type_ != "application/json":
-            raise BadRequest(http.HTTPStatus(415), "expected a content-type of "
-                                             "'application/json'")
-        elif "x-hub-signature" in headers:
+        if "x-hub-signature" in headers:
                 if secret is None:
                     raise ValidationFailure("secret not provided")
                 validate_event(body, signature=headers["x-hub-signature"],
                                secret=secret)
         elif secret is not None:
             raise ValidationFailure("signature is missing")
-        data = _decode_body(headers["content-type"], body)
+
+        try:
+            data = _decode_body(headers["content-type"], body, strict=True)
+        except (KeyError, ValueError):
+            raise BadRequest(http.HTTPStatus(415),
+                             "expected a content-type of "
+                             "'application/json' or "
+                             "'application/x-www-form-urlencoded'")
         return cls(data, event=headers["x-github-event"],
                    delivery_id=headers["x-github-delivery"])
 
@@ -200,16 +223,6 @@ class RateLimit:
         remaining = int(headers["x-ratelimit-remaining"])
         reset_epoch = float(headers["x-ratelimit-reset"])
         return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
-
-
-def _decode_body(content_type, body):
-    type_, encoding = _parse_content_type(content_type)
-    if not len(body) or not content_type:
-        return None
-    decoded_body = body.decode(encoding)
-    if type_ == "application/json":
-        return json.loads(decoded_body)
-    return decoded_body
 
 
 _link_re = re.compile(r'\<(?P<uri>[^>]+)\>;\s*'

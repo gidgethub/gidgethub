@@ -2,6 +2,7 @@ import datetime
 import http
 import json
 import pathlib
+import urllib.parse
 
 import pytest
 
@@ -59,19 +60,40 @@ class TestEvent:
                            delivery_id=self.headers["x-github-delivery"])
         self.check_event(ins)
 
-    def test_from_http(self):
+    def test_from_http_json(self):
         """Construct an event from complete HTTP information."""
         event = sansio.Event.from_http(self.headers, self.data_bytes,
                                        secret=self.secret)
         self.check_event(event)
 
-    def test_from_http_not_json(self):
+    def test_from_http_urlencoded(self):
+        payload = {"payload": json.dumps(self.data)}
+        body = urllib.parse.urlencode(payload).encode("UTF-8")
+        headers = {
+            "content-type": "application/x-www-form-urlencoded",
+            "x-github-event": "pull_request",
+            "x-github-delivery": "72d3162e-cc78-11e3-81ab-4c9367dc0958",
+        }
+        event = sansio.Event.from_http(headers, body)
+        self.check_event(event)
+
+    def test_from_http_no_content_type(self):
         """Only accept data when content-type is application/json."""
         headers_no_content_type = self.headers.copy()
         del headers_no_content_type["content-type"]
         with pytest.raises(BadRequest):
             sansio.Event.from_http(headers_no_content_type, self.data_bytes,
                                    secret=self.secret)
+
+    def test_from_http_unknown_content_type(self):
+        headers = headers = {
+            "content-type": "image/png",
+            "x-github-event": "pull_request",
+            "x-github-delivery": "72d3162e-cc78-11e3-81ab-4c9367dc0958",
+        }
+        with pytest.raises(BadRequest):
+            sansio.Event.from_http(headers, self.data_bytes)
+        pass
 
     def test_from_http_missing_secret(self):
         """Signature but no secret raises ValidationFailure."""

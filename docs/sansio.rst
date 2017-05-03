@@ -65,10 +65,10 @@ without requiring the use of the :class:`Event` class.
 
       The *headers* mapping is expected to support lowercase keys.
 
-      Since this method assumes the body of the HTTP request is JSON, a check
-      is performed for a ``"content-type"`` header field of
-      ``"application/json"``. If the content type does not match,
-      :exc:`~gidgethub.BadRequest` is raised.
+      Since this method assumes the body of the HTTP request is only of the
+      [content type that GitHub sends](https://developer.github.com/webhooks/creating/#content-type),
+      :exc:`~gidgethub.BadRequest` is raised if the content type is
+      unexpected.
 
       If the appropriate headers are provided for event validation, then
       the *secret* argument is required. Any failure in validation
