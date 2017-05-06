@@ -54,6 +54,7 @@ Contents
 
    __init__
    sansio
+   routing
    abc
    aiohttp
    treq
