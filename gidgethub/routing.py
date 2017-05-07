@@ -1,11 +1,10 @@
-from typing import Any, Callable, Dict, List
+from typing import Any, Awaitable, Callable, Dict, List
 
 from . import sansio
 
 
-# https://github.com/python/typing/issues/424 to find out how to properly
-# type this.
-AsyncCallback = Any
+AsyncCallback = Callable[[sansio.Event], Awaitable[None]]
+
 
 class Router:
 
