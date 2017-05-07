@@ -1,4 +1,5 @@
 import http
+from typing import Any
 
 
 class GitHubException(Exception):
@@ -16,7 +17,7 @@ class HTTPException(GitHubException):
 
     """A general exception to represent HTTP responses."""
 
-    def __init__(self, status_code, *args):
+    def __init__(self, status_code: http.HTTPStatus, *args: Any) -> None:
         self.status_code = status_code
         if args:
             super().__init__(*args)
@@ -41,7 +42,7 @@ class RateLimitExceeded(BadRequest):
 
     """Request rejected due to the rate limit being exceeded."""
 
-    def __init__(self, rate_limit, *args):
+    def __init__(self, rate_limit: int, *args: Any) -> None:
         self.rate_limit = rate_limit
 
         if not args:
@@ -59,7 +60,7 @@ class InvalidField(BadRequest):
     invalid are stored in the errors attribute.
     """
 
-    def __init__(self, errors, *args):
+    def __init__(self, errors: Any, *args: Any) -> None:
         """Store the error details."""
         self.errors = errors
         super().__init__(http.HTTPStatus.UNPROCESSABLE_ENTITY, *args)
