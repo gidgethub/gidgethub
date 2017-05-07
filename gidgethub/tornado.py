@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Mapping, Tuple
 
 from tornado import gen
 from tornado import httpclient
@@ -8,8 +8,8 @@ from . import abc as gh_abc
 
 class GitHubAPI(gh_abc.GitHubAPI):
 
-    async def _request(self, method: str, url: str, headers: Dict,
-                       body: bytes = b'') -> Tuple[int, Dict, bytes]:
+    async def _request(self, method: str, url: str, headers: Mapping,
+                       body: bytes = b'') -> Tuple[int, Mapping, bytes]:
         """Make an HTTP request."""
         if method == "GET" and not body:
             body = None

@@ -12,7 +12,7 @@ import hmac
 import http
 import json
 import re
-from typing import Any, Dict, Optional, Tuple, Type
+from typing import Any, Mapping, Optional, Tuple, Type
 import urllib.parse
 
 import uritemplate
@@ -86,7 +86,7 @@ class Event:
         self.delivery_id = delivery_id
 
     @classmethod
-    def from_http(cls, headers: Dict, body: bytes, *, secret=None) -> "Event":
+    def from_http(cls, headers: Mapping, body: bytes, *, secret=None) -> "Event":
         """Construct an event from HTTP headers and JSON body data.
 
         The mapping providing the headers is expected to support lowercase keys.
@@ -214,7 +214,7 @@ class RateLimit:
             return now > self.reset_datetime
 
     @classmethod
-    def from_http(cls, headers: Dict) -> "RateLimit":
+    def from_http(cls, headers: Mapping) -> "RateLimit":
         """Gather rate limit information from HTTP headers.
 
         The mapping providing the headers is expected to support lowercase
@@ -242,7 +242,7 @@ def _next_link(link: str) -> Optional[str]:
         return None
 
 
-def decipher_response(status_code: int, headers: Dict,
+def decipher_response(status_code: int, headers: Mapping,
                       body: bytes) -> Tuple[Any, RateLimit, Optional[str]]:
     """Decipher an HTTP response for a GitHub API request.
 
@@ -301,7 +301,7 @@ def decipher_response(status_code: int, headers: Dict,
 
 DOMAIN = "https://api.github.com"
 
-def format_url(url: str, url_vars: Dict[str, Any]) -> str:
+def format_url(url: str, url_vars: Mapping[str, Any]) -> str:
     """Construct a URL for the GitHub API.
 
     The URL may be absolute or relative. In the latter case the appropriate

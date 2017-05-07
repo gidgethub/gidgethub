@@ -1,7 +1,7 @@
 """Provide an abstract base class for easier requests."""
 import abc
 import json
-from typing import Any, AsyncGenerator, Dict, Tuple, Optional
+from typing import Any, AsyncGenerator, Dict, Mapping, Tuple, Optional
 
 from . import sansio
 
@@ -16,8 +16,8 @@ class GitHubAPI(abc.ABC):
         self.rate_limit: sansio.RateLimit = None
 
     @abc.abstractmethod
-    async def _request(self, method: str, url: str, headers: Dict,
-                       body: bytes = b'') -> Tuple[int, Dict, bytes]:
+    async def _request(self, method: str, url: str, headers: Mapping,
+                       body: bytes = b'') -> Tuple[int, Mapping, bytes]:
         """Make an HTTP request."""
 
     @abc.abstractmethod
