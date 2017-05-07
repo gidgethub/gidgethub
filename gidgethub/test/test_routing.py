@@ -83,8 +83,8 @@ async def test_dispatching():
     assert not never_called_1.called
     assert not never_called_2.called
     assert not never_called_3.called
-    event = sansio.Event({"action": "new", "count": 42}, event="something",
-                         delivery_id="1234")
+    event = sansio.Event({"action": "new", "count": 42, "ignored": True},
+                         event="something", delivery_id="1234")
     await router.dispatch(event)
     assert shallow_registration.called
     assert deep_registration_1.called
