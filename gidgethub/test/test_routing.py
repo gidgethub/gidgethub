@@ -66,6 +66,20 @@ async def test_dispatching():
     never_called_1 = Callback()
     never_called_2 = Callback()
     never_called_3 = Callback()
+    # Wrong event.
+    router.add(never_called_1.meth, "something")
+    # Wrong event and data detail.
+    router.add(never_called_1.meth, "something", action="new")
+    # Wrong data detail key.
+    router.add(never_called_1.meth, "nothing", never=42)
+    # Wrong data detail value.
+    router.add(never_called_1.meth, "nothing", count=-13)
+    event = sansio.Event({"action": "new", "count": 42}, event="nothing",
+                         delivery_id="1234")
+    await router.dispatch(event)
+    assert not never_called_1.called
+
+    router = routing.Router()
     router.add(shallow_registration.meth, "something")
     router.add(deep_registration_1.meth, "something", action="new")
     router.add(deep_registration_2.meth, "something", action="new")
@@ -73,16 +87,6 @@ async def test_dispatching():
     router.add(never_called_1.meth, "something else")
     router.add(never_called_2.meth, "something", never="called")
     router.add(never_called_3.meth, "something", count=-13)
-    event = sansio.Event({"action": "new", "count": 42}, event="nothing",
-                         delivery_id="1234")
-    await router.dispatch(event)
-    assert not shallow_registration.called
-    assert not deep_registration_1.called
-    assert not deep_registration_2.called
-    assert not deep_registration_3.called
-    assert not never_called_1.called
-    assert not never_called_2.called
-    assert not never_called_3.called
     event = sansio.Event({"action": "new", "count": 42, "ignored": True},
                          event="something", delivery_id="1234")
     await router.dispatch(event)
