@@ -59,6 +59,10 @@ async def test_register():
 @pytest.mark.asyncio
 async def test_dispatching():
     router = routing.Router()
+    event = sansio.Event({"action": "new", "count": 42}, event="nothing",
+                         delivery_id="1234")
+    await router.dispatch(event)  # Should raise no exceptions.
+
     shallow_registration = Callback()
     deep_registration_1 = Callback()
     deep_registration_2 = Callback()
@@ -74,8 +78,6 @@ async def test_dispatching():
     router.add(never_called_1.meth, "nothing", never=42)
     # Wrong data detail value.
     router.add(never_called_1.meth, "nothing", count=-13)
-    event = sansio.Event({"action": "new", "count": 42}, event="nothing",
-                         delivery_id="1234")
     await router.dispatch(event)
     assert not never_called_1.called
 
