@@ -12,6 +12,7 @@ import hmac
 import http
 import json
 import re
+from typing import Any, Dict, Optional, Tuple, Type
 import urllib.parse
 
 import uritemplate
@@ -20,7 +21,7 @@ from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
                RateLimitExceeded, RedirectionException, ValidationFailure)
 
 
-def _parse_content_type(content_type):
+def _parse_content_type(content_type: str) -> Tuple[Optional[str], str]:
     """Tease out the content-type and character encoding.
 
     A default character encoding of UTF-8 is used, so the content-type
@@ -35,7 +36,7 @@ def _parse_content_type(content_type):
         return type_, encoding
 
 
-def _decode_body(content_type, body, *, strict=False):
+def _decode_body(content_type: str, body: bytes, *, strict: bool = False) -> Any:
     """Decode an HTTP body based on the specified content type.
 
     If 'strict' is true, then raise ValueError if the content type
@@ -55,7 +56,7 @@ def _decode_body(content_type, body, *, strict=False):
     return decoded_body
 
 
-def validate_event(payload, *, signature, secret):
+def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
     """Validate the signature of a webhook event."""
     # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
     signature_prefix = "sha1="
@@ -73,7 +74,7 @@ class Event:
 
     """Details of a GitHub webhook event."""
 
-    def __init__(self, data, *, event, delivery_id):
+    def __init__(self, data: Any, *, event: str, delivery_id: str) -> None:
         # https://developer.github.com/v3/activity/events/types/
         # https://developer.github.com/webhooks/#delivery-headers
         self.data = data
@@ -85,7 +86,7 @@ class Event:
         self.delivery_id = delivery_id
 
     @classmethod
-    def from_http(cls, headers, body, *, secret=None):
+    def from_http(cls, headers: Dict, body: bytes, *, secret=None) -> "Event":
         """Construct an event from HTTP headers and JSON body data.
 
         The mapping providing the headers is expected to support lowercase keys.
@@ -119,7 +120,7 @@ class Event:
                    delivery_id=headers["x-github-delivery"])
 
 
-def accept_format(*, version="v3", media=None, json=True):
+def accept_format(*, version: str = "v3", media: str = None, json: bool = True) -> str:
     """Construct the specification of the format that a request should return.
 
     The version argument defaults to v3 of the GitHub API and is applicable to
@@ -141,7 +142,7 @@ def accept_format(*, version="v3", media=None, json=True):
     return accept
 
 
-def create_headers(requester, *, accept=accept_format(), oauth_token=None):
+def create_headers(requester: str, *, accept: str = accept_format(), oauth_token: str = None):
     """Create a dict representing GitHub-specific header fields.
 
     The user agent is set according to who the requester is. GitHub asks it be
@@ -190,7 +191,7 @@ class RateLimit:
 
     # https://developer.github.com/v3/#rate-limiting
 
-    def __init__(self, *, limit, remaining, reset_epoch):
+    def __init__(self, *, limit: int, remaining: int, reset_epoch: float) -> None:
         """Instantiate a RateLimit object.
 
         The reset_epoch argument should be in seconds since the UTC epoch.
@@ -204,7 +205,7 @@ class RateLimit:
         self.reset_datetime = datetime.datetime.fromtimestamp(reset_epoch,
                                                               datetime.timezone.utc)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """True if requests are remaining or the reset datetime has passed."""
         if self.remaining > 0:
             return True
@@ -213,7 +214,7 @@ class RateLimit:
             return now > self.reset_datetime
 
     @classmethod
-    def from_http(cls, headers):
+    def from_http(cls, headers: Dict) -> "RateLimit":
         """Gather rate limit information from HTTP headers.
 
         The mapping providing the headers is expected to support lowercase
@@ -228,7 +229,7 @@ class RateLimit:
 _link_re = re.compile(r'\<(?P<uri>[^>]+)\>;\s*'
                       r'(?P<param_type>\w+)="(?P<param_value>\w+)"(,\s*)?')
 
-def _next_link(link):
+def _next_link(link: str) -> Optional[str]:
     # https://developer.github.com/v3/#pagination
     # https://tools.ietf.org/html/rfc5988
     if link is None:
@@ -241,7 +242,8 @@ def _next_link(link):
         return None
 
 
-def decipher_response(status_code, headers, body):
+def decipher_response(status_code: int, headers: Dict,
+                      body: bytes) -> Tuple[Any, RateLimit, Optional[str]]:
     """Decipher an HTTP response for a GitHub API request.
 
     The mapping providing the headers is expected to support lowercase keys.
@@ -270,6 +272,7 @@ def decipher_response(status_code, headers, body):
             message = data["message"]
         except (TypeError, KeyError):
             message = None
+        exc_type: Type[HTTPException]
         if status_code >= 500:
             exc_type = GitHubBroken
         elif status_code >= 400:
@@ -288,6 +291,7 @@ def decipher_response(status_code, headers, body):
         else:
             exc_type = HTTPException
         status_code_enum = http.HTTPStatus(status_code)
+        args: Tuple
         if message:
             args = status_code_enum, message
         else:
@@ -297,7 +301,7 @@ def decipher_response(status_code, headers, body):
 
 DOMAIN = "https://api.github.com"
 
-def format_url(url, url_vars):
+def format_url(url: str, url_vars: Dict[str, Any]) -> str:
     """Construct a URL for the GitHub API.
 
     The URL may be absolute or relative. In the latter case the appropriate
