@@ -1,3 +1,5 @@
+from typing import Dict, Tuple
+
 from tornado import gen
 from tornado import httpclient
 
@@ -6,7 +8,8 @@ from . import abc as gh_abc
 
 class GitHubAPI(gh_abc.GitHubAPI):
 
-    async def _request(self, method, url, headers, body=b''):
+    async def _request(self, method: str, url: str, headers: Dict,
+                       body: bytes = b'') -> Tuple[int, Dict, bytes]:
         """Make an HTTP request."""
         if method == "GET" and not body:
             body = None
@@ -17,6 +20,6 @@ class GitHubAPI(gh_abc.GitHubAPI):
         response = await client.fetch(request, raise_error=False)
         return response.code, response.headers, response.body
 
-    async def sleep(self, seconds):
+    async def sleep(self, seconds: float) -> None:
         """Sleep for the specified number of seconds."""
         await gen.sleep(seconds)
