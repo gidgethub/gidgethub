@@ -65,6 +65,9 @@ Changelog
   (This also allows for API calls to return this content type, although GitHub
   currently does not do that.)
 
+- Introduce ``gidgethub.routing`` to help route webhook events to registered
+  asynchronous callbacks.
+
 
 2.2.0
 '''''''''''''''''''
