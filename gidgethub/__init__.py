@@ -1,6 +1,8 @@
 import http
 from typing import Any
 
+from . import sansio
+
 
 class GitHubException(Exception):
 
@@ -42,7 +44,7 @@ class RateLimitExceeded(BadRequest):
 
     """Request rejected due to the rate limit being exceeded."""
 
-    def __init__(self, rate_limit: int, *args: Any) -> None:
+    def __init__(self, rate_limit: sansio.RateLimit, *args: Any) -> None:
         self.rate_limit = rate_limit
 
         if not args:
