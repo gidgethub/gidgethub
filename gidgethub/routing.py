@@ -1,14 +1,20 @@
 from typing import Any, Callable, Dict, List
 
+from . import sansio
+
+
+# https://github.com/python/typing/issues/424 to find out how to properly
+# type this.
+AsyncCallback = Any
 
 class Router:
 
     """Route webhook events to registered functions."""
 
-    def __init__(self, *other_routers):
+    def __init__(self, *other_routers: "Router") -> None:
         """Instantiate a new router (possibly from other routers)."""
         # event type -> data key -> data value -> callbacks
-        self._routes: Dict[str, Dict[str, Dict[Any, List[Callable]]]] = {}
+        self._routes: Dict[str, Dict[str, Dict[Any, List[AsyncCallback]]]] = {}
         for other_router in other_routers:
             for event_type, data_details in other_router._routes.items():
                 for data_key, data_specifics in data_details.items():
@@ -17,7 +23,7 @@ class Router:
                             detail = {data_key: data_value}
                             self.add(callback, event_type, **detail)
 
-    def add(self, func, event_type, **data_detail):
+    def add(self, func: AsyncCallback, event_type: str, **data_detail) -> None:
         """Add a new route.
 
         After registering 'func' for the specified event_type, an
@@ -39,14 +45,15 @@ class Router:
         callbacks = specific_detail.setdefault(data_value, [])
         callbacks.append(func)
 
-    def register(self, event_type, **data_detail):
+    def register(self, event_type: str,
+                 **data_detail) -> Callable[[AsyncCallback], AsyncCallback]:
         """Decorator to apply the add() method to a function."""
-        def decorator(func):
+        def decorator(func: AsyncCallback) -> AsyncCallback:
             self.add(func, event_type, **data_detail)
             return func
         return decorator
 
-    async def dispatch(self, event):
+    async def dispatch(self, event: sansio.Event) -> None:
         """Dispatch an event to all registered function(s)."""
         try:
             details = self._routes[event.event]
