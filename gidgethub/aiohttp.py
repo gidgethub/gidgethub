@@ -8,7 +8,7 @@ from . import abc as gh_abc
 
 class GitHubAPI(gh_abc.GitHubAPI):
 
-    def __init__(self, session: aiohttp.ClitnSession, requester: str,
+    def __init__(self, session: aiohttp.ClientSession, requester: str,
                  *, oauth_token: str = None) -> None:
         self._session = session
         super().__init__(requester, oauth_token=oauth_token)
