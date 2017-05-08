@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, Dict, List
+from typing import Any, Awaitable, Callable, Dict, List, Optional
 
 from . import sansio
 
@@ -12,17 +12,21 @@ class Router:
 
     def __init__(self, *other_routers: "Router") -> None:
         """Instantiate a new router (possibly from other routers)."""
+        self._shallow_routes: Dict[str, List[AsyncCallback]] = {}
         # event type -> data key -> data value -> callbacks
-        self._routes: Dict[str, Dict[str, Dict[Any, List[AsyncCallback]]]] = {}
+        self._deep_routes: Dict[str, Dict[str, Dict[Any, List[AsyncCallback]]]] = {}
         for other_router in other_routers:
-            for event_type, data_details in other_router._routes.items():
+            for event_type, callbacks in other_router._shallow_routes.items():
+                for callback in callbacks:
+                    self.add(callback, event_type)
+            for event_type, data_details in other_router._deep_routes.items():
                 for data_key, data_specifics in data_details.items():
                     for data_value, callbacks in data_specifics.items():
+                        detail = {data_key: data_value}
                         for callback in callbacks:
-                            detail = {data_key: data_value}
                             self.add(callback, event_type, **detail)
 
-    def add(self, func: AsyncCallback, event_type: str, **data_detail) -> None:
+    def add(self, func: AsyncCallback, event_type: str, **data_detail: Any) -> None:
         """Add a new route.
 
         After registering 'func' for the specified event_type, an
@@ -36,16 +40,17 @@ class Router:
                             "supported up to one level deep; "
                             f"{len(data_detail)} levels specified")
         elif not data_detail:
-            data_key = data_value = None
+            callbacks = self._shallow_routes.setdefault(event_type, [])
+            callbacks.append(func)
         else:
             data_key, data_value = data_detail.popitem()
-        data_details = self._routes.setdefault(event_type, {})
-        specific_detail = data_details.setdefault(data_key, {})
-        callbacks = specific_detail.setdefault(data_value, [])
-        callbacks.append(func)
+            data_details = self._deep_routes.setdefault(event_type, {})
+            specific_detail = data_details.setdefault(data_key, {})
+            callbacks = specific_detail.setdefault(data_value, [])
+            callbacks.append(func)
 
     def register(self, event_type: str,
-                 **data_detail) -> Callable[[AsyncCallback], AsyncCallback]:
+                 **data_detail: Any) -> Callable[[AsyncCallback], AsyncCallback]:
         """Decorator to apply the add() method to a function."""
         def decorator(func: AsyncCallback) -> AsyncCallback:
             self.add(func, event_type, **data_detail)
@@ -54,22 +59,23 @@ class Router:
 
     async def dispatch(self, event: sansio.Event) -> None:
         """Dispatch an event to all registered function(s)."""
-        try:
-            details = self._routes[event.event]
-        except KeyError:
-            return
+
         found_callbacks = []
         try:
-            # The "no data details" case.
-            found_callbacks.extend(details[None][None])
+            found_callbacks.extend(self._shallow_routes[event.event])
         except KeyError:
             pass
-        for data_key, data_values in details.items():
-            if data_key is None:
-                continue
-            elif data_key in event.data:
-                event_value = event.data[data_key]
-                if event_value in data_values:
-                    found_callbacks.extend(data_values[event_value])
+        try:
+            details = self._deep_routes[event.event]
+        except KeyError:
+            pass
+        else:
+            for data_key, data_values in details.items():
+                if data_key is None:
+                    continue
+                elif data_key in event.data:
+                    event_value = event.data[data_key]
+                    if event_value in data_values:
+                        found_callbacks.extend(data_values[event_value])
         for callback in found_callbacks:
             await callback(event)

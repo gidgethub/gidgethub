@@ -104,12 +104,16 @@ async def test_dispatching():
 @pytest.mark.asyncio
 async def test_router_copy():
     router = routing.Router()
-    callback = Callback()
-    router.add(callback.meth, "something", extra=42)
+    deep_callback = Callback()
+    shallow_callback = Callback()
+    router.add(deep_callback.meth, "something", extra=42)
+    router.add(shallow_callback.meth, "something")
     event = sansio.Event({"extra": 42}, event="something", delivery_id="1234")
     await router.dispatch(event)
-    assert callback.called
-    callback.called = False
+    assert deep_callback.called
+    assert shallow_callback.called
+    deep_callback.called = shallow_callback.called = False
     other_router = routing.Router(router)
     await other_router.dispatch(event)
-    assert callback.called
+    assert deep_callback.called
+    assert shallow_callback.called
