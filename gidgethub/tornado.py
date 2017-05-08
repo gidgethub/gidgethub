@@ -1,4 +1,4 @@
-from typing import Mapping, Tuple
+from typing import Mapping, Optional, Tuple
 
 from tornado import gen
 from tornado import httpclient
@@ -12,8 +12,10 @@ class GitHubAPI(gh_abc.GitHubAPI):
                        body: bytes = b'') -> Tuple[int, Mapping, bytes]:
         """Make an HTTP request."""
         if method == "GET" and not body:
-            body = None
-        request = httpclient.HTTPRequest(url, method, headers, body)
+            real_body = None
+        else:
+            real_body = body
+        request = httpclient.HTTPRequest(url, method, headers, real_body)
         # Since Tornado has designed AsyncHTTPClient to be a singleton, there's
         # no reason not to simply instantiate it every time.
         client = httpclient.AsyncHTTPClient()
