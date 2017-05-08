@@ -1,4 +1,4 @@
-from typing import Mapping, Tuple
+from typing import Any, Mapping, Tuple
 
 from twisted.internet import defer
 from twisted.web.http_headers import Headers
@@ -9,7 +9,7 @@ from . import abc as gh_abc
 
 
 class GitHubAPI(gh_abc.GitHubAPI):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         from twisted.internet import reactor
         self._reactor = reactor
         super().__init__(*args, **kwargs)
