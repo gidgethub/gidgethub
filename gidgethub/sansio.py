@@ -12,7 +12,7 @@ import hmac
 import http
 import json
 import re
-from typing import Any, Mapping, Optional, Tuple, Type
+from typing import Any, Dict, Mapping, Optional, Tuple, Type
 import urllib.parse
 
 import uritemplate
@@ -21,7 +21,7 @@ from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
                RateLimitExceeded, RedirectionException, ValidationFailure)
 
 
-def _parse_content_type(content_type: str) -> Tuple[Optional[str], str]:
+def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str]:
     """Tease out the content-type and character encoding.
 
     A default character encoding of UTF-8 is used, so the content-type
@@ -36,7 +36,8 @@ def _parse_content_type(content_type: str) -> Tuple[Optional[str], str]:
         return type_, encoding
 
 
-def _decode_body(content_type: str, body: bytes, *, strict: bool = False) -> Any:
+def _decode_body(content_type: Optional[str], body: bytes,
+                 *, strict: bool = False) -> Any:
     """Decode an HTTP body based on the specified content type.
 
     If 'strict' is true, then raise ValueError if the content type
@@ -86,7 +87,8 @@ class Event:
         self.delivery_id = delivery_id
 
     @classmethod
-    def from_http(cls, headers: Mapping, body: bytes, *, secret=None) -> "Event":
+    def from_http(cls, headers: Mapping, body: bytes,
+                  *, secret: str = None) -> "Event":
         """Construct an event from HTTP headers and JSON body data.
 
         The mapping providing the headers is expected to support lowercase keys.
@@ -142,7 +144,8 @@ def accept_format(*, version: str = "v3", media: str = None, json: bool = True) 
     return accept
 
 
-def create_headers(requester: str, *, accept: str = accept_format(), oauth_token: str = None):
+def create_headers(requester: str, *, accept: str = accept_format(),
+                   oauth_token: str = None) -> Dict[str, str]:
     """Create a dict representing GitHub-specific header fields.
 
     The user agent is set according to who the requester is. GitHub asks it be
@@ -229,7 +232,7 @@ class RateLimit:
 _link_re = re.compile(r'\<(?P<uri>[^>]+)\>;\s*'
                       r'(?P<param_type>\w+)="(?P<param_value>\w+)"(,\s*)?')
 
-def _next_link(link: str) -> Optional[str]:
+def _next_link(link: Optional[str]) -> Optional[str]:
     # https://developer.github.com/v3/#pagination
     # https://tools.ietf.org/html/rfc5988
     if link is None:
@@ -311,4 +314,5 @@ def format_url(url: str, url_vars: Mapping[str, Any]) -> str:
     The dict provided in url_vars is used in URI template formatting.
     """
     url = urllib.parse.urljoin(DOMAIN, url)  # Works even if 'url' is fully-qualified.
-    return uritemplate.expand(url, var_dict=url_vars)
+    expanded_url: str = uritemplate.expand(url, var_dict=url_vars)
+    return expanded_url
