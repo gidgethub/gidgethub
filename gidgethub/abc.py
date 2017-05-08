@@ -13,7 +13,7 @@ class GitHubAPI(abc.ABC):
     def __init__(self, requester: str, *, oauth_token: str = None) -> None:
         self.requester = requester
         self.oauth_token = oauth_token
-        self.rate_limit: sansio.RateLimit = None
+        self.rate_limit: Optional[sansio.RateLimit] = None
 
     @abc.abstractmethod
     async def _request(self, method: str, url: str, headers: Mapping,
