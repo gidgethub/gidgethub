@@ -68,6 +68,8 @@ Changelog
 - Introduce ``gidgethub.routing`` to help route webhook events to registered
   asynchronous callbacks.
 
+- Add type hints.
+
 
 2.2.0
 '''''''''''''''''''
