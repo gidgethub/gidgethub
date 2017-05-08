@@ -15,7 +15,7 @@ before_install:
   - pip install -U pytest-cov sphinx mypy
 script:
   - pytest --cov=gidgethub
-  - mypy --ignore-missing-imports gidgethub/*.py
+  - mypy --ignore-missing-imports --strict gidgethub/*.py
   - sphinx-build -nW -q -b html -b linkcheck -d docs/_build/doctrees docs docs/_build/html
 after_success:
   - bash <(curl -s https://codecov.io/bash)
