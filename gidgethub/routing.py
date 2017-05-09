@@ -71,9 +71,7 @@ class Router:
             pass
         else:
             for data_key, data_values in details.items():
-                if data_key is None:
-                    continue
-                elif data_key in event.data:
+                if data_key in event.data:
                     event_value = event.data[data_key]
                     if event_value in data_values:
                         found_callbacks.extend(data_values[event_value])
