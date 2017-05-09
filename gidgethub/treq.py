@@ -1,4 +1,4 @@
-from typing import Mapping, Tuple
+from typing import Any, Mapping, Tuple
 
 from twisted.internet import defer
 from twisted.web.http_headers import Headers
@@ -9,12 +9,13 @@ from . import abc as gh_abc
 
 
 class GitHubAPI(gh_abc.GitHubAPI):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         from twisted.internet import reactor
         self._reactor = reactor
         super().__init__(*args, **kwargs)
 
-    async def _request(self, method, url, headers, body=b''):
+    async def _request(self, method: str, url: str, headers: Mapping,
+                       body: bytes = b'') -> Tuple[int, Mapping, bytes]:
         # We need to encode the headers to a format that Twisted will like.
         # As a note: treq will set a content-length even if we do, so we need
         # to strip any content-length header.
@@ -36,7 +37,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
         }
         return response.code, response_headers, await response.content()
 
-    async def sleep(self, seconds):
+    async def sleep(self, seconds: float) -> None:
         d = defer.Deferred()
         self._reactor.callLater(seconds, d.callback, None)
         await d
