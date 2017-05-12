@@ -113,11 +113,11 @@ class Event:
 
         try:
             data = _decode_body(headers["content-type"], body, strict=True)
-        except (KeyError, ValueError):
+        except (KeyError, ValueError) as exc:
             raise BadRequest(http.HTTPStatus(415),
                              "expected a content-type of "
                              "'application/json' or "
-                             "'application/x-www-form-urlencoded'")
+                             "'application/x-www-form-urlencoded'") from exc
         return cls(data, event=headers["x-github-event"],
                    delivery_id=headers["x-github-delivery"])
 

@@ -67,15 +67,9 @@ class TestEvent:
         self.check_event(event)
 
     def test_from_http_urlencoded(self):
-        payload = {"payload": json.dumps(self.data)}
-        body = urllib.parse.urlencode(payload).encode("UTF-8")
-        headers = {
-            "content-type": "application/x-www-form-urlencoded",
-            "x-github-event": "pull_request",
-            "x-github-delivery": "72d3162e-cc78-11e3-81ab-4c9367dc0958",
-        }
+        headers, body = sample("ping_urlencoded", 200)
         event = sansio.Event.from_http(headers, body)
-        self.check_event(event)
+        assert event.data["zen"] == "Keep it logically awesome."
 
     def test_from_http_no_content_type(self):
         """Only accept data when content-type is application/json."""
