@@ -1,0 +1,9 @@
+{
+    "host": "gidgethub-test.herokuapp.com",
+    "connection": "close",
+    "accept": "*/*",
+    "user-agent": "GitHub-Hookshot/0878b99",
+    "x-github-event": "ping",
+    "x-github-delivery": "44840d80-36a8-11e7-89d0-954e94e187c2",
+    "content-type": "application/x-www-form-urlencoded"
+}
