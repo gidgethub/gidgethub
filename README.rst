@@ -70,6 +70,8 @@ Changelog
 
 - Add type hints.
 
+- Add a *cache* argument to ``gidgethub.abc.GitHubAPI``.
+
 
 2.2.0
 '''''''''''''''''''

@@ -5,6 +5,7 @@ import types
 
 import pytest
 
+from .. import RedirectionException
 from .. import abc as gh_abc
 from .. import sansio
 
@@ -12,13 +13,15 @@ from .. import sansio
 class MockGitHubAPI(gh_abc.GitHubAPI):
 
     DEFAULT_HEADERS = {"x-ratelimit-limit": "2", "x-ratelimit-remaining": "1",
-                       "x-ratelimit-reset": "0"}
+                       "x-ratelimit-reset": "0",
+                       "content-type": "application/json"}
 
-    def __init__(self, status_code=200, headers=DEFAULT_HEADERS, body=b''):
+    def __init__(self, status_code=200, headers=DEFAULT_HEADERS, body=b'', *,
+                 cache=None):
         self.response_code = status_code
         self.response_headers = headers
         self.response_body = body
-        super().__init__("test_abc", oauth_token="oauth token")
+        super().__init__("test_abc", oauth_token="oauth token", cache=cache)
 
     async def _request(self, method, url, headers, body=b''):
         """Make an HTTP request."""
@@ -183,3 +186,86 @@ async def test_delete():
     data = await gh.delete("/fake")
     assert gh.method == "DELETE"
     assert data is None
+
+
+class TestCache:
+
+    @pytest.mark.asyncio
+    async def test_if_none_match_sent(self):
+        etag = "12345"
+        cache = {"https://api.github.com/fake": (etag, None, "hi", None)}
+        gh = MockGitHubAPI(cache=cache)
+        await gh.getitem("/fake")
+        assert "if-none-match" in gh.headers
+        assert gh.headers["if-none-match"] == etag
+
+
+    @pytest.mark.asyncio
+    async def test_etag_received(self):
+        cache = {}
+        etag = "12345"
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["etag"] = etag
+        gh = MockGitHubAPI(200, headers, b'42', cache=cache)
+        data = await gh.getitem("/fake")
+        url = "https://api.github.com/fake"
+        assert url in cache
+        assert cache[url] == (etag, None, 42, None)
+        assert data == cache[url][2]
+
+    @pytest.mark.asyncio
+    async def test_if_modified_since_sent(self):
+        last_modified = "12345"
+        cache = {"https://api.github.com/fake": (None, last_modified, "hi", None)}
+        gh = MockGitHubAPI(cache=cache)
+        await gh.getitem("/fake")
+        assert "if-modified-since" in gh.headers
+        assert gh.headers["if-modified-since"] == last_modified
+
+    @pytest.mark.asyncio
+    async def test_last_modified_received(self):
+        cache = {}
+        last_modified = "12345"
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["last-modified"] = last_modified
+        gh = MockGitHubAPI(200, headers, b'42', cache=cache)
+        data = await gh.getitem("/fake")
+        url = "https://api.github.com/fake"
+        assert url in cache
+        assert cache[url] == (None, last_modified, 42, None)
+        assert data == cache[url][2]
+
+    @pytest.mark.asyncio
+    async def test_hit(self):
+        url = "https://api.github.com/fake"
+        cache = {url: ("12345", "67890", 42, None)}
+        gh = MockGitHubAPI(304, cache=cache)
+        data = await gh.getitem(url)
+        assert data == 42
+
+    @pytest.mark.asyncio
+    async def test_miss(self):
+        url = "https://api.github.com/fake"
+        cache = {url: ("12345", "67890", 42, None)}
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["etag"] = "09876"
+        headers["last-modified"] = "54321"
+        gh = MockGitHubAPI(200, headers, body=b"-13", cache=cache)
+        data = await gh.getitem(url)
+        assert data == -13
+        assert cache[url] == ("09876", "54321", -13, None)
+
+    @pytest.mark.asyncio
+    async def test_ineligible(self):
+        cache = {}
+        gh = MockGitHubAPI(body=b"42", cache=cache)
+        url = "https://api.github.com/fake"
+        await gh.getitem(url)
+        assert url not in cache
+
+    @pytest.mark.asyncio
+    async def test_redirect_without_cache(self):
+        cache = {}
+        gh = MockGitHubAPI(304, cache=cache)
+        with pytest.raises(RedirectionException):
+            await gh.getitem("/fake")

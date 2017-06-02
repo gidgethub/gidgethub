@@ -24,12 +24,20 @@ does not require an update to the library, allowing one to use
 experimental APIs without issue.
 
 
-.. class:: GitHubAPI(requester, *, oauth_token=None)
+.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None)
 
     Provide an :py:term:`abstract base class` which abstracts out the
     HTTP library being used to send requests to GitHub. The class is
-    initialized with the requester's name and (optionally) their
-    OAuth token.
+    initialized with the requester's name and optionally their
+    OAuth token and a cache object.
+
+    To allow for
+    `conditional requests <https://developer.github.com/v3/#conditional-requests>`_,
+    one can provide a :class:`collections.abc.MutableMapping` object
+    for the *cache* argument to cache requests. It is up to the
+    caching object to provide any caching scheme that is desired
+    (e.g. the ``Cache`` classes provided by the
+    `cachetools package <https://pypi.org/project/cachetools/>`_).
 
     There are common arguments across methods that make requests to
     GitHub. The *url_vars* argument is used to perform
@@ -53,6 +61,9 @@ experimental APIs without issue.
         `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
         This leads to :exc:`~gidgethub.RateLimitExceeded` being raised
         when the rate limit has been execeeded.
+
+    .. versionchanged:: 2.3
+        Introduced the *cache* argument to the constructor.
 
 
     .. attribute:: requester

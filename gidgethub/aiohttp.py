@@ -1,5 +1,5 @@
 import asyncio
-from typing import Mapping, Tuple
+from typing import Any, Mapping, Tuple
 
 import aiohttp
 
@@ -8,7 +8,8 @@ from . import abc as gh_abc
 
 class GitHubAPI(gh_abc.GitHubAPI):
 
-    def __init__(self, session: aiohttp.ClientSession, *args, **kwargs) -> None:
+    def __init__(self, session: aiohttp.ClientSession, *args: Any,
+                 **kwargs: Any) -> None:
         self._session = session
         super().__init__(*args, **kwargs)
 
