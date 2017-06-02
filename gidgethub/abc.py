@@ -1,19 +1,26 @@
 """Provide an abstract base class for easier requests."""
 import abc
 import json
-from typing import Any, AsyncGenerator, Dict, Mapping, Tuple, Optional
+from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Tuple
+from typing import Optional as Opt
 
 from . import sansio
+
+
+# Value represents etag, last-modified, data, and next page.
+CACHE_TYPE = MutableMapping[str, Tuple[Opt[str], Opt[str], Any, Opt[str]]]
 
 
 class GitHubAPI(abc.ABC):
 
     """Provide an idiomatic API for making calls to GitHub's API."""
 
-    def __init__(self, requester: str, *, oauth_token: str = None) -> None:
+    def __init__(self, requester: str, *, oauth_token: Opt[str] = None,
+                 cache: Opt[CACHE_TYPE] = None) -> None:
         self.requester = requester
         self.oauth_token = oauth_token
-        self.rate_limit: Optional[sansio.RateLimit] = None
+        self._cache = cache
+        self.rate_limit: Opt[sansio.RateLimit] = None
 
     @abc.abstractmethod
     async def _request(self, method: str, url: str, headers: Mapping,
@@ -25,15 +32,26 @@ class GitHubAPI(abc.ABC):
         """Sleep for the specified number of seconds."""
 
     async def _make_request(self, method: str, url: str, url_vars: Dict,
-                            data: Any, accept: str) -> Tuple[bytes, Optional[str]]:
+                            data: Any, accept: str) -> Tuple[bytes, Opt[str]]:
         """Construct and make an HTTP request."""
         filled_url = sansio.format_url(url, url_vars)
         request_headers = sansio.create_headers(self.requester, accept=accept,
                                                 oauth_token=self.oauth_token)
+        etag = last_modified = None
         # Can't use None as a "no body" sentinel as it's a legitimate JSON type.
         if data == b"":
             body = b""
             request_headers["content-length"] = "0"
+            if method == "GET" and self._cache is not None:
+                try:
+                    etag, last_modified, data, more = self._cache[filled_url]
+                except KeyError:
+                    pass
+                else:
+                    if etag is not None:
+                        request_headers["if-none-match"] = etag
+                    if last_modified is not None:
+                        request_headers["if-modified-since"] = last_modified
         else:
             charset = "utf-8"
             body = json.dumps(data).encode(charset)
@@ -42,7 +60,14 @@ class GitHubAPI(abc.ABC):
         if self.rate_limit is not None:
             self.rate_limit.remaining -= 1
         response = await self._request(method, filled_url, request_headers, body)
-        data, self.rate_limit, more = sansio.decipher_response(*response)
+        if response[0] != 304 or (etag is None and last_modified is None):
+            data, self.rate_limit, more = sansio.decipher_response(*response)
+            has_cache_details = ("etag" in response[1]
+                                 or "last-modified" in response[1])
+            if self._cache is not None and has_cache_details:
+                etag = response[1].get("etag")
+                last_modified = response[1].get("last-modified")
+                self._cache[filled_url] = etag, last_modified, data, more
         return data, more
 
     async def getitem(self, url: str, url_vars: Dict = {},
