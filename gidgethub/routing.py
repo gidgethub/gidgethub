@@ -3,7 +3,7 @@ from typing import Any, Awaitable, Callable, Dict, List, Optional
 from . import sansio
 
 
-AsyncCallback = Callable[[sansio.Event], Awaitable[None]]
+AsyncCallback = Callable[..., Awaitable[None]]
 
 
 class Router:
