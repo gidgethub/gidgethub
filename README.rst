@@ -58,7 +58,7 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-2.3.0 (in development)
+2.3.0
 ''''''''''''''''''''''
 
 - Add support for ``application/x-www-form-urlencoded`` webhook event payloads.
