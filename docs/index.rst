@@ -14,10 +14,11 @@ took a `sans-I/O approach <https://sans-io.readthedocs.io/>`_ to their
 design. Because of that, this project was created.
 
 This project has three primary layers to it. The base layer is
-:mod:`gidgethub.sansio` which provides the tools necessary to work
-with GitHub's API. The next layer up is :mod:`gidgethub.abc` which
-provides an abstract base class for a cleaner, unified API. Finally,
-the top layer is using an implementation of the abstract base class,
+:mod:`gidgethub.sansio` and :mod:`gidgethub.routing` which provide the
+tools necessary to work with GitHub's API. The next layer up is
+:mod:`gidgethub.abc` which provides an abstract base class for a
+cleaner, unified API. Finally, the top layer is using an
+implementation of the abstract base class,
 e.g. :mod:`gidgethub.aiohttp`.
 
 The vast majority of users will want to use one of the concrete
