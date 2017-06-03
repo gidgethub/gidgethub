@@ -26,12 +26,12 @@ in user code.
     are then used to construct a server-wide router.
 
     Each callback registered with this class is expected to be
-    :term:`awaitable` and to accept a single
+    :term:`awaitable` and to accept at least a single
     :class:`~gidgethub.sansio.Event` instance:
 
     .. code-block:: python
 
-        async def callback(event):
+        async def callback(event, *args, **kwargs):
             ...
 
 
@@ -71,6 +71,11 @@ in user code.
                 ...
 
 
-    .. coroutine:: dispatch(event)
+    .. coroutine:: dispatch(event, *args, **kwargs)
 
         Call the appropriate asynchronous callbacks for the *event*.
+        The provided event and any other arguments will be passed
+        down to the callback unmodified.
+
+        .. versionchanged:: 2.4
+            Added ``*args`` and ``**kwargs``.

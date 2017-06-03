@@ -57,7 +57,8 @@ class Router:
             return func
         return decorator
 
-    async def dispatch(self, event: sansio.Event) -> None:
+    async def dispatch(self, event: sansio.Event, *args: Any,
+                       **kwargs: Any) -> None:
         """Dispatch an event to all registered function(s)."""
 
         found_callbacks = []
@@ -76,4 +77,4 @@ class Router:
                     if event_value in data_values:
                         found_callbacks.extend(data_values[event_value])
         for callback in found_callbacks:
-            await callback(event)
+            await callback(event, *args, **kwargs)

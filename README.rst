@@ -58,10 +58,10 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-2.3.1 (in development)
+2.4.0
 ''''''''''''''''''''''
 
-N/A
+- Expand ``gidgethub.routing.Router.dispatch()``.
 
 
 2.3.0
