@@ -9,9 +9,11 @@ class Callback:
     def __init__(self):
         self.called = False
 
-    async def meth(self, event):
+    async def meth(self, event, *args, **kwargs):
         self.called = True
         self.event = event
+        self.args = args
+        self.kwargs = kwargs
 
 
 @pytest.mark.asyncio
@@ -23,6 +25,11 @@ async def test_shallow_callback():
     await router.dispatch(event)
     assert callback.called
     assert callback.event == event
+    assert not callback.args
+    assert not callback.kwargs
+    await router.dispatch(event, 42, hello="world")
+    assert callback.args == (42,)
+    assert callback.kwargs == {"hello": "world"}
 
 
 @pytest.mark.asyncio
@@ -34,6 +41,8 @@ async def test_deep_callback():
     await router.dispatch(event)
     assert callback.called
     assert callback.event == event
+    assert not callback.args
+    assert not callback.kwargs
 
 
 def test_too_much_detail():

@@ -13,7 +13,7 @@ long_description = pathlib.Path("README.rst").read_text("utf-8")
 
 setuptools.setup(
     name="gidgethub",
-    version="2.3.1.dev1",
+    version="2.4.0",
     description="An async GitHub API library",
     long_description=long_description,
     url="https://gidgethub.readthedocs.io",
