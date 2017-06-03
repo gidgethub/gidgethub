@@ -3,6 +3,8 @@
 
 .. module:: gidgethub.routing
 
+.. versionadded:: 2.3
+
 When a single web service is used to perform multiple actions based on
 a single
 `webhook event <https://developer.github.com/webhooks/#events>`_, it
