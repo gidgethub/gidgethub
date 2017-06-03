@@ -269,3 +269,11 @@ class TestCache:
         gh = MockGitHubAPI(304, cache=cache)
         with pytest.raises(RedirectionException):
             await gh.getitem("/fake")
+
+    @pytest.mark.asyncio
+    async def test_no_cache(self):
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["etag"] = "09876"
+        headers["last-modified"] = "54321"
+        gh = MockGitHubAPI(headers=headers)
+        await gh.getitem("/fake")  # No exceptions.
