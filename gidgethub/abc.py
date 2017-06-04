@@ -37,14 +37,16 @@ class GitHubAPI(abc.ABC):
         filled_url = sansio.format_url(url, url_vars)
         request_headers = sansio.create_headers(self.requester, accept=accept,
                                                 oauth_token=self.oauth_token)
-        etag = last_modified = None
+        cached = cacheable = False
         # Can't use None as a "no body" sentinel as it's a legitimate JSON type.
         if data == b"":
             body = b""
             request_headers["content-length"] = "0"
             if method == "GET" and self._cache is not None:
+                cacheable = True
                 try:
                     etag, last_modified, data, more = self._cache[filled_url]
+                    cached = True
                 except KeyError:
                     pass
                 else:
@@ -60,11 +62,11 @@ class GitHubAPI(abc.ABC):
         if self.rate_limit is not None:
             self.rate_limit.remaining -= 1
         response = await self._request(method, filled_url, request_headers, body)
-        if response[0] != 304 or (etag is None and last_modified is None):
+        if not (response[0] == 304 and cached):
             data, self.rate_limit, more = sansio.decipher_response(*response)
             has_cache_details = ("etag" in response[1]
                                  or "last-modified" in response[1])
-            if self._cache is not None and has_cache_details:
+            if cacheable and has_cache_details:
                 etag = response[1].get("etag")
                 last_modified = response[1].get("last-modified")
                 self._cache[filled_url] = etag, last_modified, data, more

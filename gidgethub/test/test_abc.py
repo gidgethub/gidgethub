@@ -258,9 +258,12 @@ class TestCache:
     @pytest.mark.asyncio
     async def test_ineligible(self):
         cache = {}
-        gh = MockGitHubAPI(body=b"42", cache=cache)
+        gh = MockGitHubAPI(cache=cache)
         url = "https://api.github.com/fake"
-        await gh.getitem(url)
+        # Only way to force a GET request with a body.
+        await gh._make_request("GET", url, {}, 42, "asdf")
+        assert url not in cache
+        await gh.post(url, data=42)
         assert url not in cache
 
     @pytest.mark.asyncio
@@ -276,4 +279,4 @@ class TestCache:
         headers["etag"] = "09876"
         headers["last-modified"] = "54321"
         gh = MockGitHubAPI(headers=headers)
-        await gh.getitem("/fake")  # No exceptions.
+        await gh.getitem("/fake")  # No exceptions raised.
