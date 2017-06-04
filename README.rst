@@ -58,6 +58,12 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
+2.4.1
+'''''
+
+- Tighten up protections against caching ineligible responses.
+
+
 2.4.0
 ''''''''''''''''''''''
 
