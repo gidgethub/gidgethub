@@ -398,3 +398,9 @@ class TestFormatUrl:
         url = sansio.format_url("/users/octocat/gists{/gist_id}",
                                 template_data)
         assert url == "https://api.github.com/users/octocat/gists/1234"
+
+    def test_quoting(self):
+        template_url = 'https://api.github.com/repos/python/cpython/labels{/name}'
+        label = {'name': 'CLA signed'}
+        url = sansio.format_url(template_url, label)
+        assert url =='https://api.github.com/repos/python/cpython/labels/CLA%20signed'

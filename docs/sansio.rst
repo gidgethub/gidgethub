@@ -239,3 +239,4 @@ Utilities
 
     The dict provided in *url_vars* is used in
     `URI template expansion <https://developer.github.com/v3/#hypermedia>`_.
+    Appropriate URL quoting is automatically done on the values of the dict.

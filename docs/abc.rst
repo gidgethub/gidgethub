@@ -41,13 +41,14 @@ experimental APIs without issue.
 
     There are common arguments across methods that make requests to
     GitHub. The *url_vars* argument is used to perform
-    `URI template expansion <https://developer.github.com/v3/#hypermedia>`_.
-    The *accept* argument specifies what response format is acceptable
-    and can be constructed by using
-    :func:`gidgethub.sansio.accept_format`. For methods that send data
-    to GitHub, there is a *data* argument which accepts an object
-    which can be serialized to JSON (because ``None`` is a legitimate
-    JSON value, ``""`` is used to represent no data).
+    `URI template expansion <https://developer.github.com/v3/#hypermedia>`_
+    via :func:`gidgethub.sansio.format_url`.The *accept* argument
+    specifies what response format is acceptable and can be
+    constructed by using :func:`gidgethub.sansio.accept_format`. For
+    methods that send data to GitHub, there is a *data* argument which
+    accepts an object which can be serialized to JSON (because
+    ``None`` is a legitimate JSON value, ``""`` is used to represent
+    no data).
 
     The returned value for GitHub requests is the decoded body of the
     response according to :func:`gidgethub.sansio.decipher_response`.
