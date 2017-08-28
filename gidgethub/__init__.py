@@ -1,5 +1,9 @@
+"An async GitHub API library"
+
 import http
 from typing import Any
+
+__version__ = "2.4.2.dev1"
 
 
 class GitHubException(Exception):
