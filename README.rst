@@ -61,7 +61,8 @@ Changelog
 2.4.2 (under development)
 '''''''''''''''''''''''''
 
-- N/A
+- Tighten type hints for parameters that have a default of ``None``
+  but were not typed as ``Optional``.
 
 
 2.4.1

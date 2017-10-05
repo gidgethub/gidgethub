@@ -88,7 +88,7 @@ class Event:
 
     @classmethod
     def from_http(cls, headers: Mapping, body: bytes,
-                  *, secret: str = None) -> "Event":
+                  *, secret: Optional[str] = None) -> "Event":
         """Construct an event from HTTP headers and JSON body data.
 
         The mapping providing the headers is expected to support lowercase keys.
@@ -122,7 +122,8 @@ class Event:
                    delivery_id=headers["x-github-delivery"])
 
 
-def accept_format(*, version: str = "v3", media: str = None, json: bool = True) -> str:
+def accept_format(*, version: str = "v3", media: Optional[str] = None,
+                  json: bool = True) -> str:
     """Construct the specification of the format that a request should return.
 
     The version argument defaults to v3 of the GitHub API and is applicable to
@@ -145,7 +146,7 @@ def accept_format(*, version: str = "v3", media: str = None, json: bool = True) 
 
 
 def create_headers(requester: str, *, accept: str = accept_format(),
-                   oauth_token: str = None) -> Dict[str, str]:
+                   oauth_token: Optional[str] = None) -> Dict[str, str]:
     """Create a dict representing GitHub-specific header fields.
 
     The user agent is set according to who the requester is. GitHub asks it be
