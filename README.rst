@@ -64,6 +64,8 @@ Changelog
 - Tighten type hints for parameters that have a default of ``None``
   but were not typed as ``Optional``.
 
+- Tweak code to not change semantics but reach 100% coverage.
+
 
 2.4.1
 '''''
