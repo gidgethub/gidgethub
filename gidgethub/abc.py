@@ -66,10 +66,9 @@ class GitHubAPI(abc.ABC):
             data, self.rate_limit, more = sansio.decipher_response(*response)
             has_cache_details = ("etag" in response[1]
                                  or "last-modified" in response[1])
-            if cacheable and has_cache_details:
+            if self._cache is not None and cacheable and has_cache_details:
                 etag = response[1].get("etag")
                 last_modified = response[1].get("last-modified")
-                # 'cacheable' guarantees self._cache is not None.
                 self._cache[filled_url] = etag, last_modified, data, more
         return data, more
 
