@@ -58,13 +58,16 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-2.4.2 (under development)
+2.5.0 (under development)
 '''''''''''''''''''''''''
 
 - Tighten type hints for parameters that have a default of ``None``
   but were not typed as ``Optional``.
 
 - Tweak code to not change semantics but reach 100% coverage.
+
+- Provide a human-readable string representation of
+  ``gidgethub.sansio.RateLimit``.
 
 
 2.4.1

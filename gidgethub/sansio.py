@@ -217,6 +217,10 @@ class RateLimit:
             now = datetime.datetime.now(datetime.timezone.utc)
             return now > self.reset_datetime
 
+    def __str__(self) -> str:
+        """Provide all details in a reasonable format."""
+        return f"< {self.remaining:,}/{self.limit:,} until {self.reset_datetime} >"
+
     @classmethod
     def from_http(cls, headers: Mapping) -> "RateLimit":
         """Gather rate limit information from HTTP headers.
