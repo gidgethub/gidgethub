@@ -66,6 +66,9 @@ Changelog
 
 - Tweak code to not change semantics but reach 100% coverage.
 
+- Provide a human-readable string representation of
+  ``gidgethub.sansio.RateLimit``.
+
 
 2.4.1
 '''''

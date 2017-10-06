@@ -208,6 +208,16 @@ class TestRateLimit:
         assert rate_limit.remaining == left
         assert rate_limit.reset_datetime == reset
 
+    def test___str__(self):
+        left = 4200
+        rate = 65000
+        reset = datetime.datetime.now(datetime.timezone.utc)
+        message = str(sansio.RateLimit(limit=rate, remaining=left,
+                                       reset_epoch=reset.timestamp()))
+        assert format(left, ',') in message
+        assert format(rate, ',') in message
+        assert str(reset) in message
+
 
 def sample(directory, status_code):
     # pytest doesn't set __spec__.origin :(
