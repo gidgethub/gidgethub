@@ -256,16 +256,6 @@ class TestCache:
         assert cache[url] == ("09876", "54321", -13, None)
 
     @pytest.mark.asyncio
-    async def test_miss_no_caching(self):
-        url = "https://api.github.com/fake"
-        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
-        headers["etag"] = "09876"
-        headers["last-modified"] = "54321"
-        gh = MockGitHubAPI(200, headers, body=b"-13", cache=None)
-        data = await gh.getitem(url)
-        assert data == -13
-
-    @pytest.mark.asyncio
     async def test_ineligible(self):
         cache = {}
         gh = MockGitHubAPI(cache=cache)

@@ -69,8 +69,8 @@ class GitHubAPI(abc.ABC):
             if cacheable and has_cache_details:
                 etag = response[1].get("etag")
                 last_modified = response[1].get("last-modified")
-                if self._cache is not None:
-                    self._cache[filled_url] = etag, last_modified, data, more
+                # 'cacheable' guarantees self._cache is not None.
+                self._cache[filled_url] = etag, last_modified, data, more
         return data, more
 
     async def getitem(self, url: str, url_vars: Dict = {},
