@@ -1,3 +1,6 @@
+"""An async GitHub API library"""
+__version__ = '2.5.0.dev'
+
 import http
 from typing import Any
 
