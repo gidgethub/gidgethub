@@ -66,7 +66,7 @@ without requiring the use of the :class:`Event` class.
       The *headers* mapping is expected to support lowercase keys.
 
       Since this method assumes the body of the HTTP request is only of the
-      [content type that GitHub sends](https://developer.github.com/webhooks/creating/#content-type),
+      `content type that GitHub sends <https://developer.github.com/webhooks/creating/#content-type>`__),
       :exc:`~gidgethub.BadRequest` is raised if the content type is
       unexpected.
 
