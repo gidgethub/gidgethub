@@ -135,7 +135,7 @@ Changelog
 - More robustly decode the body in ``gidgethub.sansio.Event.from_http()``
   (i.e. if the ``content-type`` doesn't specify ``charset``, assume ``UTF-8``).
 - Changed the signature of ``gidgethub.sansio.Event`` to accept ``Any`` for
-  the *data* argment.
+  the *data* argument.
 - Fixed signature verification
 
 
