@@ -374,7 +374,7 @@ class TestDecipherResponse:
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/6395"
 
     def test_text_body(self):
-        """Test requsting non-JSON data like a diff."""
+        """Test requesting non-JSON data like a diff."""
         status_code = 200
         headers, body = sample("pr_diff", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers,
