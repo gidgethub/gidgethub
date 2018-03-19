@@ -290,9 +290,12 @@ def decipher_response(status_code: int, headers: Mapping,
                 if not rate_limit.remaining:
                     raise RateLimitExceeded(rate_limit, message)
             elif status_code == 422:
-                errors = data["errors"]
-                fields = ", ".join(repr(e["field"]) for e in errors)
-                message = f"{message} for {fields}"
+                errors = data.get("errors", None)
+                if errors:
+                    fields = ", ".join(repr(e["field"]) for e in errors)
+                    message = f"{message} for {fields}"
+                else:
+                    message = data["message"]
                 raise InvalidField(errors, message)
         elif status_code >= 300:
             exc_type = RedirectionException

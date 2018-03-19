@@ -2,7 +2,7 @@ import datetime
 import http
 import json
 import pathlib
-import urllib.parse
+
 
 import pytest
 
@@ -296,6 +296,17 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "it went bad for 'title'"
+
+    def test_422_no_errors_object(self):
+        status_code = 422
+        body = json.dumps({"message": "Reference does not exist",
+                           "documentation_url": "https://developer.github.com/v3/git/refs/#delete-a-reference"})
+        body = body.encode("utf-8")
+        headers = {"content-type": "application/json; charset=utf-8"}
+        with pytest.raises(InvalidField) as exc_info:
+            sansio.decipher_response(status_code, headers, body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert str(exc_info.value) == "Reference does not exist"
 
     def test_3XX(self):
         status_code = 301

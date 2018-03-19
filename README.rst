@@ -68,6 +68,9 @@ Changelog
 
 - Provide a human-readable string representation of
   ``gidgethub.sansio.RateLimit``.
+  
+- Use the `message` data as the error message, if the `errors` object
+  was not returned.
 
 
 2.4.1
