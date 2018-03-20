@@ -1,5 +1,5 @@
 gidgethub
-==========
+=========
 An asynchronous `GitHub API <https://developer.github.com/>`_ library.
 
 
@@ -69,8 +69,10 @@ Changelog
 - Provide a human-readable string representation of
   ``gidgethub.sansio.RateLimit``.
   
-- Use the `message` data as the error message, if the `errors` object
+- Use the ``message`` data as the error message, if the ``errors`` object
   was not returned.
+
+- Add *data* keyword argument to ``gidgethub.abc.GitHubAPI.delete``.
 
 
 2.4.1
@@ -80,13 +82,13 @@ Changelog
 
 
 2.4.0
-''''''''''''''''''''''
+'''''
 
 - Expand ``gidgethub.routing.Router.dispatch()``.
 
 
 2.3.0
-''''''''''''''''''''''
+'''''
 
 - Add support for ``application/x-www-form-urlencoded`` webhook event payloads.
   (This also allows for API calls to return this content type, although GitHub
@@ -101,7 +103,7 @@ Changelog
 
 
 2.2.0
-'''''''''''''''''''
+'''''
 
 - Introduce ``gidgethub.tornado`` to support
   `Tornado <http://www.tornadoweb.org/>`_ (thanks to
@@ -109,7 +111,7 @@ Changelog
 
 
 2.1.0
-''''''''''''''''''''''
+'''''
 
 - The default value for the *data* argument of ``gidgethub.abc.GitHubAPI.put()``
   was changed from ``""`` to ``b""``.
@@ -118,7 +120,7 @@ Changelog
 
 
 2.0.0
-''''''''''''''''''''''
+'''''
 
 - Renamed ``gidgethub.abc._sleep()`` to ``sleep()`` to make the method public.
 - Renamed the "test" extra to "tests" and added the "dev" extra.
@@ -130,7 +132,7 @@ Changelog
 
 
 1.2.0
-''''''''''''''''''''''
+'''''
 
 - ``gidgethub.sansio.Event.from_http()`` raises a ``BadRequest`` of ``415``
   instead of ``400`` when a content-type other than ``application/json``
@@ -139,7 +141,7 @@ Changelog
   (i.e. if the ``content-type`` doesn't specify ``charset``, assume ``UTF-8``).
 - Changed the signature of ``gidgethub.sansio.Event`` to accept ``Any`` for
   the *data* argument.
-- Fixed signature verification
+- Fixed signature verification.
 
 
 1.1.0

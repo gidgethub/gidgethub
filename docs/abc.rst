@@ -151,6 +151,6 @@ experimental APIs without issue.
         will return no content, leading to ``None`` being returned.
 
 
-    .. coroutine:: delete(url, url_vars={}, *, accept=sansio.accept_format())
+    .. coroutine:: delete(url, url_vars={}, *, data=b"", accept=sansio.accept_format())
 
         Send a ``DELETE`` request to GitHub.
