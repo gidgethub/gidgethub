@@ -21,6 +21,9 @@ cleaner, unified API. Finally, the top layer is using an
 implementation of the abstract base class,
 e.g. :mod:`gidgethub.aiohttp`.
 
+Motivation
+----------
+
 The vast majority of users will want to use one of the concrete
 implementations, but for those that have an HTTP library which is not
 supported or simply want the base tools, this library will still be
@@ -42,6 +45,7 @@ to use new features of the GitHub API.
 
 Installation
 ------------
+
 `Gidgethub is on PyPI <https://pypi.org/project/gidgethub/>`_.
 ::
 
