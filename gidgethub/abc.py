@@ -104,6 +104,6 @@ class GitHubAPI(abc.ABC):
         data, _ = await self._make_request("PUT", url, url_vars, data, accept)
         return data
 
-    async def delete(self, url: str, url_vars: Dict = {}, *,
+    async def delete(self, url: str, url_vars: Dict = {}, *, data: Any = b"",
                      accept: str = sansio.accept_format()) -> None:
-        await self._make_request("DELETE", url, url_vars, b"", accept)
+        await self._make_request("DELETE", url, url_vars, data, accept)

@@ -182,10 +182,18 @@ async def test_put():
 
 @pytest.mark.asyncio
 async def test_delete():
-    gh = MockGitHubAPI()
-    data = await gh.delete("/fake")
+    send = [1, 2, 3]
+    send_json = json.dumps(send).encode("utf-8")
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    data = await gh.delete("/fake", data=send)
     assert gh.method == "DELETE"
-    assert data is None
+    assert gh.headers['content-type'] == "application/json; charset=utf-8"
+    assert gh.body == send_json
+    assert gh.headers['content-length'] == str(len(send_json))
 
 
 class TestCache:
