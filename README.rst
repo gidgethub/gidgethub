@@ -58,8 +58,8 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-2.5.0 (under development)
-'''''''''''''''''''''''''
+2.5.0
+'''''
 
 - Tighten type hints for parameters that have a default of ``None``
   but were not typed as ``Optional``.
