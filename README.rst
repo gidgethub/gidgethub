@@ -68,11 +68,11 @@ Changelog
 
 - Provide a human-readable string representation of
   ``gidgethub.sansio.RateLimit``.
-  
-- Use the ``message`` data as the error message, if the ``errors`` object
-  was not returned.
 
-- Add *data* keyword argument to ``gidgethub.abc.GitHubAPI.delete``.
+- Use the ``message`` data as the error message
+  if the ``errors`` object was not returned.
+
+- Add the *data* keyword argument to ``gidgethub.abc.GitHubAPI.delete``.
 
 
 2.4.1
