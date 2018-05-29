@@ -12,8 +12,8 @@ Development status
 .. image:: https://codecov.io/gh/brettcannon/gidgethub/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/brettcannon/gidgethub
 
-.. image:: https://readthedocs.org/projects/gidgethub/badge/?version=stable
-    :target: http://gidgethub.readthedocs.io/en/stable/?badge=stable
+.. image:: https://readthedocs.org/projects/gidgethub/badge/?version=latest
+    :target: http://gidgethub.readthedocs.io/en/stable/?badge=latest
     :alt: Documentation Status
 
 
