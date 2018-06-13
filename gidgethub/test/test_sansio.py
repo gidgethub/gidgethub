@@ -218,6 +218,11 @@ class TestRateLimit:
         assert format(rate, ',') in message
         assert str(reset) in message
 
+    def test_from_http_no_ratelimit(self):
+        headers = {}
+        rate_limit = sansio.RateLimit.from_http(headers)
+        assert rate_limit is None
+
 
 def sample(directory, status_code):
     # pytest doesn't set __spec__.origin :(
@@ -394,6 +399,24 @@ class TestDecipherResponse:
         assert rate_limit.remaining == 43
         assert data.startswith("diff --git")
 
+    def test_no_ratelimit(self):
+        """Test no ratelimit in headers."""
+        status_code = 201
+        headers = {"content-type": "application/json; charset=utf-8",
+                   "link": "<http://example.com>; test=\"unimportant\""}
+        data = {
+            "id": 208045946,
+            "url": "https://api.github.com/repos/octocat/Hello-World/labels/bug",
+            "name": "bug",
+            "color": "f29513",
+            "default": True
+        }
+        body = json.dumps(data).encode("UTF-8")
+        returned_data, rate_limit, more = sansio.decipher_response(status_code,
+                                                                   headers, body)
+        assert more is None
+        assert rate_limit is None
+        assert returned_data == data
 
 class TestFormatUrl:
 

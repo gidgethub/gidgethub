@@ -222,16 +222,19 @@ class RateLimit:
         return f"< {self.remaining:,}/{self.limit:,} until {self.reset_datetime} >"
 
     @classmethod
-    def from_http(cls, headers: Mapping) -> "RateLimit":
+    def from_http(cls, headers: Mapping) -> Optional["RateLimit"]:
         """Gather rate limit information from HTTP headers.
 
         The mapping providing the headers is expected to support lowercase
-        keys.
+        keys.  Returns ``None`` if ratelimit info is not found in the headers.
         """
-        limit = int(headers["x-ratelimit-limit"])
-        remaining = int(headers["x-ratelimit-remaining"])
-        reset_epoch = float(headers["x-ratelimit-reset"])
-        return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
+        try:
+            limit = int(headers["x-ratelimit-limit"])
+            remaining = int(headers["x-ratelimit-remaining"])
+            reset_epoch = float(headers["x-ratelimit-reset"])
+            return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
+        except KeyError:
+            return None
 
 
 _link_re = re.compile(r'\<(?P<uri>[^>]+)\>;\s*'
@@ -251,7 +254,7 @@ def _next_link(link: Optional[str]) -> Optional[str]:
 
 
 def decipher_response(status_code: int, headers: Mapping,
-                      body: bytes) -> Tuple[Any, RateLimit, Optional[str]]:
+                      body: bytes) -> Tuple[Any, Optional[RateLimit], Optional[str]]:
     """Decipher an HTTP response for a GitHub API request.
 
     The mapping providing the headers is expected to support lowercase keys.
@@ -287,7 +290,7 @@ def decipher_response(status_code: int, headers: Mapping,
             exc_type = BadRequest
             if status_code == 403:
                 rate_limit = RateLimit.from_http(headers)
-                if not rate_limit.remaining:
+                if rate_limit and not rate_limit.remaining:
                     raise RateLimitExceeded(rate_limit, message)
             elif status_code == 422:
                 errors = data.get("errors", None)

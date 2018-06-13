@@ -184,7 +184,7 @@ that are provided to you. Continuing from the example in the Requests_ section::
         The maximum limit of requests per hour the requester can make.
 
 
-    .. attribute: remaining
+    .. attribute:: remaining
 
         How many requests are left for the request until their quota is reset.
 
@@ -195,10 +195,10 @@ that are provided to you. Continuing from the example in the Requests_ section::
         quota is refreshed. The object is timezone-aware to UTC.
 
 
-    .. classmethod: from_http(headers)
+    .. classmethod:: from_http(headers)
 
         Create a :class:`RateLimit` instance from the HTTP headers of a GitHub API
-        response.
+        response.  Returns ``None`` if the ratelimit is not found in the headers.
 
 
 .. function:: decipher_response(status_code, headers, body)
