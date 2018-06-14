@@ -232,9 +232,10 @@ class RateLimit:
             limit = int(headers["x-ratelimit-limit"])
             remaining = int(headers["x-ratelimit-remaining"])
             reset_epoch = float(headers["x-ratelimit-reset"])
-            return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
         except KeyError:
             return None
+        else:
+            return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
 
 
 _link_re = re.compile(r'\<(?P<uri>[^>]+)\>;\s*'
