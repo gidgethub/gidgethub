@@ -61,6 +61,9 @@ Changelog
 2.5.1 (in development)
 ''''''''''''''''''''''
 
+- ``gidgethub.sansio.RateLimit.from_http`` returns ``None`` if ratelimit is
+  not found in the headers.
+
 2.5.0
 '''''
 
