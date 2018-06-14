@@ -418,6 +418,7 @@ class TestDecipherResponse:
         assert rate_limit is None
         assert returned_data == data
 
+
 class TestFormatUrl:
 
     def test_absolute_url(self):
