@@ -13,7 +13,7 @@ Development status
     :target: https://codecov.io/gh/brettcannon/gidgethub
 
 .. image:: https://readthedocs.org/projects/gidgethub/badge/?version=latest
-    :target: http://gidgethub.readthedocs.io/en/stable/?badge=latest
+    :target: http://gidgethub.readthedocs.io/en/latest/
     :alt: Documentation Status
 
 
