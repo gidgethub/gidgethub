@@ -58,7 +58,7 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-2.5.1 (in development)
+3.0.0 (in development)
 ''''''''''''''''''''''
 
 - ``gidgethub.sansio.RateLimit.from_http`` returns ``None`` if ratelimit is
