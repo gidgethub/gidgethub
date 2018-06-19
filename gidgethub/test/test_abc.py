@@ -17,11 +17,11 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
                        "content-type": "application/json"}
 
     def __init__(self, status_code=200, headers=DEFAULT_HEADERS, body=b'', *,
-                 cache=None):
+                 cache=None, oauth_token=None, jwt=None):
         self.response_code = status_code
         self.response_headers = headers
         self.response_body = body
-        super().__init__("test_abc", oauth_token="oauth token", cache=cache)
+        super().__init__("test_abc", oauth_token=oauth_token, cache=cache, jwt=jwt)
 
     async def _request(self, method, url, headers, body=b''):
         """Make an HTTP request."""
@@ -56,11 +56,46 @@ async def test_url_formatted():
 async def test_headers():
     """Appropriate headers are created."""
     accept = sansio.accept_format()
-    gh = MockGitHubAPI()
+    gh = MockGitHubAPI(oauth_token="oauth token")
     await gh._make_request("GET", "/rate_limit", {}, "", accept)
     assert gh.headers["user-agent"] == "test_abc"
     assert gh.headers["accept"] == accept
     assert gh.headers["authorization"] == "token oauth token"
+
+
+@pytest.mark.asyncio
+async def test_auth_headers_with_passed_token():
+    """Test the authorization header with the passed oauth_token"""
+    accept = sansio.accept_format()
+    gh = MockGitHubAPI()
+    await gh._make_request("GET", "/rate_limit", {}, "", accept,
+                           auth_type="oauth", token="oauth token")
+    assert gh.headers["user-agent"] == "test_abc"
+    assert gh.headers["accept"] == accept
+    assert gh.headers["authorization"] == "token oauth token"
+
+
+@pytest.mark.asyncio
+async def test_auth_headers_with_passed_jwt():
+    """Test the authorization header with the passed jwt"""
+    accept = sansio.accept_format()
+    gh = MockGitHubAPI()
+    await gh._make_request("GET", "/rate_limit", {}, "", accept,
+                           auth_type="jwt", token="json web token")
+    assert gh.headers["user-agent"] == "test_abc"
+    assert gh.headers["accept"] == accept
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
+@pytest.mark.asyncio
+async def test_auth_headers_with_initialized_jwt():
+    """Test the authorization header using the jwt initialized in the API"""
+    accept = sansio.accept_format()
+    gh = MockGitHubAPI(jwt="json web token")
+    await gh._make_request("GET", "/rate_limit", {}, "", accept, auth_type="jwt")
+    assert gh.headers["user-agent"] == "test_abc"
+    assert gh.headers["accept"] == accept
+    assert gh.headers["authorization"] == "bearer json web token"
 
 
 @pytest.mark.asyncio
@@ -111,6 +146,32 @@ async def test_getitem():
 
 
 @pytest.mark.asyncio
+async def test_getitem_with_initialized_jwt():
+    original_data = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=UTF-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(original_data).encode("utf8"),
+                       jwt="json web token")
+    await gh.getitem("/fake", auth_type="jwt")
+    assert gh.method == "GET"
+    print(gh.headers)
+    assert gh.headers['authorization'] == "bearer json web token"
+
+
+@pytest.mark.asyncio
+async def test_getitem_with_passed_jwt():
+    original_data = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=UTF-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(original_data).encode("utf8"))
+    await gh.getitem("/fake", auth_type="jwt", token="json web token")
+    assert gh.method == "GET"
+    assert gh.headers['authorization'] == "bearer json web token"
+
+
+@pytest.mark.asyncio
 async def test_getiter():
     """Test that getiter() returns an async iterable as well as URI expansion."""
     original_data = [1, 2]
@@ -133,6 +194,43 @@ async def test_getiter():
 
 
 @pytest.mark.asyncio
+async def test_getiter_with_initialized_jwt():
+    """Test that getiter() returns an async iterable as well as URI expansion."""
+    original_data = [1, 2]
+    next_url = "https://api.github.com/fake{/extra}?page=2"
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=UTF-8"
+    headers["link"] = f'<{next_url}>; rel="next"'
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(original_data).encode("utf8"),
+                       jwt="json web token")
+    data = []
+    async for item in gh.getiter("/fake", {"extra": "stuff"}, auth_type="jwt"):
+        data.append(item)
+    assert gh.method == "GET"
+    print(gh.headers)
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
+@pytest.mark.asyncio
+async def test_getiter_with_passed_jwt():
+    original_data = [1, 2]
+    next_url = "https://api.github.com/fake{/extra}?page=2"
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=UTF-8"
+    headers["link"] = f'<{next_url}>; rel="next"'
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(original_data).encode("utf8"))
+    data = []
+    async for item in gh.getiter("/fake", {"extra": "stuff"},
+                                 auth_type="jwt", token="json web token"):
+        data.append(item)
+    assert gh.method == "GET"
+    print(gh.headers)
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
+@pytest.mark.asyncio
 async def test_post():
     send = [1, 2, 3]
     send_json = json.dumps(send).encode("utf-8")
@@ -146,6 +244,36 @@ async def test_post():
     assert gh.headers['content-type'] == "application/json; charset=utf-8"
     assert gh.body == send_json
     assert gh.headers['content-length'] == str(len(send_json))
+
+
+@pytest.mark.asyncio
+async def test_post_with_passed_jwt():
+    send = [1, 2, 3]
+    send_json = json.dumps(send).encode("utf-8")
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    await gh.post("/fake", data=send, auth_type="jwt", token="json web token")
+    assert gh.method == "POST"
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
+@pytest.mark.asyncio
+async def test_post_with_initialized_jwt():
+    send = [1, 2, 3]
+    send_json = json.dumps(send).encode("utf-8")
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"),
+                       jwt="json web token"
+                       )
+    await gh.post("/fake", data=send, auth_type="jwt")
+    assert gh.method == "POST"
+    assert gh.headers["authorization"] == "bearer json web token"
 
 
 @pytest.mark.asyncio
@@ -165,6 +293,35 @@ async def test_patch():
 
 
 @pytest.mark.asyncio
+async def test_patch_with_initialized_jwt():
+    send = [1, 2, 3]
+    send_json = json.dumps(send).encode("utf-8")
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"),
+                       jwt="json web token")
+    await gh.patch("/fake", data=send, auth_type="jwt")
+    assert gh.method == "PATCH"
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
+@pytest.mark.asyncio
+async def test_patch_with_passed_jwt():
+    send = [1, 2, 3]
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    await gh.patch("/fake", data=send,
+                          auth_type="jwt", token="json web token")
+    assert gh.method == "PATCH"
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
+@pytest.mark.asyncio
 async def test_put():
     send = [1, 2, 3]
     send_json = json.dumps(send).encode("utf-8")
@@ -181,6 +338,33 @@ async def test_put():
 
 
 @pytest.mark.asyncio
+async def test_put_with_initialized_jwt():
+    send = [1, 2, 3]
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"),
+                       jwt="json web token")
+    await gh.put("/fake", data=send, auth_type="jwt")
+    assert gh.method == "PUT"
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
+@pytest.mark.asyncio
+async def test_put_with_passed_jwt():
+    send = [1, 2, 3]
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    await gh.put("/fake", data=send, auth_type="jwt", token="json web token")
+    assert gh.method == "PUT"
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
+@pytest.mark.asyncio
 async def test_delete():
     send = [1, 2, 3]
     send_json = json.dumps(send).encode("utf-8")
@@ -194,6 +378,37 @@ async def test_delete():
     assert gh.headers['content-type'] == "application/json; charset=utf-8"
     assert gh.body == send_json
     assert gh.headers['content-length'] == str(len(send_json))
+
+
+@pytest.mark.asyncio
+async def test_delete_with_initialized_jwt():
+    send = [1, 2, 3]
+    send_json = json.dumps(send).encode("utf-8")
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"),
+                       jwt="json web token")
+    await gh.delete("/fake", data=send, auth_type="jwt")
+    assert gh.method == "DELETE"
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
+@pytest.mark.asyncio
+async def test_delete_with_passed_jwt():
+    send = [1, 2, 3]
+    send_json = json.dumps(send).encode("utf-8")
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    await gh.delete("/fake", data=send, auth_type="jwt", token="json web token")
+    assert gh.method == "DELETE"
+    print("gh headers")
+    print(gh.headers)
+    assert gh.headers["authorization"] == "bearer json web token"
 
 
 class TestCache:

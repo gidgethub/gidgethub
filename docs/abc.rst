@@ -24,7 +24,7 @@ does not require an update to the library, allowing one to use
 experimental APIs without issue.
 
 
-.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None)
+.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None, jwt=None)
 
     Provide an :py:term:`abstract base class` which abstracts out the
     HTTP library being used to send requests to GitHub. The class is
@@ -66,6 +66,8 @@ experimental APIs without issue.
     .. versionchanged:: 2.3
         Introduced the *cache* argument to the constructor.
 
+    .. versionchanged:: 3.0
+        Introduced the *jwt* argument to the constructor.
 
     .. attribute:: requester
 
@@ -77,6 +79,9 @@ experimental APIs without issue.
 
         The provided OAuth token (if any).
 
+    .. attribute:: jwt
+
+       The provided JSON web token (if any).
 
     .. attribute:: rate_limit
 
@@ -84,7 +89,6 @@ experimental APIs without issue.
         representing the last known rate limit imposed upon the user.
         This attribute is automatically updated after every successful
         HTTP request.
-
 
     .. abstractcoroutine:: _request(method, url, headers, body=b'')
 
@@ -110,16 +114,26 @@ experimental APIs without issue.
             Renamed from ``_sleep()``.
 
 
-    .. coroutine:: getitem(url, url_vars={}, *, accept=sansio.accept_format())
+    .. coroutine:: getitem(url, url_vars={}, *, accept=sansio.accept_format(), auth_type=None, token=None)
 
         Get a single item from GitHub.
+
+        *auth_type* is the authentication type, either ``"oauth"`` or ``"jwt"``.
+        Defaults to ``"oauth"``.
+
+        *token* is the value of the authentication token. Defaults to the value
+        of the value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *auth_type* and *token*.
 
         .. note::
             For ``GET`` calls that can return multiple values and
             potentially require pagination, see ``getiter()``.
 
 
-    .. coroutine:: getiter(url, url_vars={}, *, accept=sansio.accept_format())
+    .. coroutine:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), auth_type=None, token=None)
 
         Get all items from a GitHub API endpoint.
 
@@ -128,21 +142,52 @@ experimental APIs without issue.
         `pagination <https://developer.github.com/v3/#pagination>`_
         will automatically be followed.
 
+        *auth_type* is the authentication type, either ``"oauth"`` or ``"jwt"``.
+        Defaults to ``"oauth"``.
+
+        *token* is the value of the authentication token. Defaults to the value
+        of the value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *auth_type* and *token*.
+
         .. note::
             For ``GET`` calls that return only a single item, see
             :meth:`getitem`.
 
-    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format())
+
+    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), auth_type=None, token=None)
 
         Send a ``POST`` request to GitHub.
 
+        *auth_type* is the authentication type, either ``"oauth"`` or ``"jwt"``.
+        Defaults to ``"oauth"``.
 
-    .. coroutine:: patch(url, url_vars={}, *, data, accept=sansio.accept_format())
+        *token* is the value of the authentication token. Defaults to the value
+        of the value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *auth_type* and *token*.
+
+
+    .. coroutine:: patch(url, url_vars={}, *, data, accept=sansio.accept_format(), auth_type=None, token=None)
 
         Send a ``PATCH`` request to GitHub.
 
+        *auth_type* is the authentication type, either ``"oauth"`` or ``"jwt"``.
+        Defaults to ``"oauth"``.
 
-    .. coroutine:: put(url, url_vars={}, *, data=b"", accept=sansio.accept_format())
+        *token* is the value of the authentication token. Defaults to the value
+        of the value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *auth_type* and *token*.
+
+
+    .. coroutine:: put(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), auth_type=None, token=None)
 
         Send a ``PUT`` request to GitHub.
 
@@ -150,7 +195,25 @@ experimental APIs without issue.
         `locking an issue <https://developer.github.com/v3/issues/#lock-an-issue>`_
         will return no content, leading to ``None`` being returned.
 
+        *auth_type* is the authentication type, either ``"oauth"`` or ``"jwt"``.
+        Defaults to ``"oauth"``.
 
-    .. coroutine:: delete(url, url_vars={}, *, data=b"", accept=sansio.accept_format())
+        *token* is the value of the authentication token. Defaults to the value
+        of the value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *auth_type* and *token*.
+
+
+    .. coroutine:: delete(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), auth_type=None, token=None)
 
         Send a ``DELETE`` request to GitHub.
+
+        .. versionchanged:: 2.5
+
+            Added *data* argument.
+
+        .. versionchanged:: 3.0
+
+            Added *auth_type* and *token*.

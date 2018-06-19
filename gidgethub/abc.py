@@ -16,9 +16,11 @@ class GitHubAPI(abc.ABC):
     """Provide an idiomatic API for making calls to GitHub's API."""
 
     def __init__(self, requester: str, *, oauth_token: Opt[str] = None,
+                 jwt: Opt[str] = None,
                  cache: Opt[CACHE_TYPE] = None) -> None:
         self.requester = requester
         self.oauth_token = oauth_token
+        self.jwt = jwt
         self._cache = cache
         self.rate_limit: Opt[sansio.RateLimit] = None
 
@@ -32,11 +34,31 @@ class GitHubAPI(abc.ABC):
         """Sleep for the specified number of seconds."""
 
     async def _make_request(self, method: str, url: str, url_vars: Dict,
-                            data: Any, accept: str) -> Tuple[bytes, Opt[str]]:
+                            data: Any, accept: str,
+                            auth_type: Opt[str] = None,
+                            token: Opt[str] = None,
+                            ) -> Tuple[bytes, Opt[str]]:
         """Construct and make an HTTP request."""
         filled_url = sansio.format_url(url, url_vars)
-        request_headers = sansio.create_headers(self.requester, accept=accept,
-                                                oauth_token=self.oauth_token)
+        if auth_type == "oauth" and token is not None:
+            request_headers = sansio.create_headers(
+                self.requester, accept=accept,
+                oauth_token=token)
+        elif auth_type == "jwt":
+            if token:
+                request_headers = sansio.create_headers(
+                    self.requester, accept=accept,
+                    jwt=token)
+            else:
+                request_headers = sansio.create_headers(
+                    self.requester, accept=accept,
+                    jwt=self.jwt)
+        else:
+            # fallback to using oauth_token
+            request_headers = sansio.create_headers(
+                self.requester, accept=accept,
+                oauth_token=self.oauth_token)
+
         cached = cacheable = False
         # Can't use None as a "no body" sentinel as it's a legitimate JSON type.
         if data == b"":
@@ -73,37 +95,62 @@ class GitHubAPI(abc.ABC):
         return data, more
 
     async def getitem(self, url: str, url_vars: Dict = {},
-                      *, accept: str = sansio.accept_format()) -> Any:
+                      *, accept: str = sansio.accept_format(),
+                      auth_type: Opt[str] = None,
+                      token: Opt[str] = None
+                      ) -> Any:
         """Send a GET request for a single item to the specified endpoint."""
-        data, _ = await self._make_request("GET", url, url_vars, b"", accept)
+        data, _ = await self._make_request("GET", url, url_vars, b"", accept,
+                                           auth_type=auth_type, token=token)
         return data
 
     async def getiter(self, url: str, url_vars: Dict = {},
-                      *, accept: str = sansio.accept_format()) -> AsyncGenerator[Any, None]:
+                      *, accept: str = sansio.accept_format(),
+                      auth_type: Opt[str] = None,
+                      token: Opt[str] = None
+                      ) -> AsyncGenerator[Any, None]:
         """Return an async iterable for all the items at a specified endpoint."""
-        data, more = await self._make_request("GET", url, url_vars, b"", accept)
+        data, more = await self._make_request("GET", url, url_vars, b"", accept,
+                                           auth_type=auth_type, token=token)
         for item in data:
             yield item
         if more:
             # `yield from` is not supported in coroutines.
-            async for item in self.getiter(more, url_vars, accept=accept):
+            async for item in self.getiter(more, url_vars, accept=accept,
+                                           auth_type=auth_type, token=token):
                 yield item
 
     async def post(self, url: str, url_vars: Dict = {}, *, data: Any,
-                   accept: str = sansio.accept_format()) -> Any:
-        data, _ = await self._make_request("POST", url, url_vars, data, accept)
+                   accept: str = sansio.accept_format(),
+                   auth_type: Opt[str] = None,
+                   token: Opt[str] = None
+                   ) -> Any:
+        data, _ = await self._make_request("POST", url, url_vars, data, accept,
+                                           auth_type=auth_type, token=token)
         return data
 
     async def patch(self, url: str, url_vars: Dict = {}, *, data: Any,
-                    accept: str = sansio.accept_format()) -> Any:
-        data, _ = await self._make_request("PATCH", url, url_vars, data, accept)
+                    accept: str = sansio.accept_format(),
+                    auth_type: Opt[str] = None,
+                    token: Opt[str] = None
+                    ) -> Any:
+        data, _ = await self._make_request("PATCH", url, url_vars, data, accept,
+                                           auth_type=auth_type, token=token)
         return data
 
     async def put(self, url: str, url_vars: Dict = {}, *, data: Any = b"",
-                  accept: str = sansio.accept_format()) -> Any:
-        data, _ = await self._make_request("PUT", url, url_vars, data, accept)
+                  accept: str = sansio.accept_format(),
+                  auth_type: Opt[str] = None,
+                  token: Opt[str] = None
+                  ) -> Any:
+        data, _ = await self._make_request("PUT", url, url_vars, data, accept,
+                                           auth_type=auth_type, token=token)
         return data
 
     async def delete(self, url: str, url_vars: Dict = {}, *, data: Any = b"",
-                     accept: str = sansio.accept_format()) -> None:
-        await self._make_request("DELETE", url, url_vars, data, accept)
+                     accept: str = sansio.accept_format(),
+                     auth_type: Opt[str] = None,
+                     token: Opt[str] = None
+                     ) -> None:
+        await self._make_request("DELETE", url, url_vars, data, accept,
+                                           auth_type=auth_type, token=token)

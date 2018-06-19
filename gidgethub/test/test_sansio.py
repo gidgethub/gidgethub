@@ -166,6 +166,24 @@ class TestCreateHeaders:
         assert headers["accept"] == test_api
         assert headers["authorization"] == f"token {oauth_token}"
 
+    def test_authorization_with_jwt(self):
+        user_agent = "brettcannon"
+        jwt = "secret"
+        headers = sansio.create_headers(user_agent, jwt=jwt)
+        assert headers["user-agent"] == user_agent
+        assert headers["authorization"] == f"bearer {jwt}"
+
+    def test_cannot_pass_both_jwt_and_oauth(self):
+        user_agent = "brettcannon"
+        jwt = "secret jwt"
+        oauth_token = "secret oauth token"
+        with pytest.raises(ValueError) as exc_info:
+            headers = sansio.create_headers(
+                user_agent,
+                oauth_token=oauth_token,
+                jwt=jwt)
+        assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
+
 
 class TestRateLimit:
 

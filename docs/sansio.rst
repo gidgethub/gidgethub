@@ -122,7 +122,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
    support.
 
 
-.. function:: create_headers(requester, *, accept=accept_format(), oauth_token=None)
+.. function:: create_headers(requester, *, accept=accept_format(), oauth_token=None, jwt=None)
 
    Create a dict representing GitHub-specific header fields.
 
@@ -141,7 +141,17 @@ by helping to automate the GitHub-specific aspects of a REST call.
    This can be important if you need the expanded rate limit provided by an
    authenticated request.
 
+   The *jwt* allows making an authenticated request as a `GitHub App
+   <https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app>`_.
+   You can pass only one: *oauth_token* or *jwt*, but not both.
+
+   ``ValueError`` will be raised if both *jwt* and *oauth_token* are supplied.
+
    For consistency, all keys in the returned dict will be lowercased.
+
+   .. versionchanged:: 3.0
+
+       Added ``jwt`` argument.
 
 
 Responses
@@ -200,6 +210,9 @@ that are provided to you. Continuing from the example in the Requests_ section::
         Create a :class:`RateLimit` instance from the HTTP headers of a GitHub API
         response.  Returns ``None`` if the ratelimit is not found in the headers.
 
+        .. versionchanged:: 3.0
+
+            Returns ``None`` if the ratelimit is not found in the headers.
 
 .. function:: decipher_response(status_code, headers, body)
 
