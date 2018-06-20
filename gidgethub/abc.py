@@ -38,7 +38,6 @@ class GitHubAPI(abc.ABC):
                             ) -> Tuple[bytes, Opt[str]]:
         """Construct and make an HTTP request."""
         filled_url = sansio.format_url(url, url_vars)
-        print(f"filled url {filled_url}")
         if auth_type == "jwt" and token is not None:
             request_headers = sansio.create_headers(
                 self.requester, accept=accept,
@@ -52,8 +51,6 @@ class GitHubAPI(abc.ABC):
             request_headers = sansio.create_headers(
                 self.requester, accept=accept,
                 oauth_token=self.oauth_token)
-        print("headers")
-        print(request_headers)
         cached = cacheable = False
         # Can't use None as a "no body" sentinel as it's a legitimate JSON type.
         if data == b"":
