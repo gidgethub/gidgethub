@@ -16,11 +16,9 @@ class GitHubAPI(abc.ABC):
     """Provide an idiomatic API for making calls to GitHub's API."""
 
     def __init__(self, requester: str, *, oauth_token: Opt[str] = None,
-                 jwt: Opt[str] = None,
                  cache: Opt[CACHE_TYPE] = None) -> None:
         self.requester = requester
         self.oauth_token = oauth_token
-        self.jwt = jwt
         self._cache = cache
         self.rate_limit: Opt[sansio.RateLimit] = None
 
@@ -40,25 +38,22 @@ class GitHubAPI(abc.ABC):
                             ) -> Tuple[bytes, Opt[str]]:
         """Construct and make an HTTP request."""
         filled_url = sansio.format_url(url, url_vars)
-        if auth_type == "oauth" and token is not None:
+        print(f"filled url {filled_url}")
+        if auth_type == "jwt" and token is not None:
+            request_headers = sansio.create_headers(
+                self.requester, accept=accept,
+                jwt=token)
+        elif token is not None:
             request_headers = sansio.create_headers(
                 self.requester, accept=accept,
                 oauth_token=token)
-        elif auth_type == "jwt":
-            if token:
-                request_headers = sansio.create_headers(
-                    self.requester, accept=accept,
-                    jwt=token)
-            else:
-                request_headers = sansio.create_headers(
-                    self.requester, accept=accept,
-                    jwt=self.jwt)
         else:
             # fallback to using oauth_token
             request_headers = sansio.create_headers(
                 self.requester, accept=accept,
                 oauth_token=self.oauth_token)
-
+        print("headers")
+        print(request_headers)
         cached = cacheable = False
         # Can't use None as a "no body" sentinel as it's a legitimate JSON type.
         if data == b"":

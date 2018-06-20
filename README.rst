@@ -64,7 +64,7 @@ Changelog
 - ``gidgethub.sansio.RateLimit.from_http`` returns ``None`` if ratelimit is
   not found in the headers.
 - Allow authenticating as a GitHub App by using JSON web token.
-  ``gidgethub.abc.GitHubAPI`` and ``gidgethub.sansio.create_headers`` now accepts
+  ``gidgethub.sansio.create_headers`` now accepts
   ``jwt`` argument. ``gidgethub.abc.GitHubAPI._make_request``,
   ``gidgethub.abc.GitHubAPI.getitem``, ``gidgethub.abc.GitHubAPI.getiter``,
   ``gidgethub.abc.GitHubAPI.post``, ``gidgethub.abc.GitHubAPI.patch``,

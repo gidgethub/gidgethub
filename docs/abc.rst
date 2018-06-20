@@ -24,7 +24,7 @@ does not require an update to the library, allowing one to use
 experimental APIs without issue.
 
 
-.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None, jwt=None)
+.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None)
 
     Provide an :py:term:`abstract base class` which abstracts out the
     HTTP library being used to send requests to GitHub. The class is
@@ -66,8 +66,6 @@ experimental APIs without issue.
     .. versionchanged:: 2.3
         Introduced the *cache* argument to the constructor.
 
-    .. versionchanged:: 3.0
-        Introduced the *jwt* argument to the constructor.
 
     .. attribute:: requester
 
@@ -79,9 +77,6 @@ experimental APIs without issue.
 
         The provided OAuth token (if any).
 
-    .. attribute:: jwt
-
-       The provided JSON web token (if any).
 
     .. attribute:: rate_limit
 
