@@ -182,7 +182,6 @@ async def test_getiter_with_passed_jwt():
                                  auth_type="jwt", token="json web token"):
         data.append(item)
     assert gh.method == "GET"
-    print(gh.headers)
     assert gh.headers["authorization"] == "bearer json web token"
 
 
@@ -302,8 +301,6 @@ async def test_delete_with_passed_jwt():
                        body=json.dumps(receive).encode("utf-8"))
     await gh.delete("/fake", data=send, auth_type="jwt", token="json web token")
     assert gh.method == "DELETE"
-    print("gh headers")
-    print(gh.headers)
     assert gh.headers["authorization"] == "bearer json web token"
 
 
