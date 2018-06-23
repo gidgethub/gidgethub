@@ -25,6 +25,9 @@ Gidgethub is `available on PyPI <https://pypi.org/project/gidgethub/>`_.
   python3 -m pip install gidgethub
 
 
+Gidgethub requires Python version 3.6 and up.
+
+
 Goals
 -----
 
@@ -70,6 +73,8 @@ Changelog
   ``gidgethub.abc.GitHubAPI.post``, ``gidgethub.abc.GitHubAPI.patch``,
   ``gidgethub.abc.GitHubAPI.put``, and ``gidgethub.abc.GitHubAPI.delete`` now
   accept``jwt`` and ``oauth_token`` arguments.
+
+- gidgethub now uses `flit <https://flit.readthedocs.io/en/latest/>`_.
 
 2.5.0
 '''''
@@ -166,4 +171,4 @@ Changelog
 1.0.0
 '''''
 
-Initial release
+Initial release.

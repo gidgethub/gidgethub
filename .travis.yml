@@ -12,12 +12,13 @@ matrix:
     python: "nightly"
 
 before_install:
-  - pip install -U ".[dev]"
-  - pip install -U pytest-cov sphinx mypy
+  - pip install -U -r dev-requirements.txt
+
 script:
   - pytest --cov=gidgethub
   - mypy --ignore-missing-imports --strict gidgethub/*.py
   - sphinx-build -nW -q -b html -b linkcheck -d docs/_build/doctrees docs docs/_build/html
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 

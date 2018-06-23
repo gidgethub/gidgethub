@@ -1,0 +1,34 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "gidgethub"
+author = "Brett Cannon"
+author-email = "brett@python.org"
+home-page = "https://gidgethub.readthedocs.io"
+requires = ["uritemplate>=3.0.0"]
+dev-requires = ["pytest>=3.0.0",
+    "pytest-asyncio",
+    "pytest-tornasync",
+    "pytest-runner>=2.11.0",
+    "sphinx",
+    "aiohttp",
+    "treq",
+    "twisted[tls]",
+    "tornado",
+]
+description-file = "README.rst"
+classifiers = ["Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+]
+requires-python = ">=3.6"
+license = "Apache"
+keywords = "github sans-io async"
+
+
+[tool.flit.scripts]
+gidgethub = "gidgethub:gidgethub"
