@@ -178,7 +178,7 @@ class TestCreateHeaders:
         jwt = "secret jwt"
         oauth_token = "secret oauth token"
         with pytest.raises(ValueError) as exc_info:
-            headers = sansio.create_headers(
+            sansio.create_headers(
                 user_agent,
                 oauth_token=oauth_token,
                 jwt=jwt)

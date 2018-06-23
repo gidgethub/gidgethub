@@ -68,8 +68,8 @@ Changelog
   ``jwt`` argument. ``gidgethub.abc.GitHubAPI._make_request``,
   ``gidgethub.abc.GitHubAPI.getitem``, ``gidgethub.abc.GitHubAPI.getiter``,
   ``gidgethub.abc.GitHubAPI.post``, ``gidgethub.abc.GitHubAPI.patch``,
-  ``gidgethub.abc.GitHubAPI.put``, and ``gidgethub.abc.GitHubAPI.delete`` are now
-  accepting ``auth_type`` and ``token`` arguments.
+  ``gidgethub.abc.GitHubAPI.put``, and ``gidgethub.abc.GitHubAPI.delete`` now
+  accept``jwt`` and ``oauth_token`` arguments.
 
 2.5.0
 '''''
