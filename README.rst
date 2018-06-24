@@ -74,7 +74,7 @@ Changelog
   ``gidgethub.abc.GitHubAPI.put``, and ``gidgethub.abc.GitHubAPI.delete`` now
   accept``jwt`` and ``oauth_token`` arguments.
 
-- gidgethub now uses `flit <https://flit.readthedocs.io/en/latest/>`_.
+- gidgethub is now packaged using `flit <https://flit.readthedocs.io/en/latest/>`_.
 
 2.5.0
 '''''
