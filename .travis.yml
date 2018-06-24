@@ -13,6 +13,10 @@ matrix:
 
 before_install:
   - pip install -U -r dev-requirements.txt
+  - pip install --upgrade flit
+
+install:
+  - flit install --deps develop
 
 script:
   - pytest --cov=gidgethub
