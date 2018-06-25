@@ -170,6 +170,19 @@ async def test_getitem_with_passed_oauth_token():
 
 
 @pytest.mark.asyncio
+async def test_getitem_cannot_pass_both_jwt_and_oauth_token():
+    original_data = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=UTF-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(original_data).encode("utf8"))
+    with pytest.raises(ValueError) as exc_info:
+        await gh.getitem("/fake", oauth_token="my oauth token", jwt="json web token")
+
+    assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
+
+
+@pytest.mark.asyncio
 async def test_getiter():
     """Test that getiter() returns an async iterable as well as URI expansion."""
     original_data = [1, 2]
@@ -202,7 +215,7 @@ async def test_getiter_with_passed_jwt():
                        body=json.dumps(original_data).encode("utf8"))
     data = []
     async for item in gh.getiter("/fake", {"extra": "stuff"},
-                                jwt="json web token"):
+                                 jwt="json web token"):
         data.append(item)
     assert gh.method == "GET"
     assert gh.headers["authorization"] == "bearer json web token"
@@ -219,10 +232,27 @@ async def test_getiter_with_passed_oauth_token():
                        body=json.dumps(original_data).encode("utf8"))
     data = []
     async for item in gh.getiter("/fake", {"extra": "stuff"},
-                                oauth_token="my oauth token"):
+                                 oauth_token="my oauth token"):
         data.append(item)
     assert gh.method == "GET"
     assert gh.headers["authorization"] == "token my oauth token"
+
+
+@pytest.mark.asyncio
+async def test_getiter_cannot_pass_both_oauth_and_jwt():
+    original_data = [1, 2]
+    next_url = "https://api.github.com/fake{/extra}?page=2"
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=UTF-8"
+    headers["link"] = f'<{next_url}>; rel="next"'
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(original_data).encode("utf8"))
+    with pytest.raises(ValueError) as exc_info:
+        async for _ in gh.getiter("/fake", {"extra": "stuff"},
+                                     oauth_token="my oauth token",
+                                     jwt="json web token"):
+            pass # pragma: no cover
+    assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
 
 
 @pytest.mark.asyncio
@@ -266,6 +296,18 @@ async def test_post_with_passed_oauth_token():
     assert gh.method == "POST"
     assert gh.headers["authorization"] == "token my oauth token"
 
+@pytest.mark.asyncio
+async def test_post_cannot_pass_both_oauth_and_jwt():
+    send = [1, 2, 3]
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    with pytest.raises(ValueError) as exc_info:
+        await gh.post("/fake", data=send, oauth_token="my oauth token", jwt="json web token")
+
+    assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
 
 @pytest.mark.asyncio
 async def test_patch():
@@ -308,6 +350,18 @@ async def test_patch_with_passed_oauth_token():
     assert gh.method == "PATCH"
     assert gh.headers["authorization"] == "token my oauth token"
 
+@pytest.mark.asyncio
+async def test_patch_cannot_pass_both_oauth_and_jwt():
+    send = [1, 2, 3]
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    with pytest.raises(ValueError) as exc_info:
+        await gh.patch("/fake", data=send, oauth_token="my oauth token", jwt="json web token")
+
+    assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
 
 @pytest.mark.asyncio
 async def test_put():
@@ -352,6 +406,20 @@ async def test_put_with_passed_oauth_token():
 
 
 @pytest.mark.asyncio
+async def test_put_cannot_pass_both_oauth_and_jwt():
+    send = [1, 2, 3]
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    with pytest.raises(ValueError) as exc_info:
+        await gh.put("/fake", data=send, oauth_token="my oauth token", jwt="json web token")
+
+    assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
+
+
+@pytest.mark.asyncio
 async def test_delete():
     send = [1, 2, 3]
     send_json = json.dumps(send).encode("utf-8")
@@ -391,6 +459,20 @@ async def test_delete_with_passed_oauth_token():
     await gh.delete("/fake", data=send, oauth_token="my oauth token")
     assert gh.method == "DELETE"
     assert gh.headers["authorization"] == "token my oauth token"
+
+
+@pytest.mark.asyncio
+async def test_delete_pass_both_oauth_and_jwt():
+    send = [1, 2, 3]
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    with pytest.raises(ValueError) as exc_info:
+        await gh.delete("/fake", data=send, oauth_token="my oauth token", jwt="json web token")
+
+    assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
 
 
 class TestCache:
