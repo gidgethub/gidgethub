@@ -13,7 +13,7 @@ matrix:
 
 before_install:
   - pip install -U -r dev-requirements.txt
-  - pip install --upgrade flit
+  - pip install -U flit
 
 install:
   - flit install --deps develop
