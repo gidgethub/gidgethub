@@ -251,7 +251,7 @@ async def test_getiter_cannot_pass_both_oauth_and_jwt():
         async for _ in gh.getiter("/fake", {"extra": "stuff"},
                                      oauth_token="my oauth token",
                                      jwt="json web token"):
-            pass # pragma: no cover
+            pytest.fail("Unreachable")  # pragma: no cover
     assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
 
 
