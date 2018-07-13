@@ -146,7 +146,8 @@ def accept_format(*, version: str = "v3", media: Optional[str] = None,
 
 
 def create_headers(requester: str, *, accept: str = accept_format(),
-                   oauth_token: Optional[str] = None) -> Dict[str, str]:
+                   oauth_token: Optional[str] = None,
+                   jwt: Optional[str] = None) -> Dict[str, str]:
     """Create a dict representing GitHub-specific header fields.
 
     The user agent is set according to who the requester is. GitHub asks it be
@@ -158,9 +159,14 @@ def create_headers(requester: str, *, accept: str = accept_format(),
     development -- or if you are looking for a different format return type,
     e.g. wanting the rendered HTML of a Markdown file.
 
-    The oauth_token allows making an authenticated request. This can be
-    important if you need the expanded rate limit provided by an authenticated
-    request.
+    The 'oauth_token' allows making an authenticated request using a personal access
+    token. This can be important if you need the expanded rate limit provided
+    by an authenticated request.
+
+    The 'jwt' allows authenticating as a GitHub App by passing in the
+    bearer token.
+
+    You can only supply only one of oauth_token or jwt, not both.
 
     For consistency, all keys in the returned dict will be lowercased.
     """
@@ -168,9 +174,15 @@ def create_headers(requester: str, *, accept: str = accept_format(),
     # accept: https://developer.github.com/v3/#current-version
     #         https://developer.github.com/v3/media/
     # authorization: https://developer.github.com/v3/#authentication
+    # authenticating as a GitHub App: https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app
+
+    if oauth_token is not None and jwt is not None:
+        raise ValueError("Cannot pass both oauth_token and jwt.")
     headers = {"user-agent": requester, "accept": accept}
     if oauth_token is not None:
         headers["authorization"] = f"token {oauth_token}"
+    elif jwt is not None:
+        headers["authorization"] = f"bearer {jwt}"
     return headers
 
 

@@ -85,7 +85,6 @@ experimental APIs without issue.
         This attribute is automatically updated after every successful
         HTTP request.
 
-
     .. abstractcoroutine:: _request(method, url, headers, body=b'')
 
         An abstract :term:`coroutine` to make an HTTP request. The
@@ -110,16 +109,30 @@ experimental APIs without issue.
             Renamed from ``_sleep()``.
 
 
-    .. coroutine:: getitem(url, url_vars={}, *, accept=sansio.accept_format())
+    .. coroutine:: getitem(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None)
 
         Get a single item from GitHub.
+
+        *jwt* is the value of the JSON web token, for authenticating as a GitHub
+        App.
+
+        *oauth_token* is the value of the oauth token, for making an authenticated
+        API call.
+
+        Only one of *oauth_token* or *jwt* may be passed. A ``ValueError`` is
+        raised if both are passed. If neither was passed, it defaults to the
+        value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *jwt* and *oauth_token*.
 
         .. note::
             For ``GET`` calls that can return multiple values and
             potentially require pagination, see ``getiter()``.
 
 
-    .. coroutine:: getiter(url, url_vars={}, *, accept=sansio.accept_format())
+    .. coroutine:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None)
 
         Get all items from a GitHub API endpoint.
 
@@ -128,21 +141,64 @@ experimental APIs without issue.
         `pagination <https://developer.github.com/v3/#pagination>`_
         will automatically be followed.
 
+        *jwt* is the value of the JSON web token, for authenticating as a GitHub
+        App.
+
+        *oauth_token* is the value of the oauth token, for making an authenticated
+        API call.
+
+        Only one of *oauth_token* or *jwt* may be passed. A ``ValueError`` is
+        raised if both are passed. If neither was passed, it defaults to the
+        value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *jwt* and *oauth_token*.
+
         .. note::
             For ``GET`` calls that return only a single item, see
             :meth:`getitem`.
 
-    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format())
+
+    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None)
 
         Send a ``POST`` request to GitHub.
 
+        *jwt* is the value of the JSON web token, for authenticating as a GitHub
+        App.
 
-    .. coroutine:: patch(url, url_vars={}, *, data, accept=sansio.accept_format())
+        *oauth_token* is the value of the oauth token, for making an authenticated
+        API call.
+
+        Only one of *oauth_token* or *jwt* may be passed. A ``ValueError`` is
+        raised if both are passed. If neither was passed, it defaults to the
+        value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *jwt* and *oauth_token*.
+
+
+    .. coroutine:: patch(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None)
 
         Send a ``PATCH`` request to GitHub.
 
+        *jwt* is the value of the JSON web token, for authenticating as a GitHub
+        App.
 
-    .. coroutine:: put(url, url_vars={}, *, data=b"", accept=sansio.accept_format())
+        *oauth_token* is the value of the oauth token, for making an authenticated
+        API call.
+
+        Only one of *oauth_token* or *jwt* may be passed. A ``ValueError`` is
+        raised if both are passed. If neither was passed, it defaults to the
+        value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *jwt* and *oauth_token*.
+
+
+    .. coroutine:: put(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None)
 
         Send a ``PUT`` request to GitHub.
 
@@ -150,7 +206,39 @@ experimental APIs without issue.
         `locking an issue <https://developer.github.com/v3/issues/#lock-an-issue>`_
         will return no content, leading to ``None`` being returned.
 
+        *jwt* is the value of the JSON web token, for authenticating as a GitHub
+        App.
 
-    .. coroutine:: delete(url, url_vars={}, *, data=b"", accept=sansio.accept_format())
+        *oauth_token* is the value of the oauth token, for making an authenticated
+        API call.
+
+        Only one of *oauth_token* or *jwt* may be passed. A ``ValueError`` is
+        raised if both are passed. If neither was passed, it defaults to the
+        value of the *oauth_token* attribute.
+
+        .. versionchanged:: 3.0
+
+            Added *jwt* and *oauth_token*.
+
+
+    .. coroutine:: delete(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None)
 
         Send a ``DELETE`` request to GitHub.
+
+        *jwt* is the value of the JSON web token, for authenticating as a GitHub
+        App.
+
+        *oauth_token* is the value of the oauth token, for making an authenticated
+        API call.
+
+        Only one of *oauth_token* or *jwt* may be passed. A ``ValueError`` is
+        raised if both are passed. If neither was passed, it defaults to the
+        value of the *oauth_token* attribute.
+
+        .. versionchanged:: 2.5
+
+            Added *data* argument.
+
+        .. versionchanged:: 3.0
+
+            Added *jwt* and *oauth_token*.
