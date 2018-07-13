@@ -65,7 +65,7 @@ async def test_headers():
 
 @pytest.mark.asyncio
 async def test_auth_headers_with_passed_token():
-    """Test the authorization header with the passed oauth_token"""
+    """Test the authorization header with the passed oauth_token."""
     accept = sansio.accept_format()
     gh = MockGitHubAPI()
     await gh._make_request("GET", "/rate_limit", {}, "", accept,
@@ -77,7 +77,7 @@ async def test_auth_headers_with_passed_token():
 
 @pytest.mark.asyncio
 async def test_auth_headers_with_passed_jwt():
-    """Test the authorization header with the passed jwt"""
+    """Test the authorization header with the passed jwt."""
     accept = sansio.accept_format()
     gh = MockGitHubAPI()
     await gh._make_request("GET", "/rate_limit", {}, "", accept,
@@ -89,7 +89,7 @@ async def test_auth_headers_with_passed_jwt():
 
 @pytest.mark.asyncio
 async def test_make_request_passing_token_and_jwt():
-    """Test that passing both jwt and oauth_token raises ValueError"""
+    """Test that passing both jwt and oauth_token raises ValueError."""
     accept = sansio.accept_format()
     gh = MockGitHubAPI()
     with pytest.raises(ValueError) as exc_info:
