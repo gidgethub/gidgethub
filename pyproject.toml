@@ -6,18 +6,11 @@ build-backend = "flit.buildapi"
 module = "gidgethub"
 author = "Brett Cannon"
 author-email = "brett@python.org"
-home-page = "https://gidgethub.readthedocs.io"
+home-page = "https://github.com/brettcannon/gidgethub"
 requires = ["uritemplate>=3.0.0"]
-dev-requires = ["pytest>=3.0.0",
-    "pytest-asyncio",
-    "pytest-tornasync",
-    "pytest-runner>=2.11.0",
-    "sphinx",
-    "aiohttp",
-    "treq",
-    "twisted[tls]",
-    "tornado",
-]
+requires-python = ">=3.6"
+license = "Apache"
+keywords = "github sans-io async"
 description-file = "README.rst"
 classifiers = ["Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
@@ -25,10 +18,17 @@ classifiers = ["Intended Audience :: Developers",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.6",
 ]
-requires-python = ">=3.6"
-license = "Apache"
-keywords = "github sans-io async"
 
+[tool.flit.metadata.extras-require]
+test = ["pytest>=3.0.0", "pytest-asyncio"]
+doc = ["sphinx"]
+aiohttp = ["aiohttp"]
+treq = ["treq", "twisted[tls]"]
+tornado = ["tornado"]
+setup = ["pytest-runner>=2.11.0"]
 
 [tool.flit.scripts]
 gidgethub = "gidgethub:gidgethub"
+
+[tool.flit.metadata.urls]
+Documentation = "https://gidgethub.readthedocs.io"
