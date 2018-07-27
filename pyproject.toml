@@ -21,7 +21,7 @@ classifiers = ["Intended Audience :: Developers",
 
 [tool.flit.metadata.requires-extra]
 test = ["pytest>=3.0.0", "pytest-asyncio"]
-docs = ["sphinx"]
+doc = ["sphinx"]
 aiohttp = ["aiohttp"]
 treq = ["treq", "twisted[tls]"]
 tornado = ["tornado"]
