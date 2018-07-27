@@ -25,10 +25,6 @@ doc = ["sphinx"]
 aiohttp = ["aiohttp"]
 treq = ["treq", "twisted[tls]"]
 tornado = ["tornado"]
-setup = ["pytest-runner>=2.11.0"]
-
-[tool.flit.scripts]
-gidgethub = "gidgethub:gidgethub"
 
 [tool.flit.metadata.urls]
 Documentation = "https://gidgethub.readthedocs.io"
