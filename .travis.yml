@@ -12,7 +12,6 @@ matrix:
     python: "nightly"
 
 before_install:
-  - pip install -U -r dev-requirements.txt
   - pip install -U flit>=1.0
 
 install:
