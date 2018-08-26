@@ -12,7 +12,7 @@ matrix:
     python: "nightly"
 
 before_install:
-  - pip install -U flit>=1.0
+  - pip install -U flit>=1.1
 
 install:
   - flit install --deps develop
