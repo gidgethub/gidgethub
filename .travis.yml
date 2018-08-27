@@ -15,6 +15,7 @@ before_install:
   - pip install -U pip flit
 
 install:
+  - flit build
   - flit install --deps develop
 
 script:
