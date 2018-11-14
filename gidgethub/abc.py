@@ -107,6 +107,10 @@ class GitHubAPI(abc.ABC):
         """Return an async iterable for all the items at a specified endpoint."""
         data, more = await self._make_request("GET", url, url_vars, b"", accept,
                                               jwt=jwt, oauth_token=oauth_token)
+
+        if isinstance(data, dict) and "items" in data:
+            data = data["items"]
+
         for item in data:
             yield item
         if more:
