@@ -1,0 +1,189 @@
+{
+  "total_count": 6,
+  "incomplete_results": false,
+  "items": [
+    {
+      "url": "https://api.github.com/repos/brettcannon/gidgethub/issues/25",
+      "repository_url": "https://api.github.com/repos/brettcannon/gidgethub",
+      "labels_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/25/labels{/name}",
+      "comments_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/25/comments",
+      "events_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/25/events",
+      "html_url": "https://github.com/brettcannon/gidgethub/issues/25",
+      "id": 219224878,
+      "node_id": "MDU6SXNzdWUyMTkyMjQ4Nzg=",
+      "number": 25,
+      "title": "Not all APIs have rate limits",
+      "user": {
+        "login": "dstufft",
+        "id": 145979,
+        "node_id": "MDQ6VXNlcjE0NTk3OQ==",
+        "avatar_url": "https://avatars3.githubusercontent.com/u/145979?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/dstufft",
+        "html_url": "https://github.com/dstufft",
+        "followers_url": "https://api.github.com/users/dstufft/followers",
+        "following_url": "https://api.github.com/users/dstufft/following{/other_user}",
+        "gists_url": "https://api.github.com/users/dstufft/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/dstufft/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/dstufft/subscriptions",
+        "organizations_url": "https://api.github.com/users/dstufft/orgs",
+        "repos_url": "https://api.github.com/users/dstufft/repos",
+        "events_url": "https://api.github.com/users/dstufft/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/dstufft/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "labels": [
+        {
+          "id": 523296941,
+          "node_id": "MDU6TGFiZWw1MjMyOTY5NDE=",
+          "url": "https://api.github.com/repos/brettcannon/gidgethub/labels/bug",
+          "name": "bug",
+          "color": "ee0701",
+          "default": true
+        },
+        {
+          "id": 523296944,
+          "node_id": "MDU6TGFiZWw1MjMyOTY5NDQ=",
+          "url": "https://api.github.com/repos/brettcannon/gidgethub/labels/help%20wanted",
+          "name": "help wanted",
+          "color": "128A0C",
+          "default": true
+        }
+      ],
+      "state": "closed",
+      "locked": false,
+      "assignee": null,
+      "assignees": [
+
+      ],
+      "milestone": null,
+      "comments": 6,
+      "created_at": "2017-04-04T11:50:58Z",
+      "updated_at": "2018-06-14T03:30:13Z",
+      "closed_at": "2018-06-14T03:30:13Z",
+      "author_association": "NONE",
+      "body": "When working with the integrations API, I noticed that not all APIs have rate limits, which causes gidgethub to fail hard:\r\n\r\n```\r\nTraceback (most recent call last):\r\n  File \"/Users/dstufft/.virtualenvs/browntruck/lib/python3.6/site-packages/twisted/internet/defer.py\", line 459, in callback\r\n    self._startRunCallbacks(result)\r\n  File \"/Users/dstufft/.virtualenvs/browntruck/lib/python3.6/site-packages/twisted/internet/defer.py\", line 567, in _startRunCallbacks\r\n    self._runCallbacks()\r\n  File \"/Users/dstufft/.virtualenvs/browntruck/lib/python3.6/site-packages/twisted/internet/defer.py\", line 653, in _runCallbacks\r\n    current.result = callback(current.result, *args, **kw)\r\n  File \"/Users/dstufft/.virtualenvs/browntruck/lib/python3.6/site-packages/twisted/internet/defer.py\", line 1357, in gotResult\r\n    _inlineCallbacks(r, g, deferred)\r\n--- <exception caught here> ---\r\n  File \"/Users/dstufft/.virtualenvs/browntruck/lib/python3.6/site-packages/twisted/internet/defer.py\", line 1301, in _inlineCallbacks\r\n    result = g.send(result)\r\n  File \"t.py\", line 46, in inner\r\n    async for installation in gh.getiter(\"/integration/installations\"):\r\n  File \"/Users/dstufft/.virtualenvs/browntruck/src/gidgethub/gidgethub/abc.py\", line 64, in getiter\r\n    authorization)\r\n  File \"/Users/dstufft/.virtualenvs/browntruck/src/gidgethub/gidgethub/abc.py\", line 48, in _make_request\r\n    data, self.rate_limit, more = sansio.decipher_response(*response)\r\n  File \"/Users/dstufft/.virtualenvs/browntruck/src/gidgethub/gidgethub/sansio.py\", line 267, in decipher_response\r\n    return data, RateLimit.from_http(headers), _next_link(headers.get(\"link\"))\r\n  File \"/Users/dstufft/.virtualenvs/browntruck/src/gidgethub/gidgethub/sansio.py\", line 211, in from_http\r\n    limit = int(headers[\"x-ratelimit-limit\"])\r\nbuiltins.KeyError: 'x-ratelimit-limit'\r\n```",
+      "score": 2.741533
+    },
+    {
+      "url": "https://api.github.com/repos/brettcannon/gidgethub/issues/49",
+      "repository_url": "https://api.github.com/repos/brettcannon/gidgethub",
+      "labels_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/49/labels{/name}",
+      "comments_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/49/comments",
+      "events_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/49/events",
+      "html_url": "https://github.com/brettcannon/gidgethub/issues/49",
+      "id": 302506160,
+      "node_id": "MDU6SXNzdWUzMDI1MDYxNjA=",
+      "number": 49,
+      "title": "KeyError from 422 response lacking an error object",
+      "user": {
+        "login": "Mariatta",
+        "id": 5844587,
+        "node_id": "MDQ6VXNlcjU4NDQ1ODc=",
+        "avatar_url": "https://avatars1.githubusercontent.com/u/5844587?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/Mariatta",
+        "html_url": "https://github.com/Mariatta",
+        "followers_url": "https://api.github.com/users/Mariatta/followers",
+        "following_url": "https://api.github.com/users/Mariatta/following{/other_user}",
+        "gists_url": "https://api.github.com/users/Mariatta/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/Mariatta/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/Mariatta/subscriptions",
+        "organizations_url": "https://api.github.com/users/Mariatta/orgs",
+        "repos_url": "https://api.github.com/users/Mariatta/repos",
+        "events_url": "https://api.github.com/users/Mariatta/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/Mariatta/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "labels": [
+
+      ],
+      "state": "closed",
+      "locked": false,
+      "assignee": null,
+      "assignees": [
+
+      ],
+      "milestone": null,
+      "comments": 3,
+      "created_at": "2018-03-05T23:33:53Z",
+      "updated_at": "2018-03-19T22:59:39Z",
+      "closed_at": "2018-03-19T22:59:39Z",
+      "author_association": "COLLABORATOR",
+      "body": "Seeing this in miss-islington's logs. Thought I'll report it :)\r\n\r\n<img width=\"811\" alt=\"screen shot 2018-03-05 at 3 28 06 pm\" src=\"https://user-images.githubusercontent.com/5844587/37005794-43b908e8-208a-11e8-901c-aac3fb9e26be.png\">\r\n\r\n```\r\nMar 05 10:45:08 miss-islington app/web.1: Traceback (most recent call last): \r\nMar 05 10:45:08 miss-islington app/web.1:   File \"/app/miss_islington/__main__.py\", line 42, in main \r\nMar 05 10:45:08 miss-islington app/web.1:     await router.dispatch(event, gh) \r\nMar 05 10:45:08 miss-islington app/web.1:   File \"/app/.heroku/python/lib/python3.6/site-packages/gidgethub/routing.py\", line 80, in dispatch \r\nMar 05 10:45:08 miss-islington app/web.1:     await callback(event, *args, **kwargs) \r\nMar 05 10:45:08 miss-islington app/web.1:   File \"/app/miss_islington/delete_branch.py\", line 25, in delete_branch \r\nMar 05 10:45:08 miss-islington app/web.1:     await gh.delete(url) \r\nMar 05 10:45:08 miss-islington app/web.1:   File \"/app/.heroku/python/lib/python3.6/site-packages/gidgethub/abc.py\", line 110, in delete \r\nMar 05 10:45:08 miss-islington app/web.1:     await self._make_request(\"DELETE\", url, url_vars, b\"\", accept) \r\nMar 05 10:45:08 miss-islington app/web.1:   File \"/app/.heroku/python/lib/python3.6/site-packages/gidgethub/abc.py\", line 66, in _make_request \r\nMar 05 10:45:08 miss-islington app/web.1:     data, self.rate_limit, more = sansio.decipher_response(*response) \r\nMar 05 10:45:08 miss-islington app/web.1:   File \"/app/.heroku/python/lib/python3.6/site-packages/gidgethub/sansio.py\", line 288, in decipher_response \r\nMar 05 10:45:08 miss-islington app/web.1:     errors = data[\"errors\"] \r\nMar 05 10:45:08 miss-islington app/web.1: KeyError: 'errors' \r\n```\r\n\r\nUsing gidgethub 2.4.1.",
+      "score": 0.42761025
+    },
+    {
+      "url": "https://api.github.com/repos/brettcannon/gidgethub/issues/18",
+      "repository_url": "https://api.github.com/repos/brettcannon/gidgethub",
+      "labels_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/18/labels{/name}",
+      "comments_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/18/comments",
+      "events_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/18/events",
+      "html_url": "https://github.com/brettcannon/gidgethub/pull/18",
+      "id": 217110799,
+      "node_id": "MDExOlB1bGxSZXF1ZXN0MTEyNjU0MTk5",
+      "number": 18,
+      "title": "Drop rate limit management",
+      "user": {
+        "login": "brettcannon",
+        "id": 54418,
+        "node_id": "MDQ6VXNlcjU0NDE4",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/54418?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/brettcannon",
+        "html_url": "https://github.com/brettcannon",
+        "followers_url": "https://api.github.com/users/brettcannon/followers",
+        "following_url": "https://api.github.com/users/brettcannon/following{/other_user}",
+        "gists_url": "https://api.github.com/users/brettcannon/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/brettcannon/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/brettcannon/subscriptions",
+        "organizations_url": "https://api.github.com/users/brettcannon/orgs",
+        "repos_url": "https://api.github.com/users/brettcannon/repos",
+        "events_url": "https://api.github.com/users/brettcannon/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/brettcannon/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "labels": [
+        {
+          "id": 523296943,
+          "node_id": "MDU6TGFiZWw1MjMyOTY5NDM=",
+          "url": "https://api.github.com/repos/brettcannon/gidgethub/labels/enhancement",
+          "name": "enhancement",
+          "color": "84b6eb",
+          "default": true
+        },
+        {
+          "id": 523296946,
+          "node_id": "MDU6TGFiZWw1MjMyOTY5NDY=",
+          "url": "https://api.github.com/repos/brettcannon/gidgethub/labels/question",
+          "name": "question",
+          "color": "cc317c",
+          "default": true
+        }
+      ],
+      "state": "closed",
+      "locked": false,
+      "assignee": null,
+      "assignees": [
+
+      ],
+      "milestone": null,
+      "comments": 1,
+      "created_at": "2017-03-27T01:05:13Z",
+      "updated_at": "2017-04-01T01:35:27Z",
+      "closed_at": "2017-03-27T01:06:42Z",
+      "author_association": "OWNER",
+      "pull_request": {
+        "url": "https://api.github.com/repos/brettcannon/gidgethub/pulls/18",
+        "html_url": "https://github.com/brettcannon/gidgethub/pull/18",
+        "diff_url": "https://github.com/brettcannon/gidgethub/pull/18.diff",
+        "patch_url": "https://github.com/brettcannon/gidgethub/pull/18.patch"
+      },
+      "body": "Introduce the RateLimitExceeded exception and drop the automatic sleeping of requests in GitHubAPI.",
+      "score": 0.079047635
+    }
+  ]
+}
