@@ -61,10 +61,10 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-3.0.1 (in development)
+3.1.0 (in development)
 ''''''''''''''''''''''
 
-- <nothing yet>
+- ``gidgethub.abc.GitHubAPI.getiter()`` now works with [GitHub's search API](https://developer.github.com/v3/search/) (thanks [Pablo Galindo](https://github.com/pablogsal))
 
 3.0.0
 '''''
