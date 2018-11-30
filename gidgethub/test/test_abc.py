@@ -256,6 +256,29 @@ async def test_getiter_cannot_pass_both_oauth_and_jwt():
 
 
 @pytest.mark.asyncio
+async def test_getiter_search_api():
+    """Test that getiter() returns an async iterable with the items if
+       the original data is a dictionary (GitHub search API)."""
+    original_data = {"items":[1, 2]}
+    next_url = "https://api.github.com/fake{/extra}?page=2"
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=UTF-8"
+    headers["link"] = f'<{next_url}>; rel="next"'
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(original_data).encode("utf8"))
+    data = []
+    async for item in gh.getiter("/fake", {"extra": "stuff"}):
+        data.append(item)
+    assert gh.method == "GET"
+    assert gh.url == "https://api.github.com/fake/stuff?page=2"
+    assert len(data) == 4
+    assert data[0] == 1
+    assert data[1] == 2
+    assert data[2] == 1
+    assert data[3] == 2
+
+
+@pytest.mark.asyncio
 async def test_post():
     send = [1, 2, 3]
     send_json = json.dumps(send).encode("utf-8")

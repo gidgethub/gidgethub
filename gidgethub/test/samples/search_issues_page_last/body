@@ -1,0 +1,174 @@
+{
+  "total_count": 6,
+  "incomplete_results": false,
+  "items": [
+    {
+      "url": "https://api.github.com/repos/brettcannon/gidgethub/issues/10",
+      "repository_url": "https://api.github.com/repos/brettcannon/gidgethub",
+      "labels_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/10/labels{/name}",
+      "comments_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/10/comments",
+      "events_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/10/events",
+      "html_url": "https://github.com/brettcannon/gidgethub/issues/10",
+      "id": 213562041,
+      "node_id": "MDU6SXNzdWUyMTM1NjIwNDE=",
+      "number": 10,
+      "title": "Introduce a RateLimitExceeded exception",
+      "user": {
+        "login": "brettcannon",
+        "id": 54418,
+        "node_id": "MDQ6VXNlcjU0NDE4",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/54418?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/brettcannon",
+        "html_url": "https://github.com/brettcannon",
+        "followers_url": "https://api.github.com/users/brettcannon/followers",
+        "following_url": "https://api.github.com/users/brettcannon/following{/other_user}",
+        "gists_url": "https://api.github.com/users/brettcannon/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/brettcannon/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/brettcannon/subscriptions",
+        "organizations_url": "https://api.github.com/users/brettcannon/orgs",
+        "repos_url": "https://api.github.com/users/brettcannon/repos",
+        "events_url": "https://api.github.com/users/brettcannon/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/brettcannon/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "labels": [
+        {
+          "id": 523296943,
+          "node_id": "MDU6TGFiZWw1MjMyOTY5NDM=",
+          "url": "https://api.github.com/repos/brettcannon/gidgethub/labels/enhancement",
+          "name": "enhancement",
+          "color": "84b6eb",
+          "default": true
+        }
+      ],
+      "state": "closed",
+      "locked": false,
+      "assignee": null,
+      "assignees": [
+
+      ],
+      "milestone": null,
+      "comments": 6,
+      "created_at": "2017-03-11T21:53:05Z",
+      "updated_at": "2017-03-27T01:07:03Z",
+      "closed_at": "2017-03-27T01:07:03Z",
+      "author_association": "OWNER",
+      "body": "Detect a [403 response and `X-RateLimit-Remaining` is 0](https://developer.github.com/v3/#rate-limiting). This would allow users to do what they want when their rate limit is reached instead of gidgethub making that decision for them by sleeping. It also has the perk of simplifying gidgethub's own code. 😁 ",
+      "score": 0.04832509
+    },
+    {
+      "url": "https://api.github.com/repos/brettcannon/gidgethub/issues/12",
+      "repository_url": "https://api.github.com/repos/brettcannon/gidgethub",
+      "labels_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/12/labels{/name}",
+      "comments_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/12/comments",
+      "events_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/12/events",
+      "html_url": "https://github.com/brettcannon/gidgethub/issues/12",
+      "id": 214498614,
+      "node_id": "MDU6SXNzdWUyMTQ0OTg2MTQ=",
+      "number": 12,
+      "title": "Test POST using httpbin",
+      "user": {
+        "login": "brettcannon",
+        "id": 54418,
+        "node_id": "MDQ6VXNlcjU0NDE4",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/54418?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/brettcannon",
+        "html_url": "https://github.com/brettcannon",
+        "followers_url": "https://api.github.com/users/brettcannon/followers",
+        "following_url": "https://api.github.com/users/brettcannon/following{/other_user}",
+        "gists_url": "https://api.github.com/users/brettcannon/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/brettcannon/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/brettcannon/subscriptions",
+        "organizations_url": "https://api.github.com/users/brettcannon/orgs",
+        "repos_url": "https://api.github.com/users/brettcannon/repos",
+        "events_url": "https://api.github.com/users/brettcannon/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/brettcannon/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "labels": [
+        {
+          "id": 523296941,
+          "node_id": "MDU6TGFiZWw1MjMyOTY5NDE=",
+          "url": "https://api.github.com/repos/brettcannon/gidgethub/labels/bug",
+          "name": "bug",
+          "color": "ee0701",
+          "default": true
+        }
+      ],
+      "state": "closed",
+      "locked": false,
+      "assignee": null,
+      "assignees": [
+
+      ],
+      "milestone": null,
+      "comments": 7,
+      "created_at": "2017-03-15T19:22:09Z",
+      "updated_at": "2017-03-17T18:29:21Z",
+      "closed_at": "2017-03-17T18:29:21Z",
+      "author_association": "OWNER",
+      "body": "As https://github.com/brettcannon/gidgethub/pull/11 discovered, testing that POST works as expected is important, so writing a test that uses https://httpbin.org/ to just make sure everything is set up to at least not fail on a POST with a body would be good (GET requests are already covered by the rate limit test).",
+      "score": 0.03995731
+    },
+    {
+      "url": "https://api.github.com/repos/brettcannon/gidgethub/issues/17",
+      "repository_url": "https://api.github.com/repos/brettcannon/gidgethub",
+      "labels_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/17/labels{/name}",
+      "comments_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/17/comments",
+      "events_url": "https://api.github.com/repos/brettcannon/gidgethub/issues/17/events",
+      "html_url": "https://github.com/brettcannon/gidgethub/issues/17",
+      "id": 217082255,
+      "node_id": "MDU6SXNzdWUyMTcwODIyNTU=",
+      "number": 17,
+      "title": "Treq tests failing",
+      "user": {
+        "login": "brettcannon",
+        "id": 54418,
+        "node_id": "MDQ6VXNlcjU0NDE4",
+        "avatar_url": "https://avatars0.githubusercontent.com/u/54418?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/brettcannon",
+        "html_url": "https://github.com/brettcannon",
+        "followers_url": "https://api.github.com/users/brettcannon/followers",
+        "following_url": "https://api.github.com/users/brettcannon/following{/other_user}",
+        "gists_url": "https://api.github.com/users/brettcannon/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/brettcannon/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/brettcannon/subscriptions",
+        "organizations_url": "https://api.github.com/users/brettcannon/orgs",
+        "repos_url": "https://api.github.com/users/brettcannon/repos",
+        "events_url": "https://api.github.com/users/brettcannon/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/brettcannon/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "labels": [
+        {
+          "id": 523296941,
+          "node_id": "MDU6TGFiZWw1MjMyOTY5NDE=",
+          "url": "https://api.github.com/repos/brettcannon/gidgethub/labels/bug",
+          "name": "bug",
+          "color": "ee0701",
+          "default": true
+        }
+      ],
+      "state": "closed",
+      "locked": false,
+      "assignee": null,
+      "assignees": [
+
+      ],
+      "milestone": null,
+      "comments": 13,
+      "created_at": "2017-03-26T19:29:33Z",
+      "updated_at": "2017-03-31T20:02:18Z",
+      "closed_at": "2017-03-31T00:49:55Z",
+      "author_association": "OWNER",
+      "body": "@Lukasa any ideas as to why this is failing locally?\r\n\r\n```\r\n=========================================================== FAILURES ============================================================\r\n______________________________________________ TwistedPluginTestCase.test__request ______________________________________________\r\n\r\nresult = <twisted.python.failure.Failure twisted.web._newclient.ResponseNeverReceived: [<twisted.python.failure.Failure OpenSSL.SSL.Error: [('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')]>]>\r\ng = <coroutine object GitHubAPI._request at 0x106566150>, deferred = <Deferred at 0x1064fbc50 current result: None>\r\n\r\n    def _inlineCallbacks(result, g, deferred):\r\n        \"\"\"\r\n        See L{inlineCallbacks}.\r\n        \"\"\"\r\n        # This function is complicated by the need to prevent unbounded recursion\r\n        # arising from repeatedly yielding immediately ready deferreds.  This while\r\n        # loop and the waiting variable solve that by manually unfolding the\r\n        # recursion.\r\n    \r\n        waiting = [True, # waiting for result?\r\n                   None] # result\r\n    \r\n        while 1:\r\n            try:\r\n                # Send the last result back as the result of the yield expression.\r\n                isFailure = isinstance(result, failure.Failure)\r\n                if isFailure:\r\n>                   result = result.throwExceptionIntoGenerator(g)\r\n\r\nvenv/lib/python3.6/site-packages/twisted/internet/defer.py:1299: \r\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\r\nvenv/lib/python3.6/site-packages/twisted/python/failure.py:393: in throwExceptionIntoGenerator\r\n    return g.throw(self.type, self.value, self.tb)\r\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\r\n\r\nself = <gidgethub.treq.GitHubAPI object at 0x1064fbe80>, method = 'GET', url = 'https://api.github.com/rate_limit'\r\nheaders = Headers({b'user-agent': [b'gidgethub'], b'accept': [b'application/vnd.github.v3+json']}), body = b''\r\n\r\n    async def _request(self, method: str, url: str,\r\n                       headers: Mapping[str, str],\r\n                       body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]:\r\n        # We need to encode the headers to a format that Twisted will like.\r\n        # As a note: treq will set a content-length even if we do, so we need\r\n        # to strip any content-length header.\r\n        headers = Headers(\r\n            {\r\n                k.encode('utf-8'): [v.encode('utf-8')]\r\n                for k, v in headers.items()\r\n                if k.lower() != 'content-length'\r\n            }\r\n        )\r\n>       response = await treq.request(method, url, headers=headers, data=body)\r\nE       twisted.web._newclient.ResponseNeverReceived: [<twisted.python.failure.Failure OpenSSL.SSL.Error: [('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')]>]\r\n\r\ngidgethub/treq.py:30: ResponseNeverReceived\r\n________________________________________________ TwistedPluginTestCase.test_get _________________________________________________\r\n\r\nresult = <twisted.python.failure.Failure twisted.web._newclient.ResponseNeverReceived: [<twisted.python.failure.Failure OpenSSL.SSL.Error: [('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')]>]>\r\ng = <coroutine object GitHubAPI.getitem at 0x106808fc0>, deferred = <Deferred at 0x10658c518 current result: None>\r\n\r\n    def _inlineCallbacks(result, g, deferred):\r\n        \"\"\"\r\n        See L{inlineCallbacks}.\r\n        \"\"\"\r\n        # This function is complicated by the need to prevent unbounded recursion\r\n        # arising from repeatedly yielding immediately ready deferreds.  This while\r\n        # loop and the waiting variable solve that by manually unfolding the\r\n        # recursion.\r\n    \r\n        waiting = [True, # waiting for result?\r\n                   None] # result\r\n    \r\n        while 1:\r\n            try:\r\n                # Send the last result back as the result of the yield expression.\r\n                isFailure = isinstance(result, failure.Failure)\r\n                if isFailure:\r\n>                   result = result.throwExceptionIntoGenerator(g)\r\n\r\nvenv/lib/python3.6/site-packages/twisted/internet/defer.py:1299: \r\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\r\nvenv/lib/python3.6/site-packages/twisted/python/failure.py:393: in throwExceptionIntoGenerator\r\n    return g.throw(self.type, self.value, self.tb)\r\ngidgethub/abc.py:64: in getitem\r\n    data, _ = await self._make_request(\"GET\", url, url_vars, \"\", accept)\r\ngidgethub/abc.py:57: in _make_request\r\n    response = await self._request(method, filled_url, request_headers, body)\r\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\r\n\r\nself = <gidgethub.treq.GitHubAPI object at 0x10658c4e0>, method = 'GET', url = 'https://api.github.com/rate_limit'\r\nheaders = Headers({b'user-agent': [b'gidgethub'], b'accept': [b'application/vnd.github.v3+json']}), body = b''\r\n\r\n    async def _request(self, method: str, url: str,\r\n                       headers: Mapping[str, str],\r\n                       body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]:\r\n        # We need to encode the headers to a format that Twisted will like.\r\n        # As a note: treq will set a content-length even if we do, so we need\r\n        # to strip any content-length header.\r\n        headers = Headers(\r\n            {\r\n                k.encode('utf-8'): [v.encode('utf-8')]\r\n                for k, v in headers.items()\r\n                if k.lower() != 'content-length'\r\n            }\r\n        )\r\n>       response = await treq.request(method, url, headers=headers, data=body)\r\nE       twisted.web._newclient.ResponseNeverReceived: [<twisted.python.failure.Failure OpenSSL.SSL.Error: [('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')]>]\r\n\r\ngidgethub/treq.py:30: ResponseNeverReceived\r\n============================================== 2 failed, 57 passed in 3.87 seconds ==============================================\r\n```",
+      "score": 0.022395043
+    }
+  ]
+}

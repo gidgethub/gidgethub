@@ -407,6 +407,28 @@ class TestDecipherResponse:
         assert rate_limit.remaining == 48
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/6395"
 
+    def test_next_with_search_api(self):
+        status_code = 200
+        headers, body = sample("search_issues_page_1", status_code)
+        data, rate_limit, more = sansio.decipher_response(status_code, headers,
+                                                          body)
+        assert more == ("https://api.github.com/search/issues"
+                        "?q=repo%3Abrettcannon%2Fgidgethub+state%3Aclosed"
+                        "+rate+&per_page=3&page=2")
+        assert rate_limit.remaining == 9
+        assert {"items", "incomplete_results", "total_count"} == data.keys()
+        expected_first_url = "https://api.github.com/repos/brettcannon/gidgethub/issues/25"
+        assert data["items"][0]["url"] == expected_first_url
+
+        headers, body = sample("search_issues_page_last", status_code)
+        data, rate_limit, more = sansio.decipher_response(status_code, headers,
+                                                          body)
+        assert more is None
+        assert rate_limit.remaining == 9
+        assert {"items", "incomplete_results", "total_count"} == data.keys()
+        expected_first_url = "https://api.github.com/repos/brettcannon/gidgethub/issues/10"
+        assert data["items"][0]["url"] == expected_first_url
+
     def test_text_body(self):
         """Test requesting non-JSON data like a diff."""
         status_code = 200
