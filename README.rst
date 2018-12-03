@@ -64,7 +64,7 @@ Changelog
 3.1.0 (in development)
 ''''''''''''''''''''''
 
-- ``gidgethub.abc.GitHubAPI.getiter()`` now works with [GitHub's search API](https://developer.github.com/v3/search/) (thanks [Pablo Galindo](https://github.com/pablogsal))
+- ``gidgethub.abc.GitHubAPI.getiter()`` now works with `GitHub's search API <https://developer.github.com/v3/search/>`_ (thanks `Pablo Galindo <https://github.com/pablogsal>`_).
 
 3.0.0
 '''''
