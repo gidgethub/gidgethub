@@ -66,7 +66,7 @@ Changelog
 
 - ``gidgethub.abc.GitHubAPI.getiter()`` now works with `GitHub's search API
   <https://developer.github.com/v3/search/>`_ (thanks `Pablo Galindo <https://github.com/pablogsal>`_).
-- The ``data`` argument in gidgethub.abc.GitHubAPI.post()`` is now optional.
+- The ``data`` argument in ``gidgethub.abc.GitHubAPI.post()`` is now optional.
 
 3.0.0
 '''''
