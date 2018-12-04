@@ -332,6 +332,20 @@ async def test_post_cannot_pass_both_oauth_and_jwt():
 
     assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
 
+
+@pytest.mark.asyncio
+async def test_post_without_data():
+    receive = {"hello": "world"}
+    headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+    headers['content-type'] = "application/json; charset=utf-8"
+    gh = MockGitHubAPI(headers=headers,
+                       body=json.dumps(receive).encode("utf-8"))
+    await gh.post("/fake", jwt="json web token")
+
+    assert gh.method == "POST"
+    assert gh.headers["authorization"] == "bearer json web token"
+
+
 @pytest.mark.asyncio
 async def test_patch():
     send = [1, 2, 3]

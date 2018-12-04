@@ -119,7 +119,7 @@ class GitHubAPI(abc.ABC):
                                            jwt=jwt, oauth_token=oauth_token):
                 yield item
 
-    async def post(self, url: str, url_vars: Dict = {}, *, data: Any,
+    async def post(self, url: str, url_vars: Dict = {}, *, data: Any = b"",
                    accept: str = sansio.accept_format(),
                    jwt: Opt[str] = None,
                    oauth_token: Opt[str] = None

@@ -160,7 +160,7 @@ experimental APIs without issue.
             :meth:`getitem`.
 
 
-    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. coroutine:: post(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None)
 
         Send a ``POST`` request to GitHub.
 
@@ -177,6 +177,10 @@ experimental APIs without issue.
         .. versionchanged:: 3.0
 
             Added *jwt* and *oauth_token*.
+
+        .. versionchanged:: 3.1.0
+
+            *data* argument becomes optional.
 
 
     .. coroutine:: patch(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None)
