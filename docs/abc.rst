@@ -174,7 +174,7 @@ experimental APIs without issue.
         raised if both are passed. If neither was passed, it defaults to the
         value of the *oauth_token* attribute.
         
-        A few of GitHub POST endpoints do not take any *data* argument, for example
+        A few GitHub POST endpoints do not take any *data* argument, for example
         the endpoint to `create an installation access token <https://developer.github.com/v3/apps/#create-a-github-app-from-a-manifest>`_. For this situation, you can pass ``data=b""``.
 
         .. versionchanged:: 3.0
