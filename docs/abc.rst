@@ -155,6 +155,11 @@ experimental APIs without issue.
 
             Added *jwt* and *oauth_token*.
 
+        .. versionchanged:: 3.1
+
+            Added support for for endpoints which return a JSON object with an
+            ``items`` value instead of a list.
+
         .. note::
             For ``GET`` calls that return only a single item, see
             :meth:`getitem`.
@@ -173,7 +178,7 @@ experimental APIs without issue.
         Only one of *oauth_token* or *jwt* may be passed. A ``ValueError`` is
         raised if both are passed. If neither was passed, it defaults to the
         value of the *oauth_token* attribute.
-        
+
         A few GitHub POST endpoints do not take any *data* argument, for example
         the endpoint to `create an installation access token <https://developer.github.com/v3/apps/#create-a-github-app-from-a-manifest>`_. For this situation, you can pass ``data=b""``.
 
