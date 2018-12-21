@@ -12,7 +12,7 @@ import hmac
 import http
 import json
 import re
-from typing import Any, Dict, Mapping, Optional, Tuple, Type
+from typing import Any, Dict, Mapping, Optional, Tuple, Type, Union
 import urllib.parse
 
 import uritemplate
@@ -87,7 +87,7 @@ class Event:
         self.delivery_id = delivery_id
 
     @classmethod
-    def from_http(cls, headers: Mapping, body: bytes,
+    def from_http(cls, headers: Mapping[str, str], body: bytes,
                   *, secret: Optional[str] = None) -> "Event":
         """Construct an event from HTTP headers and JSON body data.
 
@@ -234,7 +234,7 @@ class RateLimit:
         return f"< {self.remaining:,}/{self.limit:,} until {self.reset_datetime} >"
 
     @classmethod
-    def from_http(cls, headers: Mapping) -> Optional["RateLimit"]:
+    def from_http(cls, headers: Mapping[str, str]) -> Optional["RateLimit"]:
         """Gather rate limit information from HTTP headers.
 
         The mapping providing the headers is expected to support lowercase
@@ -266,7 +266,7 @@ def _next_link(link: Optional[str]) -> Optional[str]:
         return None
 
 
-def decipher_response(status_code: int, headers: Mapping,
+def decipher_response(status_code: int, headers: Mapping[str, str],
                       body: bytes) -> Tuple[Any, Optional[RateLimit], Optional[str]]:
     """Decipher an HTTP response for a GitHub API request.
 
@@ -318,7 +318,7 @@ def decipher_response(status_code: int, headers: Mapping,
         else:
             exc_type = HTTPException
         status_code_enum = http.HTTPStatus(status_code)
-        args: Tuple
+        args: Union[Tuple[http.HTTPStatus, str], Tuple[http.HTTPStatus]]
         if message:
             args = status_code_enum, message
         else:
