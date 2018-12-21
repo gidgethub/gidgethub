@@ -23,15 +23,15 @@ class GitHubAPI(abc.ABC):
         self.rate_limit: Opt[sansio.RateLimit] = None
 
     @abc.abstractmethod
-    async def _request(self, method: str, url: str, headers: Mapping,
-                       body: bytes = b'') -> Tuple[int, Mapping, bytes]:
+    async def _request(self, method: str, url: str, headers: Mapping[str, str],
+                       body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
 
     @abc.abstractmethod
     async def sleep(self, seconds: float) -> None:
         """Sleep for the specified number of seconds."""
 
-    async def _make_request(self, method: str, url: str, url_vars: Dict,
+    async def _make_request(self, method: str, url: str, url_vars: Dict[str, str],
                             data: Any, accept: str,
                             jwt: Opt[str] = None,
                             oauth_token: Opt[str] = None,
@@ -88,7 +88,7 @@ class GitHubAPI(abc.ABC):
                 self._cache[filled_url] = etag, last_modified, data, more
         return data, more
 
-    async def getitem(self, url: str, url_vars: Dict = {},
+    async def getitem(self, url: str, url_vars: Dict[str, str] = {},
                       *, accept: str = sansio.accept_format(),
                       jwt: Opt[str] = None,
                       oauth_token: Opt[str] = None
@@ -99,7 +99,7 @@ class GitHubAPI(abc.ABC):
                                            jwt=jwt, oauth_token=oauth_token)
         return data
 
-    async def getiter(self, url: str, url_vars: Dict = {},
+    async def getiter(self, url: str, url_vars: Dict[str, str] = {},
                       *, accept: str = sansio.accept_format(),
                       jwt: Opt[str] = None,
                       oauth_token: Opt[str] = None
@@ -119,7 +119,7 @@ class GitHubAPI(abc.ABC):
                                            jwt=jwt, oauth_token=oauth_token):
                 yield item
 
-    async def post(self, url: str, url_vars: Dict = {}, *, data: Any,
+    async def post(self, url: str, url_vars: Dict[str, str] = {}, *, data: Any,
                    accept: str = sansio.accept_format(),
                    jwt: Opt[str] = None,
                    oauth_token: Opt[str] = None
@@ -128,7 +128,7 @@ class GitHubAPI(abc.ABC):
                                            jwt=jwt, oauth_token=oauth_token)
         return data
 
-    async def patch(self, url: str, url_vars: Dict = {}, *, data: Any,
+    async def patch(self, url: str, url_vars: Dict[str, str] = {}, *, data: Any,
                     accept: str = sansio.accept_format(),
                     jwt: Opt[str] = None,
                     oauth_token: Opt[str] = None
@@ -137,7 +137,7 @@ class GitHubAPI(abc.ABC):
                                            jwt=jwt, oauth_token=oauth_token)
         return data
 
-    async def put(self, url: str, url_vars: Dict = {}, *, data: Any = b"",
+    async def put(self, url: str, url_vars: Dict[str, str] = {}, *, data: Any = b"",
                   accept: str = sansio.accept_format(),
                   jwt: Opt[str] = None,
                   oauth_token: Opt[str] = None
@@ -146,7 +146,7 @@ class GitHubAPI(abc.ABC):
                                            jwt=jwt, oauth_token=oauth_token)
         return data
 
-    async def delete(self, url: str, url_vars: Dict = {}, *, data: Any = b"",
+    async def delete(self, url: str, url_vars: Dict[str, str] = {}, *, data: Any = b"",
                      accept: str = sansio.accept_format(),
                      jwt: Opt[str] = None,
                      oauth_token: Opt[str] = None
