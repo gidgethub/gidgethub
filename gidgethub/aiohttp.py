@@ -13,8 +13,8 @@ class GitHubAPI(gh_abc.GitHubAPI):
         self._session = session
         super().__init__(*args, **kwargs)
 
-    async def _request(self, method: str, url: str, headers: Mapping,
-                       body: bytes = b'') -> Tuple[int, Mapping, bytes]:
+    async def _request(self, method: str, url: str, headers: Mapping[str, str],
+                       body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]:
         async with self._session.request(method, url, headers=headers,
                                          data=body) as response:
             return response.status, response.headers, await response.read()
