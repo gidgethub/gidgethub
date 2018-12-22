@@ -61,10 +61,11 @@ cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
 Changelog
 ---------
 
-3.1.1 (in development)
+3.2.0 (in development)
 ''''''''''''''''''''''
 
-- N/A
+- Fix mypy warnings about the ``Dict`` and ``Mapping`` generic types lacking
+  type parameters.
 
 3.1.0
 ''''''
