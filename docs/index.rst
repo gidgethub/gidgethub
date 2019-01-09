@@ -126,7 +126,6 @@ Contents
 .. toctree::
    :titlesonly:
 
-   changelog
    __init__
    sansio
    routing
