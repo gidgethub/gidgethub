@@ -310,15 +310,18 @@ class TestDecipherResponse:
 
     def test_422(self):
         status_code = 422
-        errors = [{"resource": "Issue", "field": "title",
-                   "code": "missing_field"}]
+        errors = [
+            {"resource": "Issue", "field": "title", "code": "missing_field"},
+            {"resource": "PullRequest", "code": "custom",
+             "message": "A pull request already exists for foo:1."},
+        ]
         body = json.dumps({"message": "it went bad", "errors": errors})
         body = body.encode("utf-8")
         headers = {"content-type": "application/json; charset=utf-8"}
         with pytest.raises(InvalidField) as exc_info:
             sansio.decipher_response(status_code, headers, body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
-        assert str(exc_info.value) == "it went bad for 'title'"
+        assert str(exc_info.value) == "it went bad for 'title', 'PullRequest'"
 
     def test_422_no_errors_object(self):
         status_code = 422

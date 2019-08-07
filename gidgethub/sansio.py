@@ -308,8 +308,8 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
             elif status_code == 422:
                 errors = data.get("errors", None)
                 if errors:
-                    fields = ", ".join(repr(e["field"]) for e in errors)
-                    message = f"{message} for {fields}"
+                    error_context = ", ".join(repr(e.get("field", e["resource"])) for e in errors)
+                    message = f"{message} for {error_context}"
                 else:
                     message = data["message"]
                 raise InvalidField(errors, message)
