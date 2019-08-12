@@ -12,7 +12,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
                        body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
         if method == "GET" and not body:
-            real_body = b''
+            real_body = None
         else:
             real_body = body
         request = httpclient.HTTPRequest(url, method, headers, real_body)
