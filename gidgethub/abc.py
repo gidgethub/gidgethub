@@ -23,7 +23,7 @@ class GitHubAPI(abc.ABC):
         self.rate_limit: Opt[sansio.RateLimit] = None
 
     @abc.abstractmethod
-    async def _request(self, method: str, url: str, headers: Dict[str, str],
+    async def _request(self, method: str, url: str, headers: Mapping[str, str],
                        body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
 
