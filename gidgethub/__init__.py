@@ -71,6 +71,20 @@ class InvalidField(BadRequest):
         super().__init__(http.HTTPStatus.UNPROCESSABLE_ENTITY, *args)
 
 
+class ValidationError(BadRequest):
+
+    """A request was unable to be completed.
+
+    Represented by a 422 HTTP Response. Details of what went wrong
+    are stored in the errors attribute.
+    """
+
+    def __init__(self, errors: Any, *args: Any) -> None:
+        """Store the error details."""
+        self.errors = errors
+        super().__init__(http.HTTPStatus.UNPROCESSABLE_ENTITY, *args)
+
+
 class GitHubBroken(HTTPException):
 
     """Exception for 5XX HTTP responses."""
