@@ -12,6 +12,7 @@ import hmac
 import http
 import json
 import re
+from string import Template
 from typing import Any, Dict, Mapping, Optional, Tuple, Type, Union
 import urllib.parse
 
@@ -340,3 +341,11 @@ def format_url(url: str, url_vars: Mapping[str, Any]) -> str:
     url = urllib.parse.urljoin(DOMAIN, url)  # Works even if 'url' is fully-qualified.
     expanded_url: str = uritemplate.expand(url, var_dict=url_vars)
     return expanded_url
+
+
+V4_DOMAIN = "https://api.github.com/graphql"
+
+
+def format_query(template: str, variables: Mapping[str, Any]) -> str:
+    """Format the GraphQL query template substituting the given mapping."""
+    return Template(template).safe_substitute(variables)
