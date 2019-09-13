@@ -67,6 +67,10 @@ class Router:
         except KeyError:
             pass
         try:
+            found_callbacks.extend(self._shallow_routes['*'])
+        except KeyError:
+            pass
+        try:
             details = self._deep_routes[event.event]
         except KeyError:
             pass
