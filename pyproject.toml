@@ -20,14 +20,15 @@ classifiers = ["Intended Audience :: Developers",
 ]
 
 [tool.flit.metadata.requires-extra]
-test = ["pytest>=3.0.0", "pytest-asyncio"]
+test = ["pytest>=3.0.0", "pytest-asyncio", "pytest-tornasync"]
 doc = ["sphinx"]
 # The 'dev' target should contain all dependencies listed in any extras coming
 # after it to make sure that the test suite will run successfully.
-dev = ["aiohttp", "mypy", "pytest-cov", "treq", "twisted[tls]", "tornado"]
+dev = ["aiohttp", "mypy", "pytest-cov", "treq", "twisted[tls]", "tornado", "httpx"]
 aiohttp = ["aiohttp"]
 treq = ["treq", "twisted[tls]"]
 tornado = ["tornado"]
+httpx = ["httpx"]
 
 [tool.flit.metadata.urls]
 Documentation = "https://gidgethub.readthedocs.io"
