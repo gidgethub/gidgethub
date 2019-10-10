@@ -15,7 +15,8 @@ class GitHubAPI(gh_abc.GitHubAPI):
     async def _request(self, method: str, url: str, headers: Mapping[str, str],
                        body: bytes = b'') -> Tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
-        raise NotImplementedError
+        response = await self._client.request(method, url, headers=dict(headers))
+        return response.status_code, response.headers, await response.read()
 
     async def sleep(self, seconds: float) -> None:
         """Sleep for the specified number of seconds."""
