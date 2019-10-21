@@ -13,7 +13,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
         """Make an HTTP request."""
         # Setting 'body' to None fails type checking, so only add a 'body' argument if necessary.
         args: List[Union[str, Dict[Any, Any], bytes]] = [url, method, dict(headers)]
-        if method == "GET" and not body:
+        if method != "GET" and body:
             args.append(body)
         # The below line is skipped from mypy because Tornado's HTTPRequest signature
         # requires many types of arguments some of which are internal to it
