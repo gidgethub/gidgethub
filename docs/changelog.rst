@@ -6,6 +6,7 @@ Changelog
 
 - Fix mypy warnings about the ``Dict`` and ``Mapping`` generic types lacking
   type parameters.
+- Add `httpx <https://www.encode.io/httpx>`_ backend.
 
 3.1.0
 ''''''

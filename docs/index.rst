@@ -134,6 +134,7 @@ Contents
    aiohttp
    treq
    tornado
+   httpx
 
 
 About the title
