@@ -6,7 +6,6 @@ build-backend = "flit.buildapi"
 module = "gidgethub"
 author = "Brett Cannon"
 author-email = "brett@python.org"
-home-page = "https://github.com/brettcannon/gidgethub"
 requires = ["uritemplate>=3.0.0"]
 requires-python = ">=3.6"
 license = "Apache"
@@ -32,3 +31,4 @@ httpx = ["httpx"]
 
 [tool.flit.metadata.urls]
 Documentation = "https://gidgethub.readthedocs.io"
+Repository = "https://github.com/brettcannon/gidgethub"
