@@ -53,8 +53,8 @@ If you think you want a different approach to the GitHub API,
 
 I couldn't think of a good name that was somehow a play on "GitHub" or somehow
 tied into `Monty Python <http://www.montypython.com/>`_. And so I decided to play
-off of GitHub's `octocat <https://octodex.github.com/>`_ as a theme and use my
-cat's name, Gidget, as part of the name. Since "Gidget" somewhat sounds like
+off of GitHub's `octocat <https://octodex.github.com/>`_ mascot and use my own
+cat's name, Gidget, in some way. Since "Gidget" somewhat sounds like
 "git", I decided to go with "gidgethub".
 
 
