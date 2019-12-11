@@ -12,7 +12,7 @@
         import gidgethub.httpx
 
 
-        async with httpx.AsyncClient() as client:
+        async with httpx.Client() as client:
             gh = gidgethub.httpx.GitHubAPI(client, requester,
                                            oauth_token=oauth_token)
             # Make your requests, e.g. ...
