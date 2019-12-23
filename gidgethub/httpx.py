@@ -3,7 +3,7 @@ from typing import Mapping, Tuple, Any
 
 try:
     from httpx import AsyncClient as Client
-except ModuleNotFoundError:
+except ImportError:
     from httpx import Client
 
 from . import abc as gh_abc
