@@ -2,7 +2,7 @@ import datetime
 
 try:
     from httpx import AsyncClient as Client
-except ImportError:
+except ModuleNotFoundError:
     from httpx import Client
 
 import pytest
