@@ -2,7 +2,7 @@ import asyncio
 from typing import Mapping, Tuple, Any
 
 try:
-    from httpx import AsyncClient as Client  # type: ignore
+    from httpx import AsyncClient as Client
 except ImportError:
     from httpx import Client
 
