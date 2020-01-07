@@ -4,7 +4,7 @@ on: [pull_request, push]
 
 jobs:
   test:
-    name: Test w/ Python ${{ matrix.python_version }}
+    name: test w/ Python ${{ matrix.python_version }}
 
     runs-on: ubuntu-latest
     
