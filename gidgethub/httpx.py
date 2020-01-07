@@ -2,7 +2,7 @@ import asyncio
 from typing import Mapping, Tuple, Any
 
 try:
-    from httpx import AsyncClient as Client  # type: ignore
+    from httpx import AsyncClient as Client
 except ImportError:
     from httpx import Client
 
@@ -20,7 +20,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
         """Make an HTTP request."""
         response = await self._client.request(
             method, url, headers=dict(headers), data=body)
-        return response.status_code, response.headers, await response.read()
+        return response.status_code, response.headers, response.content
 
     async def sleep(self, seconds: float) -> None:
         """Sleep for the specified number of seconds."""
