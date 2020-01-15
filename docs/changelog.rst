@@ -4,7 +4,7 @@ Changelog
 vNext
 '''''
 
-- Adapt to the new ``httpx`` api to support versions >= 0.8.0 (thanks [Dave Hirschfeld](https://github.com/dhirschfeld))
+- Adapt to the new ``httpx`` api to support versions >= 0.8.0 (thanks `Dave Hirschfeld <https://github.com/dhirschfeld>`_)
 
 3.2.0
 '''''
