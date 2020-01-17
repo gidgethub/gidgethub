@@ -29,7 +29,7 @@ dev = ["aiohttp", "httpx", "mypy", "pytest-cov", "treq", "twisted[tls]", "tornad
 aiohttp = ["aiohttp"]
 treq = ["treq", "twisted[tls]"]
 tornado = ["tornado"]
-httpx = ["httpx"]
+httpx = ["httpx>=0.11.0"]
 
 [tool.flit.metadata.urls]
 Documentation = "https://gidgethub.readthedocs.io"

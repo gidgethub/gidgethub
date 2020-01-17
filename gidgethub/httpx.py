@@ -1,16 +1,13 @@
 import asyncio
 from typing import Mapping, Tuple, Any
 
-try:
-    from httpx import AsyncClient as Client
-except ImportError:
-    from httpx import Client
+import httpx
 
 from . import abc as gh_abc
 
 
 class GitHubAPI(gh_abc.GitHubAPI):
-    def __init__(self, client: Client, *args: Any,
+    def __init__(self, client: httpx.AsyncClient, *args: Any,
                  **kwargs: Any) -> None:
         self._client = client
         super().__init__(*args, **kwargs)
