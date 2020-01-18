@@ -1,9 +1,6 @@
 import datetime
 
-try:
-    from httpx import AsyncClient as Client  # type: ignore
-except ImportError:
-    from httpx import Client
+import httpx
 
 import pytest
 
@@ -15,7 +12,7 @@ from .. import sansio
 async def test_sleep():
     delay = 1
     start = datetime.datetime.now()
-    async with Client() as client:
+    async with httpx.AsyncClient() as client:
         gh = gh_httpx.GitHubAPI(client, "gidgethub")
         await gh.sleep(delay)
     stop = datetime.datetime.now()
@@ -26,7 +23,7 @@ async def test_sleep():
 async def test__request():
     """Make sure that that abstract method is implemented properly."""
     request_headers = sansio.create_headers("gidgethub")
-    async with Client() as client:
+    async with httpx.AsyncClient() as client:
         gh = gh_httpx.GitHubAPI(client, "gidgethub")
         aio_call = await gh._request("GET", "https://api.github.com/rate_limit",
                                      request_headers)
@@ -37,7 +34,7 @@ async def test__request():
 @pytest.mark.asyncio
 async def test_get():
     """Integration test."""
-    async with Client() as client:
+    async with httpx.AsyncClient() as client:
         gh = gh_httpx.GitHubAPI(client, "gidgethub")
         data = await gh.getitem("/rate_limit")
     assert "rate" in data
