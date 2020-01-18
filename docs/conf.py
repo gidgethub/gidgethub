@@ -102,8 +102,6 @@ html_theme_options = {
     "github_repo": "gidgethub",
     "github_type": "star",
     "github_banner": True,
-    "travis_button": True,
-    "codecov_button": True,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
