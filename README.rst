@@ -6,8 +6,8 @@ An asynchronous `GitHub API <https://developer.github.com/>`_ library.
 Development status
 ------------------
 
-.. image:: https://travis-ci.org/brettcannon/gidgethub.svg?branch=master
-    :target: https://travis-ci.org/brettcannon/gidgethub
+.. image:: https://github.com/brettcannon/gidgethub/workflows/CI/badge.svg?event=push
+    :target: https://github.com/brettcannon/gidgethub/actions
 
 .. image:: https://codecov.io/gh/brettcannon/gidgethub/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/brettcannon/gidgethub
