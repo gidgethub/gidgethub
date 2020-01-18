@@ -5,7 +5,7 @@ Changelog
 '''''
 
 - Adapt to the new ``httpx`` API to support
-  `versions >= 0.11.0 <https://github.com/encode/httpx/blob/master/CHANGELOG.md#0110-january-9th-2020>`_
+  `versions >= 0.11.0 <https://github.com/encode/httpx/blob/master/CHANGELOG.md>`_
   (thanks `Dave Hirschfeld <https://github.com/dhirschfeld>`_)
 
 3.2.0
