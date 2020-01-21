@@ -18,7 +18,8 @@ import urllib.parse
 import uritemplate
 
 from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
-               RateLimitExceeded, RedirectionException, ValidationFailure)
+               RateLimitExceeded, RedirectionException, ValidationError,
+               ValidationFailure)
 
 
 def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str]:
@@ -307,12 +308,19 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
                     raise RateLimitExceeded(rate_limit, message)
             elif status_code == 422:
                 errors = data.get("errors", None)
+                exc_type = InvalidField
                 if errors:
-                    fields = ", ".join(repr(e["field"]) for e in errors)
-                    message = f"{message} for {fields}"
+                    if any(e['code'] in ['missing', 'missing_field', 'invalid', 'already_exists']
+                           for e in errors):
+                        error_context = ", ".join(repr(e.get("field")) for e in errors)
+                        message = f"{message} for {error_context}"
+                    else:
+                        exc_type = ValidationError
+                        error_context = ", ".join(repr(e.get("message")) for e in errors)
+                        message = f"{message}: {error_context}"
                 else:
                     message = data["message"]
-                raise InvalidField(errors, message)
+                raise exc_type(errors, message)
         elif status_code >= 300:
             exc_type = RedirectionException
         else:

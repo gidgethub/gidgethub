@@ -7,7 +7,8 @@ import pathlib
 import pytest
 
 from .. import (BadRequest, GitHubBroken, HTTPException, InvalidField,
-                RateLimitExceeded, RedirectionException, ValidationFailure)
+                RateLimitExceeded, RedirectionException, ValidationError,
+                ValidationFailure)
 from .. import sansio
 
 
@@ -319,6 +320,20 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "it went bad for 'title'"
+
+    def test_422_custom_code(self):
+        status_code = 422
+        errors = [
+            {"resource": "PullRequest", "code": "custom",
+             "message": "A pull request already exists for foo:1."},
+        ]
+        body = json.dumps({"message": "it went bad", "errors": errors})
+        body = body.encode("utf-8")
+        headers = {"content-type": "application/json; charset=utf-8"}
+        with pytest.raises(ValidationError) as exc_info:
+            sansio.decipher_response(status_code, headers, body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert str(exc_info.value) == "it went bad: 'A pull request already exists for foo:1.'"
 
     def test_422_no_errors_object(self):
         status_code = 422
