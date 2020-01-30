@@ -25,6 +25,8 @@ jobs:
     - run: flit install --deps develop
     - name: Run tests
       run: pytest --cov=gidgethub --cov-config=.coveragerc --cov-fail-under=100 --cov-report=xml:cov.xml
+      env:
+        PYTHONDEVMODE: 1
     - uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
