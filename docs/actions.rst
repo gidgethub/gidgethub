@@ -11,7 +11,7 @@ This module is to help provide support for `GitHub Actions`_ when writing a
 
 .. function:: workspace()
 
-    Return a :cls:`pathlib.Path` object representing the ``GITHUB_WORKSPACE``
+    Return a :class:`pathlib.Path` object representing the ``GITHUB_WORKSPACE``
     path. As the location is considered static, the function is idempotent after
     its initial call.
 
