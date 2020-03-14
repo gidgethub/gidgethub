@@ -1,6 +1,14 @@
 Changelog
 =========
 
+4.0.0
+'''''
+
+.. note::
+   Under development
+
+- Introduce the `actions` submodule.
+
 3.3.0
 '''''
 
