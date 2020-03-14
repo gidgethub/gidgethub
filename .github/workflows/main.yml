@@ -45,6 +45,6 @@ jobs:
       - name: Check type hints
         run: mypy --ignore-missing-imports --strict gidgethub/*.py
       - name: Check formatting
-        run: black .
+        run: black --check .
       - name: Check docs
         run: sphinx-build -nW -q -b html -b linkcheck -d docs/_build/doctrees docs docs/_build/html

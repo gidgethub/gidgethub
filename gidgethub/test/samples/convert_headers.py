@@ -16,5 +16,5 @@ headers = {}
 for line in header_lines:
     key, _, value = line.partition(":")
     headers[key.lower().strip()] = value.strip()
-with open(f"{status_code}.json", 'w') as file:
+with open(f"{status_code}.json", "w") as file:
     json.dump(headers, file, ensure_ascii=False)

@@ -12,7 +12,6 @@ import treq._utils
 
 
 class TwistedPluginTestCase(TestCase):
-
     @staticmethod
     def create_cleanup(gh):
         def cleanup(_):
@@ -33,6 +32,7 @@ class TwistedPluginTestCase(TestCase):
         def test_done(ignored):
             stop = datetime.datetime.now()
             self.assertTrue((stop - start) > datetime.timedelta(seconds=delay))
+
         d = ensureDeferred(gh.sleep(delay))
         d.addCallback(test_done)
         return d
@@ -41,9 +41,7 @@ class TwistedPluginTestCase(TestCase):
         request_headers = sansio.create_headers("gidgethub")
         gh = gh_treq.GitHubAPI("gidgethub")
         d = ensureDeferred(
-            gh._request(
-                "GET", "https://api.github.com/rate_limit", request_headers,
-            )
+            gh._request("GET", "https://api.github.com/rate_limit", request_headers,)
         )
 
         def test_done(response):

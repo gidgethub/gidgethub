@@ -24,8 +24,9 @@ async def test__request():
     request_headers = sansio.create_headers("gidgethub")
     async with aiohttp.ClientSession() as session:
         gh = gh_aiohttp.GitHubAPI(session, "gidgethub")
-        aio_call = await gh._request("GET", "https://api.github.com/rate_limit",
-                                     request_headers)
+        aio_call = await gh._request(
+            "GET", "https://api.github.com/rate_limit", request_headers
+        )
     data, rate_limit, _ = sansio.decipher_response(*aio_call)
     assert "rate" in data
 

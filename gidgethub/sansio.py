@@ -17,9 +17,16 @@ import urllib.parse
 
 import uritemplate
 
-from . import (BadRequest, GitHubBroken, HTTPException, InvalidField,
-               RateLimitExceeded, RedirectionException, ValidationError,
-               ValidationFailure)
+from . import (
+    BadRequest,
+    GitHubBroken,
+    HTTPException,
+    InvalidField,
+    RateLimitExceeded,
+    RedirectionException,
+    ValidationError,
+    ValidationFailure,
+)
 
 
 def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str]:
@@ -37,8 +44,9 @@ def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str
         return type_, encoding
 
 
-def _decode_body(content_type: Optional[str], body: bytes,
-                 *, strict: bool = False) -> Any:
+def _decode_body(
+    content_type: Optional[str], body: bytes, *, strict: bool = False
+) -> Any:
     """Decode an HTTP body based on the specified content type.
 
     If 'strict' is true, then raise ValueError if the content type
@@ -63,13 +71,13 @@ def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
     # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
     signature_prefix = "sha1="
     if not signature.startswith(signature_prefix):
-        raise ValidationFailure("signature does not start with "
-                                           f"{repr(signature_prefix)}")
+        raise ValidationFailure(
+            "signature does not start with " f"{repr(signature_prefix)}"
+        )
     hmac_ = hmac.new(secret.encode("UTF-8"), msg=payload, digestmod="sha1")
     calculated_sig = signature_prefix + hmac_.hexdigest()
     if not hmac.compare_digest(signature, calculated_sig):
-        raise ValidationFailure("payload's signature does not align "
-                                           "with the secret")
+        raise ValidationFailure("payload's signature does not align " "with the secret")
 
 
 class Event:
@@ -88,8 +96,9 @@ class Event:
         self.delivery_id = delivery_id
 
     @classmethod
-    def from_http(cls, headers: Mapping[str, str], body: bytes,
-                  *, secret: Optional[str] = None) -> "Event":
+    def from_http(
+        cls, headers: Mapping[str, str], body: bytes, *, secret: Optional[str] = None
+    ) -> "Event":
         """Construct an event from HTTP headers and JSON body data.
 
         The mapping providing the headers is expected to support lowercase keys.
@@ -105,26 +114,31 @@ class Event:
         raised.
         """
         if "x-hub-signature" in headers:
-                if secret is None:
-                    raise ValidationFailure("secret not provided")
-                validate_event(body, signature=headers["x-hub-signature"],
-                               secret=secret)
+            if secret is None:
+                raise ValidationFailure("secret not provided")
+            validate_event(body, signature=headers["x-hub-signature"], secret=secret)
         elif secret is not None:
             raise ValidationFailure("signature is missing")
 
         try:
             data = _decode_body(headers["content-type"], body, strict=True)
         except (KeyError, ValueError) as exc:
-            raise BadRequest(http.HTTPStatus(415),
-                             "expected a content-type of "
-                             "'application/json' or "
-                             "'application/x-www-form-urlencoded'") from exc
-        return cls(data, event=headers["x-github-event"],
-                   delivery_id=headers["x-github-delivery"])
+            raise BadRequest(
+                http.HTTPStatus(415),
+                "expected a content-type of "
+                "'application/json' or "
+                "'application/x-www-form-urlencoded'",
+            ) from exc
+        return cls(
+            data,
+            event=headers["x-github-event"],
+            delivery_id=headers["x-github-delivery"],
+        )
 
 
-def accept_format(*, version: str = "v3", media: Optional[str] = None,
-                  json: bool = True) -> str:
+def accept_format(
+    *, version: str = "v3", media: Optional[str] = None, json: bool = True
+) -> str:
     """Construct the specification of the format that a request should return.
 
     The version argument defaults to v3 of the GitHub API and is applicable to
@@ -146,9 +160,13 @@ def accept_format(*, version: str = "v3", media: Optional[str] = None,
     return accept
 
 
-def create_headers(requester: str, *, accept: str = accept_format(),
-                   oauth_token: Optional[str] = None,
-                   jwt: Optional[str] = None) -> Dict[str, str]:
+def create_headers(
+    requester: str,
+    *,
+    accept: str = accept_format(),
+    oauth_token: Optional[str] = None,
+    jwt: Optional[str] = None,
+) -> Dict[str, str]:
     """Create a dict representing GitHub-specific header fields.
 
     The user agent is set according to who the requester is. GitHub asks it be
@@ -219,8 +237,9 @@ class RateLimit:
         self.remaining = remaining
         # Name specifies the type to remind users that the epoch is not stored
         # as an int as the GitHub API returns.
-        self.reset_datetime = datetime.datetime.fromtimestamp(reset_epoch,
-                                                              datetime.timezone.utc)
+        self.reset_datetime = datetime.datetime.fromtimestamp(
+            reset_epoch, datetime.timezone.utc
+        )
 
     def __bool__(self) -> bool:
         """True if requests are remaining or the reset datetime has passed."""
@@ -251,8 +270,10 @@ class RateLimit:
             return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
 
 
-_link_re = re.compile(r'\<(?P<uri>[^>]+)\>;\s*'
-                      r'(?P<param_type>\w+)="(?P<param_value>\w+)"(,\s*)?')
+_link_re = re.compile(
+    r"\<(?P<uri>[^>]+)\>;\s*" r'(?P<param_type>\w+)="(?P<param_value>\w+)"(,\s*)?'
+)
+
 
 def _next_link(link: Optional[str]) -> Optional[str]:
     # https://developer.github.com/v3/#pagination
@@ -267,8 +288,9 @@ def _next_link(link: Optional[str]) -> Optional[str]:
         return None
 
 
-def decipher_response(status_code: int, headers: Mapping[str, str],
-                      body: bytes) -> Tuple[Any, Optional[RateLimit], Optional[str]]:
+def decipher_response(
+    status_code: int, headers: Mapping[str, str], body: bytes
+) -> Tuple[Any, Optional[RateLimit], Optional[str]]:
     """Decipher an HTTP response for a GitHub API request.
 
     The mapping providing the headers is expected to support lowercase keys.
@@ -310,13 +332,18 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
                 errors = data.get("errors", None)
                 exc_type = InvalidField
                 if errors:
-                    if any(e['code'] in ['missing', 'missing_field', 'invalid', 'already_exists']
-                           for e in errors):
+                    if any(
+                        e["code"]
+                        in ["missing", "missing_field", "invalid", "already_exists"]
+                        for e in errors
+                    ):
                         error_context = ", ".join(repr(e.get("field")) for e in errors)
                         message = f"{message} for {error_context}"
                     else:
                         exc_type = ValidationError
-                        error_context = ", ".join(repr(e.get("message")) for e in errors)
+                        error_context = ", ".join(
+                            repr(e.get("message")) for e in errors
+                        )
                         message = f"{message}: {error_context}"
                 else:
                     message = data["message"]
@@ -330,11 +357,12 @@ def decipher_response(status_code: int, headers: Mapping[str, str],
         if message:
             args = status_code_enum, message
         else:
-            args = status_code_enum,
+            args = (status_code_enum,)
         raise exc_type(*args)
 
 
 DOMAIN = "https://api.github.com"
+
 
 def format_url(url: str, url_vars: Mapping[str, Any]) -> str:
     """Construct a URL for the GitHub API.
