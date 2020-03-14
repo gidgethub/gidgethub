@@ -8,6 +8,9 @@ Changelog
    Under development
 
 - Introduce the `actions` submodule.
+- Add `ValidationError` for when the HTTP response is a 422 but not
+  field-related. ([#83](https://github.com/brettcannon/gidgethub/pull/83);
+  thanks [John Hossler](https://github.com/jmhossler))
 
 3.3.0
 '''''
