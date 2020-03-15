@@ -42,7 +42,7 @@ Changelog
 '''''
 
 - Tighten type hints for parameters that have a default of ``None``
-  but were not typed as :class:`typing.Optional`.
+  but were not typed as :data:`typing.Optional`.
 
 - Tweak code to not change semantics but reach 100% coverage.
 
