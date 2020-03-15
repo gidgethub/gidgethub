@@ -1,5 +1,5 @@
 """An async GitHub API library"""
-__version__ = '3.3.0'
+__version__ = "3.3.0"
 
 import http
 from typing import Any
@@ -13,6 +13,7 @@ class GitHubException(Exception):
 class ValidationFailure(GitHubException):
 
     """An exception representing failed validation of a webhook event."""
+
     # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
 
 
@@ -38,6 +39,7 @@ class BadRequest(HTTPException):
 
     Used for 4XX HTTP errors.
     """
+
     # https://developer.github.com/v3/#client-errors
 
 
@@ -51,8 +53,7 @@ class RateLimitExceeded(BadRequest):
         self.rate_limit = rate_limit
 
         if not args:
-            super().__init__(http.HTTPStatus.FORBIDDEN,
-                             "rate limit exceeded")
+            super().__init__(http.HTTPStatus.FORBIDDEN, "rate limit exceeded")
         else:
             super().__init__(http.HTTPStatus.FORBIDDEN, *args)
 

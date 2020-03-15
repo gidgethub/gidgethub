@@ -5,7 +5,6 @@ from gidgethub import sansio
 
 
 class Callback:
-
     def __init__(self):
         self.called = False
 
@@ -55,12 +54,13 @@ def test_too_much_detail():
 async def test_register():
     router = routing.Router()
     called = False
+
     @router.register("pull_request", action="new")
     async def callback(event):
         nonlocal called
         called = True
-    event = sansio.Event({"action": "new"}, event="pull_request",
-                         delivery_id="1234")
+
+    event = sansio.Event({"action": "new"}, event="pull_request", delivery_id="1234")
     await router.dispatch(event)
     assert called
 
@@ -68,8 +68,9 @@ async def test_register():
 @pytest.mark.asyncio
 async def test_dispatching():
     router = routing.Router()
-    event = sansio.Event({"action": "new", "count": 42}, event="nothing",
-                         delivery_id="1234")
+    event = sansio.Event(
+        {"action": "new", "count": 42}, event="nothing", delivery_id="1234"
+    )
     await router.dispatch(event)  # Should raise no exceptions.
 
     shallow_registration = Callback()
@@ -98,8 +99,11 @@ async def test_dispatching():
     router.add(never_called_1.meth, "something else")
     router.add(never_called_2.meth, "something", never="called")
     router.add(never_called_3.meth, "something", count=-13)
-    event = sansio.Event({"action": "new", "count": 42, "ignored": True},
-                         event="something", delivery_id="1234")
+    event = sansio.Event(
+        {"action": "new", "count": 42, "ignored": True},
+        event="something",
+        delivery_id="1234",
+    )
     await router.dispatch(event)
     assert shallow_registration.called
     assert deep_registration_1.called
