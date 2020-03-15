@@ -5,6 +5,8 @@ use any HTTP library you prefer while not having to implement common details
 when working with GitHub's API (e.g. validating webhook events or specifying the
 API version you want your request to work against).
 """
+from __future__ import annotations
+
 import cgi
 import datetime
 import hashlib

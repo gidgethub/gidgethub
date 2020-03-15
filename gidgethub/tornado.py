@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Mapping, Tuple, Union, List, Dict, Any
 
 from tornado import gen

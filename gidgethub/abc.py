@@ -1,4 +1,6 @@
 """Provide an abstract base class for easier requests."""
+from __future__ import annotations
+
 import abc
 import json
 from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Tuple

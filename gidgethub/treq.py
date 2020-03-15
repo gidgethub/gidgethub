@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Mapping, Tuple
 
 from twisted.internet import defer
