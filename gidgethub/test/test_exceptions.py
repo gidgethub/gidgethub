@@ -2,6 +2,7 @@ import http
 
 from .. import (
     BadRequest,
+    BadRequestUnknownError,
     GitHubBroken,
     HTTPException,
     InvalidField,
@@ -34,6 +35,12 @@ def test_GitHubBroken():
 def test_BadRequest():
     exc = BadRequest(http.HTTPStatus.BAD_REQUEST)
     assert exc.status_code == http.HTTPStatus.BAD_REQUEST
+
+
+def test_BadRequestUnknownError():
+    exc = BadRequestUnknownError("uh-oh")
+    assert exc.status_code == http.HTTPStatus.UNPROCESSABLE_ENTITY
+    assert exc.response == "uh-oh"
 
 
 def test_RateLimitExceeded():
