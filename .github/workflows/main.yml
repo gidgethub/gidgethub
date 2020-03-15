@@ -30,7 +30,7 @@ jobs:
       - run: pip install flit
       - run: flit install --deps develop
       - name: Run `pytest --cov`
-        run: pytest --cov --cov-report=xml:cov.xml
+        run: pytest --cov --cov-report=xml:cov.xml tests
         env:
           PYTHONDEVMODE: 1
       - uses: codecov/codecov-action@v1

@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from .. import actions
+from gidgethub import actions
 
 
 @pytest.fixture

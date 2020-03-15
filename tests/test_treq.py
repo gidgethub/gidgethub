@@ -5,8 +5,8 @@ from twisted.internet.defer import ensureDeferred
 from twisted.trial.unittest import TestCase
 from twisted.web.client import Agent, HTTPConnectionPool
 
-from .. import treq as gh_treq
-from .. import sansio
+from gidgethub import treq as gh_treq
+from gidgethub import sansio
 
 import treq._utils
 

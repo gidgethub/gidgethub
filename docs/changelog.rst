@@ -8,6 +8,7 @@ Changelog
    Under development
 
 - Add `from __future__ import annotations` to all modules
+- Removed `gidgethub.test` from the distribution
 - Introduce the `actions` submodule.
 - Add `ValidationError` for when the HTTP response is a 422 but not
   field-related. ([#83](https://github.com/brettcannon/gidgethub/pull/83);
