@@ -25,7 +25,7 @@ test = ["pytest>=3.0.0", "pytest-asyncio", "pytest-tornasync"]
 doc = ["sphinx"]
 # The 'dev' target should contain all dependencies listed in any extras coming
 # after it to make sure that the test suite will run successfully.
-dev = ["aiohttp", "httpx", "mypy", "pytest-cov", "treq", "twisted[tls]", "tornado"]
+dev = ["aiohttp", "black", "coverage[toml]>=5.0.3", "httpx", "mypy", "pytest-cov", "treq", "twisted[tls]", "tornado"]
 aiohttp = ["aiohttp"]
 treq = ["treq", "twisted[tls]"]
 tornado = ["tornado"]
@@ -34,3 +34,10 @@ httpx = ["httpx>=0.11.0"]
 [tool.flit.metadata.urls]
 Documentation = "https://gidgethub.readthedocs.io"
 Repository = "https://github.com/brettcannon/gidgethub"
+
+[tool.coverage.run]
+branch = true
+source = ["gidgethub"]
+
+[tool.coverage.report]
+fail_under = 99

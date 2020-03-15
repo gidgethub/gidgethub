@@ -9,8 +9,8 @@ from .. import BadRequest
 from .. import sansio
 from .. import tornado as gh_tornado
 
-class TornadoTestCase(AsyncTestCase):
 
+class TornadoTestCase(AsyncTestCase):
     @tornado.testing.gen_test
     async def test_sleep(self):
         delay = 1
@@ -25,8 +25,9 @@ class TornadoTestCase(AsyncTestCase):
         """Make sure that that abstract method is implemented properly."""
         request_headers = sansio.create_headers("gidgethub")
         gh = gh_tornado.GitHubAPI("gidgethub")
-        tornado_call = await gh._request("GET", "https://api.github.com/rate_limit",
-                                         request_headers)
+        tornado_call = await gh._request(
+            "GET", "https://api.github.com/rate_limit", request_headers
+        )
         data, rate_limit, _ = sansio.decipher_response(*tornado_call)
         assert "rate" in data
 
@@ -36,8 +37,9 @@ class TornadoTestCase(AsyncTestCase):
         request_headers = sansio.create_headers("gidgethub")
         gh = gh_tornado.GitHubAPI("gidgethub")
         # This leads to a 404.
-        tornado_call = await gh._request("POST", "https://api.github.com/rate_limit",
-                                         request_headers, b'bogus')
+        tornado_call = await gh._request(
+            "POST", "https://api.github.com/rate_limit", request_headers, b"bogus"
+        )
         with pytest.raises(BadRequest):
             sansio.decipher_response(*tornado_call)
 

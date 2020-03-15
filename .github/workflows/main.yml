@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    paths: "**"
+    branches: master
   push:
     branches: master
 
@@ -11,27 +11,51 @@ jobs:
     name: test w/ Python ${{ matrix.python_version }}
 
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
-        python_version: ['3.6', '3.7', '3.8']
+        python_version: ["3.6", "3.7", "3.8"]
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python_version }}
-    - run: pip install flit
-    - run: flit install --deps develop
-    - name: Run tests
-      run: pytest --cov=gidgethub --cov-config=.coveragerc --cov-fail-under=100 --cov-report=xml:cov.xml
-      env:
-        PYTHONDEVMODE: 1
-    - uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./cov.xml
-    - name: Check type hints
-      run:  mypy --ignore-missing-imports --strict gidgethub/*.py
-    - name: Check docs
-      run: sphinx-build -nW -q -b html -b linkcheck -d docs/_build/doctrees docs docs/_build/html
+      - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python_version }}
+      - run: pip install flit
+      - run: flit install --deps develop
+      - name: Run `pytest --cov`
+        run: pytest --cov --cov-report=xml:cov.xml
+        env:
+          PYTHONDEVMODE: 1
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./cov.xml
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - uses: actions/setup-python@v1
+        with:
+          python-version: "3.8"
+      - run: pip install flit
+      - run: flit install --deps develop
+      - run: black --check .
+      - name: Check type hints
+        run: mypy --ignore-missing-imports --strict gidgethub/*.py
+      - name: Check docs
+        run: sphinx-build -nW -q -b html -b linkcheck -d docs/_build/doctrees docs docs/_build/html

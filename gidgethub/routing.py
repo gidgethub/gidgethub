@@ -36,9 +36,11 @@ class Router:
         """
         if len(data_detail) > 1:
             msg = ()
-            raise TypeError("dispatching based on data details is only "
-                            "supported up to one level deep; "
-                            f"{len(data_detail)} levels specified")
+            raise TypeError(
+                "dispatching based on data details is only "
+                "supported up to one level deep; "
+                f"{len(data_detail)} levels specified"
+            )
         elif not data_detail:
             callbacks = self._shallow_routes.setdefault(event_type, [])
             callbacks.append(func)
@@ -49,16 +51,18 @@ class Router:
             callbacks = specific_detail.setdefault(data_value, [])
             callbacks.append(func)
 
-    def register(self, event_type: str,
-                 **data_detail: Any) -> Callable[[AsyncCallback], AsyncCallback]:
+    def register(
+        self, event_type: str, **data_detail: Any
+    ) -> Callable[[AsyncCallback], AsyncCallback]:
         """Decorator to apply the add() method to a function."""
+
         def decorator(func: AsyncCallback) -> AsyncCallback:
             self.add(func, event_type, **data_detail)
             return func
+
         return decorator
 
-    async def dispatch(self, event: sansio.Event, *args: Any,
-                       **kwargs: Any) -> None:
+    async def dispatch(self, event: sansio.Event, *args: Any, **kwargs: Any) -> None:
         """Dispatch an event to all registered function(s)."""
 
         found_callbacks = []
