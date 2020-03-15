@@ -30,7 +30,7 @@ Changelog
   not found in the headers.
 - Allow authenticating as a GitHub App by using JSON web token.
   :func:`gidgethub.sansio.create_headers` now accepts
-  ``jwt`` argument. :meth:`gidgethub.abc.GitHubAPI._make_request`,
+  ``jwt`` argument. ``gidgethub.abc.GitHubAPI._make_request``,
   :meth:`gidgethub.abc.GitHubAPI.getitem`, :meth:`gidgethub.abc.GitHubAPI.getiter`,
   :meth:`gidgethub.abc.GitHubAPI.post`, :meth:`gidgethub.abc.GitHubAPI.patch`,
   :meth:`gidgethub.abc.GitHubAPI.put`, and :meth:`gidgethub.abc.GitHubAPI.delete` now
