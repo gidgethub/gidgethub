@@ -106,7 +106,7 @@ Changelog
   :meth:`~gidgethub.abc.GitHubAPI.sleep()` to make the method public.
 - Renamed the "test" extra to "tests" and added the "dev" extra.
 - Introduced the :exc:`gidgethub.RateLimitExceeded` exception.
-- Methods on :class:`gidgethub.GitHubAPI` no longer automatically sleep when it's
+- Methods on :class:`gidgethub.abc.GitHubAPI` no longer automatically sleep when it's
   possible that the call will exceed the user's rate limit (it's now up to the
   user to prevent from going over the rate limit).
 - Made the ``[treq]`` install extra depend on ``Twisted[tls]``.
