@@ -121,7 +121,7 @@ Changelog
 - More robustly decode the body in :meth:`gidgethub.sansio.Event.from_http`
   (i.e. if the ``content-type`` doesn't specify ``charset``, assume ``UTF-8``).
 - Changed the signature of :class:`gidgethub.sansio.Event` to accept
-  :class:`typing.Any` for the *data* argument.
+  :data:`typing.Any` for the *data* argument.
 - Fixed signature verification.
 
 
