@@ -133,7 +133,6 @@ Contents
    routing
    abc
    aiohttp
-   treq
    tornado
    httpx
 

@@ -23,9 +23,8 @@ test = ["pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync"]
 doc = ["sphinx"]
 # The 'dev' target should contain all dependencies listed in any extras coming
 # after it to make sure that the test suite will run successfully.
-dev = ["aiohttp", "black", "coverage[toml]>=5.0.3", "httpx", "mypy", "pytest-cov", "treq", "twisted[tls]", "tornado"]
+dev = ["aiohttp", "black", "coverage[toml]>=5.0.3", "httpx", "mypy", "pytest-cov", "tornado"]
 aiohttp = ["aiohttp"]
-treq = ["treq", "twisted[tls]"]
 tornado = ["tornado"]
 httpx = ["httpx>=0.11.0"]
 

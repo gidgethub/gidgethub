@@ -7,6 +7,9 @@ Changelog
 .. note::
    Under development
 
+- Remove `gidgethub.treq`; tests were not passing and a request for help on
+  Twitter came back with no reponse (happy to add back if someone steps forward
+  to help out)
 - Add `from __future__ import annotations` to all modules
 - Removed `gidgethub.test` from the distribution
 - Introduce the `actions` submodule.
@@ -141,7 +144,7 @@ Changelog
 1.1.0
 '''''
 
-- Introduced :mod:`gidgethub.treq` (thanks to Cory Benfield).
+- Introduced ``gidgethub.treq`` (thanks to Cory Benfield).
 
 
 1.0.0
