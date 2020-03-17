@@ -19,6 +19,7 @@ import uritemplate
 
 from . import (
     BadRequest,
+    BadRequestUnknownError,
     GitHubBroken,
     HTTPException,
     InvalidField,
@@ -329,7 +330,11 @@ def decipher_response(
                 if rate_limit and not rate_limit.remaining:
                     raise RateLimitExceeded(rate_limit, message)
             elif status_code == 422:
-                errors = data.get("errors", None)
+                try:
+                    errors = data.get("errors", None)
+                except AttributeError:
+                    # Not JSON so don't know why the request failed.
+                    raise BadRequestUnknownError(data)
                 exc_type = InvalidField
                 if errors:
                     if any(

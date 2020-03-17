@@ -8,6 +8,7 @@ import pytest
 
 from gidgethub import (
     BadRequest,
+    BadRequestUnknownError,
     GitHubBroken,
     HTTPException,
     InvalidField,
@@ -375,6 +376,17 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "Reference does not exist"
+
+    def test_422_html_response(self):
+        # https://github.com/brettcannon/gidgethub/issues/81
+        status_code = 422
+        body = "<html><body>Mistakes were made ...</body></html>"
+        encoded_body = body.encode("utf-8")
+        headers = {"content-type": "text/html; charset=utf-8"}
+        with pytest.raises(BadRequestUnknownError) as exc_info:
+            sansio.decipher_response(status_code, headers, encoded_body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert exc_info.value.response == body
 
     def test_3XX(self):
         status_code = 301

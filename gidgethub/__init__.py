@@ -43,6 +43,15 @@ class BadRequest(HTTPException):
     # https://developer.github.com/v3/#client-errors
 
 
+class BadRequestUnknownError(BadRequest):
+
+    """A bad request whose response body is not JSON."""
+
+    def __init__(self, response: str) -> None:
+        self.response = response
+        super().__init__(http.HTTPStatus.UNPROCESSABLE_ENTITY)
+
+
 class RateLimitExceeded(BadRequest):
 
     """Request rejected due to the rate limit being exceeded."""

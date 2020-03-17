@@ -45,6 +45,18 @@ Exceptions
    Inherits from :exc:`HTTPException`.
 
 
+.. exception:: BadRequestUnknownError
+
+   Exception for ``422`` status code responses which do not include a JSON
+   response.
+
+   .. versionadded:: XXX
+
+   .. attribute:: response
+
+      The response as returned by GitHub.
+
+
 .. exception:: RateLimitExceeded(rate_limit)
 
     Raised when one's rate limit has been reached. A subclass of
