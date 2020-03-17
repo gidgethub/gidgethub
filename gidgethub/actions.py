@@ -1,6 +1,4 @@
 """Support for GitHub Actions."""
-from __future__ import annotations
-
 import functools
 import json
 import os
