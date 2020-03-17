@@ -9,11 +9,10 @@ Changelog
 
 - Remove `gidgethub.treq`; tests were not passing and a request for help on
   Twitter came back with no reponse (happy to add back if someone steps forward
-  to help out)
-- Add `from __future__ import annotations` to all modules
-- Removed `gidgethub.test` from the distribution
-- Introduce the `actions` submodule.
-- Add `ValidationError` for when the HTTP response is a 422 but not
+  to help out).
+- Removed `gidgethub.test` from the distribution.
+- Introduce :mod:`gidgethub.actions`.
+- Add :exc:`gidgethub.ValidationError` for when the HTTP response is a 422 but not
   field-related. ([#83](https://github.com/brettcannon/gidgethub/pull/83);
   thanks [John Hossler](https://github.com/jmhossler))
 
