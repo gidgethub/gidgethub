@@ -98,3 +98,6 @@ ENV/
 
 # pytest
 .pytest_cache
+
+# nox
+.nox

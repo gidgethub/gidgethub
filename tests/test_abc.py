@@ -5,9 +5,9 @@ import types
 
 import pytest
 
-from .. import RedirectionException
-from .. import abc as gh_abc
-from .. import sansio
+from gidgethub import RedirectionException
+from gidgethub import abc as gh_abc
+from gidgethub import sansio
 
 
 class MockGitHubAPI(gh_abc.GitHubAPI):

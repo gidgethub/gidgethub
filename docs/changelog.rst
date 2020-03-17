@@ -1,6 +1,21 @@
 Changelog
 =========
 
+4.0.0
+'''''
+
+.. note::
+   Under development
+
+- Remove `gidgethub.treq`; tests were not passing and a request for help on
+  Twitter came back with no reponse (happy to add back if someone steps forward
+  to help out).
+- Remove `gidgethub.test` from the distribution.
+- Introduce :mod:`gidgethub.actions`.
+- Add :exc:`gidgethub.ValidationError` for when the HTTP response is a 422 but not
+  field-related. ([#83](https://github.com/brettcannon/gidgethub/pull/83);
+  thanks [John Hossler](https://github.com/jmhossler))
+
 3.3.0
 '''''
 
@@ -128,7 +143,7 @@ Changelog
 1.1.0
 '''''
 
-- Introduced :mod:`gidgethub.treq` (thanks to Cory Benfield).
+- Introduced ``gidgethub.treq`` (thanks to Cory Benfield).
 
 
 1.0.0

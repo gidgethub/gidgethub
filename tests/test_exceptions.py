@@ -1,6 +1,6 @@
 import http
 
-from .. import (
+from gidgethub import (
     BadRequest,
     GitHubBroken,
     HTTPException,
@@ -8,7 +8,7 @@ from .. import (
     RateLimitExceeded,
     RedirectionException,
 )
-from .. import sansio
+from gidgethub import sansio
 
 
 class TestHTTPException:

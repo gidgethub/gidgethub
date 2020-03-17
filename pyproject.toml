@@ -6,7 +6,7 @@ build-backend = "flit.buildapi"
 module = "gidgethub"
 author = "Brett Cannon"
 author-email = "brett@python.org"
-requires = ["uritemplate>=3.0.0"]
+requires = ["uritemplate>=3.0.1"]
 requires-python = ">=3.6"
 license = "Apache"
 keywords = "github sans-io async"
@@ -15,19 +15,16 @@ classifiers = ["Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8"
 ]
 
 [tool.flit.metadata.requires-extra]
-test = ["pytest>=3.0.0", "pytest-asyncio", "pytest-tornasync"]
+test = ["pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync"]
 doc = ["sphinx"]
 # The 'dev' target should contain all dependencies listed in any extras coming
 # after it to make sure that the test suite will run successfully.
-dev = ["aiohttp", "black", "coverage[toml]>=5.0.3", "httpx", "mypy", "pytest-cov", "treq", "twisted[tls]", "tornado"]
+dev = ["aiohttp", "black", "coverage[toml]>=5.0.3", "httpx", "mypy", "pytest-cov", "tornado"]
 aiohttp = ["aiohttp"]
-treq = ["treq", "twisted[tls]"]
 tornado = ["tornado"]
 httpx = ["httpx>=0.11.0"]
 
@@ -40,4 +37,4 @@ branch = true
 source = ["gidgethub"]
 
 [tool.coverage.report]
-fail_under = 99
+fail_under = 100
