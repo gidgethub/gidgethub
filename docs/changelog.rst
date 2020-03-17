@@ -1,6 +1,21 @@
 Changelog
 =========
 
+4.0.0
+'''''
+
+.. note::
+   Under development
+
+- Remove `gidgethub.treq`; tests were not passing and a request for help on
+  Twitter came back with no reponse (happy to add back if someone steps forward
+  to help out).
+- Remove `gidgethub.test` from the distribution.
+- Introduce :mod:`gidgethub.actions`.
+- Add :exc:`gidgethub.ValidationError` for when the HTTP response is a 422 but not
+  field-related. ([#83](https://github.com/brettcannon/gidgethub/pull/83);
+  thanks [John Hossler](https://github.com/jmhossler))
+
 3.3.0
 '''''
 
@@ -11,29 +26,29 @@ Changelog
 3.2.0
 '''''
 
-- Fix mypy warnings about the ``Dict`` and ``Mapping`` generic types lacking
-  type parameters.
-- Add `httpx <https://www.encode.io/httpx>`_ backend.
+- Fix mypy warnings about the :class:`typing.Dict` and :class:`typing.Mapping`
+  generic types lacking type parameters.
+- Add :mod:`gidgethub.httpx` backend.
 - Add a ``py.typed`` file to mark the project as fully typed.
 
 3.1.0
 ''''''
 
-- ``gidgethub.abc.GitHubAPI.getiter()`` now works with
+- :meth:`gidgethub.abc.GitHubAPI.getiter` now works with
   `GitHub's search API <https://developer.github.com/v3/search/>`_
   (thanks `Pablo Galindo <https://github.com/pablogsal>`_).
 
 3.0.0
 '''''
 
-- ``gidgethub.sansio.RateLimit.from_http`` returns ``None`` if ratelimit is
+- :meth:`gidgethub.sansio.RateLimit.from_http` returns ``None`` if ratelimit is
   not found in the headers.
 - Allow authenticating as a GitHub App by using JSON web token.
-  ``gidgethub.sansio.create_headers`` now accepts
+  :func:`gidgethub.sansio.create_headers` now accepts
   ``jwt`` argument. ``gidgethub.abc.GitHubAPI._make_request``,
-  ``gidgethub.abc.GitHubAPI.getitem``, ``gidgethub.abc.GitHubAPI.getiter``,
-  ``gidgethub.abc.GitHubAPI.post``, ``gidgethub.abc.GitHubAPI.patch``,
-  ``gidgethub.abc.GitHubAPI.put``, and ``gidgethub.abc.GitHubAPI.delete`` now
+  :meth:`gidgethub.abc.GitHubAPI.getitem`, :meth:`gidgethub.abc.GitHubAPI.getiter`,
+  :meth:`gidgethub.abc.GitHubAPI.post`, :meth:`gidgethub.abc.GitHubAPI.patch`,
+  :meth:`gidgethub.abc.GitHubAPI.put`, and :meth:`gidgethub.abc.GitHubAPI.delete` now
   accept ``jwt`` and ``oauth_token`` arguments.
 
 - gidgethub is now packaged using `flit <https://flit.readthedocs.io/en/latest/>`_.
@@ -42,17 +57,17 @@ Changelog
 '''''
 
 - Tighten type hints for parameters that have a default of ``None``
-  but were not typed as ``Optional``.
+  but were not typed as :data:`typing.Optional`.
 
 - Tweak code to not change semantics but reach 100% coverage.
 
 - Provide a human-readable string representation of
-  ``gidgethub.sansio.RateLimit``.
+  :class:`gidgethub.sansio.RateLimit`.
 
 - Use the ``message`` data as the error message
   if the ``errors`` object was not returned.
 
-- Add the *data* keyword argument to ``gidgethub.abc.GitHubAPI.delete``.
+- Add the *data* keyword argument to :meth:`gidgethub.abc.GitHubAPI.delete`.
 
 
 2.4.1
@@ -64,7 +79,7 @@ Changelog
 2.4.0
 '''''
 
-- Expand ``gidgethub.routing.Router.dispatch()``.
+- Expand :meth:`gidgethub.routing.Router.dispatch`.
 
 
 2.3.0
@@ -74,18 +89,18 @@ Changelog
   (This also allows for API calls to return this content type, although GitHub
   currently does not do that.)
 
-- Introduce ``gidgethub.routing`` to help route webhook events to registered
+- Introduce :mod:`gidgethub.routing` to help route webhook events to registered
   asynchronous callbacks.
 
 - Add type hints.
 
-- Add a *cache* argument to ``gidgethub.abc.GitHubAPI``.
+- Add a *cache* argument to :class:`gidgethub.abc.GitHubAPI`.
 
 
 2.2.0
 '''''
 
-- Introduce ``gidgethub.tornado`` to support
+- Introduce :mod:`gidgethub.tornado` to support
   `Tornado <http://www.tornadoweb.org/>`_ (thanks to
   Matthias Bussonnier and A. Jesse Jiryu Davis for the PR reviews).
 
@@ -93,7 +108,7 @@ Changelog
 2.1.0
 '''''
 
-- The default value for the *data* argument of ``gidgethub.abc.GitHubAPI.put()``
+- The default value for the *data* argument of :meth:`gidgethub.abc.GitHubAPI.put`
   was changed from ``""`` to ``b""``.
 - All type hints were removed (due to mypy not supporting yield in an async
   function, they were not being tested as being valid).
@@ -102,10 +117,11 @@ Changelog
 2.0.0
 '''''
 
-- Renamed ``gidgethub.abc._sleep()`` to ``sleep()`` to make the method public.
+- Renamed ``gidgethub.abc.GitHubAPI._sleep()`` to
+  :meth:`~gidgethub.abc.GitHubAPI.sleep()` to make the method public.
 - Renamed the "test" extra to "tests" and added the "dev" extra.
-- Introduced the ``RateLimitExceeded`` exception.
-- Methods on ``GitHubAPI`` no longer automatically sleep when it's
+- Introduced the :exc:`gidgethub.RateLimitExceeded` exception.
+- Methods on :class:`gidgethub.abc.GitHubAPI` no longer automatically sleep when it's
   possible that the call will exceed the user's rate limit (it's now up to the
   user to prevent from going over the rate limit).
 - Made the ``[treq]`` install extra depend on ``Twisted[tls]``.
@@ -114,13 +130,13 @@ Changelog
 1.2.0
 '''''
 
-- ``gidgethub.sansio.Event.from_http()`` raises a ``BadRequest`` of ``415``
+- :meth:`gidgethub.sansio.Event.from_http` raises a :exc:`gidgethub.BadRequest` of ``415``
   instead of ``400`` when a content-type other than ``application/json``
   is provided.
-- More robustly decode the body in ``gidgethub.sansio.Event.from_http()``
+- More robustly decode the body in :meth:`gidgethub.sansio.Event.from_http`
   (i.e. if the ``content-type`` doesn't specify ``charset``, assume ``UTF-8``).
-- Changed the signature of ``gidgethub.sansio.Event`` to accept ``Any`` for
-  the *data* argument.
+- Changed the signature of :class:`gidgethub.sansio.Event` to accept
+  :data:`typing.Any` for the *data* argument.
 - Fixed signature verification.
 
 

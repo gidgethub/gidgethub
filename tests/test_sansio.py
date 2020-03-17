@@ -6,7 +6,7 @@ import pathlib
 
 import pytest
 
-from .. import (
+from gidgethub import (
     BadRequest,
     BadRequestUnknownError,
     GitHubBroken,
@@ -17,7 +17,7 @@ from .. import (
     ValidationError,
     ValidationFailure,
 )
-from .. import sansio
+from gidgethub import sansio
 
 
 class TestValidateEvent:
