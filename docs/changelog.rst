@@ -10,7 +10,7 @@ Changelog
 - Remove `gidgethub.treq`; tests were not passing and a request for help on
   Twitter came back with no reponse (happy to add back if someone steps forward
   to help out).
-- Removed `gidgethub.test` from the distribution.
+- Remove `gidgethub.test` from the distribution.
 - Introduce :mod:`gidgethub.actions`.
 - Add :exc:`gidgethub.ValidationError` for when the HTTP response is a 422 but not
   field-related. ([#83](https://github.com/brettcannon/gidgethub/pull/83);
