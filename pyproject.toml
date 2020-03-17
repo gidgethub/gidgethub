@@ -7,7 +7,7 @@ module = "gidgethub"
 author = "Brett Cannon"
 author-email = "brett@python.org"
 requires = ["uritemplate>=3.0.1"]
-requires-python = ">=3.8"
+requires-python = ">=3.6"
 license = "Apache"
 keywords = "github sans-io async"
 description-file = "README.rst"
