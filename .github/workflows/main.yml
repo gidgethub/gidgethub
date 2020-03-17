@@ -8,13 +8,13 @@ on:
 
 jobs:
   test:
-    name: test w/ Python ${{ matrix.python_version }}
+    name: test w/ Python ${{ matrix.python-version }}
 
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        python_version: ["3.6", "3.7", "3.8"]
+        python-version: ["3.6", "3.7", "3.8"]
 
     steps:
       - uses: actions/checkout@v1
@@ -26,9 +26,9 @@ jobs:
             ${{ runner.os }}-pip-
       - uses: actions/setup-python@v1
         with:
-          python-version: ${{ matrix.python_version }}
+          python-version: ${{ matrix.python-version }}
       - run: pip install nox
-      - run: nox --session tests-${{ python_version }}
+      - run: nox --session tests-${{ matrix.python-version }}
         env:
           PYTHONDEVMODE: 1
       - uses: codecov/codecov-action@v1
