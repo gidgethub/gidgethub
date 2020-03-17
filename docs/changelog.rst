@@ -7,6 +7,8 @@ Changelog
 .. note::
    Under development
 
+- Add :exc:`gidgethub.BadRequestUnknownError` when something other than JSON is
+  returned for a 422 response.
 - Remove `gidgethub.treq`; tests were not passing and a request for help on
   Twitter came back with no reponse (happy to add back if someone steps forward
   to help out).
