@@ -22,7 +22,7 @@ This module is to help provide support for `GitHub Actions`_ when writing a
     static, the function is idempotent after its initial call.
 
 
-.. function:: command(cmd, val, /, **parameters)
+.. function:: command(cmd, val, **parameters)
 
    Issue a `logging command <https://help.github.com/en/actions/reference/development-tools-for-github-actions#logging-commands>`_.
 

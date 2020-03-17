@@ -26,7 +26,7 @@ _DATA_ESCAPE = [("%", "%25"), ("\r", "%0D"), ("\n", "%0A")]
 _VALUE_ESCAPE = [("%", "%25"), ("\r", "%0D"), ("\n", "%0A"), (":", "%3A"), (",", "%3A")]
 
 
-def command(cmd: str, data: str = "", /, **parameters: str) -> None:
+def command(cmd: str, data: str = "", **parameters: str) -> None:
     """Issue a logging command."""
     cmd_parts = [f"::{cmd}"]
     if parameters:
