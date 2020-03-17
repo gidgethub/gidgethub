@@ -72,6 +72,17 @@ Exceptions
       A list of error details for each field which was invalid.
 
 
+.. exception:: ValidationError(errors, *args)
+
+   A request was unable to be completed.
+
+   Inherits from :exc:`BadRequest` a 422 HTTP response.
+
+   .. attribute:: errors
+
+      Error details.
+
+
 .. exception:: GitHubBroken
 
    An exception representing 5XX HTTP responses.

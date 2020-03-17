@@ -76,8 +76,8 @@ class ValidationError(BadRequest):
 
     """A request was unable to be completed.
 
-    Represented by a 422 HTTP Response. Details of what went wrong
-    are stored in the errors attribute.
+    Represented by a 422 HTTP response. Details of what went wrong
+    are stored in the *errors* attribute.
     """
 
     def __init__(self, errors: Any, *args: Any) -> None:
