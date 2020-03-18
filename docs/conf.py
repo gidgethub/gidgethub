@@ -142,7 +142,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "gidgethub.tex", "gidgethub Documentation", "Brett Cannon", "manual"),
+    (master_doc, "gidgethub.tex", "gidgethub Documentation", "Brett Cannon", "manual")
 ]
 
 
@@ -167,7 +167,7 @@ texinfo_documents = [
         "gidgethub",
         "One line description of project.",
         "Miscellaneous",
-    ),
+    )
 ]
 
 

@@ -349,7 +349,7 @@ class TestDecipherResponse:
                 "resource": "PullRequest",
                 "code": "custom",
                 "message": "A pull request already exists for foo:1.",
-            },
+            }
         ]
         body = json.dumps({"message": "it went bad", "errors": errors})
         body = body.encode("utf-8")
