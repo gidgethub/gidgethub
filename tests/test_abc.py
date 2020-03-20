@@ -666,14 +666,14 @@ class TestGraphQL:
         gh, response_data = self.gh_and_response("malformed-query-200.json")
         with pytest.raises(QueryError) as exc:
             await gh.graphql("this isn't right")
-        assert exc.value.errors == response_data
+        assert exc.value.response == response_data
 
     @pytest.mark.asyncio
     async def test_missing_variable(self):
         gh, response_data = self.gh_and_response("missing-variable-in-request-200.json")
         with pytest.raises(QueryError) as exc:
             await gh.graphql(_SAMPLE_QUERY_WITH_VARIABLES)
-        assert exc.value.errors == response_data
+        assert exc.value.response == response_data
 
     @pytest.mark.asyncio
     async def test_query(self):
