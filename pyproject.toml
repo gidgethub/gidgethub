@@ -34,7 +34,6 @@ Repository = "https://github.com/brettcannon/gidgethub"
 
 [tool.coverage.run]
 branch = true
-source = ["gidgethub"]
 
 [tool.coverage.report]
 fail_under = 100
