@@ -250,3 +250,19 @@ experimental APIs without issue.
         .. versionchanged:: 3.0
 
             Added *jwt* and *oauth_token*.
+
+    .. coroutine:: graphql(query, *, endpoint_, **variables)
+
+       Make a request of the `GraphQL v4 API <https://developer.github.com/v4/>`_.
+
+       The *endpoint_* argument specifies the
+       `root endpoint <https://developer.github.com/v4/guides/forming-calls/#the-graphql-endpoint>`_
+       to use for the GraphQL request (do note the ``_`` suffix in the name).
+       The *variables* argument collects all other keyword arguments to pass in
+       `variables <https://developer.github.com/v4/guides/forming-calls/#working-with-variables>`_
+       for the query.
+
+       Exceptions raised directly by this method all subclass
+       :exc:`~gidgethub.GraphQLException`.
+
+       .. versionadded:: 4.0

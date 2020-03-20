@@ -28,7 +28,7 @@ Exceptions
 
    .. attribute:: status_code
 
-      The status code that the exception represents.
+      The :class:`http.HTTPStatus` status code that the exception represents.
 
 
 .. exception:: RedirectionException
@@ -99,5 +99,46 @@ Exceptions
 
    An exception representing 5XX HTTP responses.
 
+   Inherits from :exc:`HTTPException`.
+
+
+GraphQL-specific
+''''''''''''''''
+
+.. exception:: GraphQLException
+
+   Base exception for all GraphQL-related exceptions.
+
    Inherits from :exc:`GitHubException`.
 
+.. exception:: BadGraphQLRequest(status_code, response)
+
+   A 4XX HTTP response to a GraphQL request.
+
+   Inherits from :exc:`GraphQLException`.
+
+   .. attribute:: status_code
+
+      A :class:`http.HTTPStatus` status code representing the error.
+
+   .. attribute:: response
+
+      The JSON response from GitHub.
+
+.. exception:: GraphQLAuthorizationFailure(response)
+
+   A 401 HTTP response due to an authorization failure.
+
+   Inherits from :exc:`BadGraphQLRequest`.
+
+.. exception:: QueryError(response)
+
+   An exception representing an error relating to the GraphQL query itself.
+
+   Inherits from :exc:`GraphQLException`.
+
+   .. attribute:: response
+
+      The JSON response from GitHub. The object will at least have an
+      ``"errors"`` key containing a list of objects with at least a
+      ``"message"`` key.

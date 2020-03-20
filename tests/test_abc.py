@@ -1,13 +1,21 @@
 import asyncio
 import datetime
 import json
+import re
 import types
 
+import importlib_resources
 import pytest
 
-from gidgethub import RedirectionException
+from gidgethub import (
+    GraphQLAuthorizationFailure,
+    QueryError,
+    RedirectionException,
+)
 from gidgethub import abc as gh_abc
 from gidgethub import sansio
+
+from .samples import GraphQL as graphql_samples
 
 
 class MockGitHubAPI(gh_abc.GitHubAPI):
@@ -16,7 +24,7 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         "x-ratelimit-limit": "2",
         "x-ratelimit-remaining": "1",
         "x-ratelimit-reset": "0",
-        "content-type": "application/json",
+        "content-type": "application/json; charset=utf-8",
     }
 
     def __init__(
@@ -605,3 +613,125 @@ class TestGitHubAPICache:
         headers["last-modified"] = "54321"
         gh = MockGitHubAPI(headers=headers)
         await gh.getitem("/fake")  # No exceptions raised.
+
+
+_SAMPLE_QUERY = """query {
+    viewer {
+        name
+        repositories(last: 3) {
+            nodes {
+                name
+            }
+        }
+    }
+}
+"""
+
+_SAMPLE_QUERY_WITH_VARIABLES = """query ($number_of_repos: Int!) {
+    viewer {
+        name
+        repositories(last: $number_of_repos) {
+            nodes {
+                name
+            }
+        }
+    }
+}
+"""
+
+
+class TestGraphQL:
+
+    """Test gidgethub.abc.GitHubAPI.graphql()."""
+
+    def gh_and_response(self, payload_filename):
+        payload = importlib_resources.read_binary(graphql_samples, payload_filename)
+        status_code_match = re.match(r"^.+-(\d+)\.json$", payload_filename)
+        status_code = int(status_code_match.group(1))
+        print(status_code)
+        return (
+            MockGitHubAPI(status_code, body=payload, oauth_token="oauth-token"),
+            json.loads(payload.decode("utf-8")),
+        )
+
+    @pytest.mark.asyncio
+    async def test_bad_credentials(self):
+        gh, response_data = self.gh_and_response("bad-credentials-401.json")
+        with pytest.raises(GraphQLAuthorizationFailure) as exc:
+            await gh.graphql(_SAMPLE_QUERY)
+        assert exc.value.response == response_data
+
+    @pytest.mark.asyncio
+    async def test_malformed_query(self):
+        gh, response_data = self.gh_and_response("malformed-query-200.json")
+        with pytest.raises(QueryError) as exc:
+            await gh.graphql("this isn't right")
+        assert exc.value.errors == response_data
+
+    @pytest.mark.asyncio
+    async def test_missing_variable(self):
+        gh, response_data = self.gh_and_response("missing-variable-in-request-200.json")
+        with pytest.raises(QueryError) as exc:
+            await gh.graphql(_SAMPLE_QUERY_WITH_VARIABLES)
+        assert exc.value.errors == response_data
+
+    @pytest.mark.asyncio
+    async def test_query(self):
+        gh, response_data = self.gh_and_response("success-200.json")
+        result = await gh.graphql(_SAMPLE_QUERY)
+        assert gh.method == "POST"
+        assert gh.url == "https://api.github.com/graphql"
+        assert gh.headers["content-type"] == "application/json; charset=utf-8"
+        assert gh.headers["content-length"] == str(len(gh.body))
+        expected_headers = sansio.create_headers(
+            "test_abc",
+            accept="application/json; charset=utf-8",
+            oauth_token="oauth-token",
+        )
+        for key, value in expected_headers.items():
+            assert gh.headers[key] == value
+        body = json.loads(gh.body.decode("utf-8"))
+        assert body == {"query": _SAMPLE_QUERY}
+        assert result == response_data["data"]
+
+    @pytest.mark.asyncio
+    async def test_query_with_variables(self):
+        gh, response_data = self.gh_and_response("success-200.json")
+        result = await gh.graphql(_SAMPLE_QUERY_WITH_VARIABLES, number_of_repos=3)
+        assert gh.method == "POST"
+        assert gh.url == "https://api.github.com/graphql"
+        assert gh.headers["content-type"] == "application/json; charset=utf-8"
+        assert gh.headers["content-length"] == str(len(gh.body))
+        expected_headers = sansio.create_headers(
+            "test_abc",
+            accept="application/json; charset=utf-8",
+            oauth_token="oauth-token",
+        )
+        for key, value in expected_headers.items():
+            assert gh.headers[key] == value
+        body = json.loads(gh.body.decode("utf-8"))
+        assert body == {
+            "query": _SAMPLE_QUERY_WITH_VARIABLES,
+            "variables": {"number_of_repos": 3},
+        }
+        assert result == response_data["data"]
+
+    @pytest.mark.asyncio
+    async def test_endpoint_(self):
+        gh, response_data = self.gh_and_response("success-200.json")
+        base_url = "https://example.com/graphql"
+        result = await gh.graphql(_SAMPLE_QUERY, endpoint_=base_url)
+        assert gh.method == "POST"
+        assert gh.url == base_url
+        assert gh.headers["content-type"] == "application/json; charset=utf-8"
+        assert gh.headers["content-length"] == str(len(gh.body))
+        expected_headers = sansio.create_headers(
+            "test_abc",
+            accept="application/json; charset=utf-8",
+            oauth_token="oauth-token",
+        )
+        for key, value in expected_headers.items():
+            assert gh.headers[key] == value
+        body = json.loads(gh.body.decode("utf-8"))
+        assert body == {"query": _SAMPLE_QUERY}
+        assert result == response_data["data"]

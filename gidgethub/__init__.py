@@ -98,3 +98,35 @@ class ValidationError(BadRequest):
 class GitHubBroken(HTTPException):
 
     """Exception for 5XX HTTP responses."""
+
+
+class GraphQLException(GitHubException):
+
+    """Base exception for the GraphQL v4 API."""
+
+
+class BadGraphQLRequest(GraphQLException):
+
+    """A 4XX HTTP response."""
+
+    def __init__(self, status_code: http.HTTPStatus, response: Any) -> None:
+        self.status_code = status_code
+        self.response = response
+        super().__init__(response["message"])
+
+
+class GraphQLAuthorizationFailure(BadGraphQLRequest):
+
+    """401 HTTP response to a bad oauth token."""
+
+    def __init__(self, response: Any) -> None:
+        super().__init__(http.HTTPStatus(401), response)
+
+
+class QueryError(GraphQLException):
+
+    """An error occurred while attempting to handle a GraphQL v4 query."""
+
+    def __init__(self, response: Any) -> None:
+        self.response = response
+        super().__init__(response["errors"][0]["message"])
