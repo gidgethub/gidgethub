@@ -8,6 +8,7 @@ import importlib_resources
 import pytest
 
 from gidgethub import (
+    BadGraphQLRequest,
     GraphQLAuthorizationFailure,
     QueryError,
     RedirectionException,
@@ -658,6 +659,17 @@ class TestGraphQL:
     async def test_bad_credentials(self):
         gh, response_data = self.gh_and_response("bad-credentials-401.json")
         with pytest.raises(GraphQLAuthorizationFailure) as exc:
+            await gh.graphql(_SAMPLE_QUERY)
+        assert exc.value.response == response_data
+
+    @pytest.mark.asyncio
+    async def test_4XX_response(self):
+        """Test a 4XX response for which there is no pre-defined exception.
+
+        The testing of the response to sending bad JSON is inconsequential.
+        """
+        gh, response_data = self.gh_and_response("malformed-json-400.json")
+        with pytest.raises(BadGraphQLRequest) as exc:
             await gh.graphql(_SAMPLE_QUERY)
         assert exc.value.response == response_data
 
