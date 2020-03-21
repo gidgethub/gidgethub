@@ -262,4 +262,3 @@ class GitHubAPI(abc.ABC):
             raise GraphQLException(
                 f"unexpected HTTP response to GraphQL request: {status_code}", response
             )
-
