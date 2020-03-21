@@ -729,10 +729,10 @@ class TestGraphQL:
         assert result == response_data["data"]
 
     @pytest.mark.asyncio
-    async def test_endpoint_(self):
+    async def test_endpoint(self):
         gh, response_data = self.gh_and_response("success-200.json")
         base_url = "https://example.com/graphql"
-        result = await gh.graphql(_SAMPLE_QUERY, endpoint_=base_url)
+        result = await gh.graphql(_SAMPLE_QUERY, endpoint=base_url)
         assert gh.method == "POST"
         assert gh.url == base_url
         assert gh.headers["content-type"] == "application/json; charset=utf-8"

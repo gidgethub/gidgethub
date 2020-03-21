@@ -213,14 +213,13 @@ class GitHubAPI(abc.ABC):
         self,
         query: str,
         *,
-        endpoint_: str = "https://api.github.com/graphql",
+        endpoint: str = "https://api.github.com/graphql",
         **variables: Any,
     ) -> Any:
         """Query the GraphQL v4 API.
 
-        The *endpoint_* argument -- notice the trailing '_' -- specifies the
-        endpoint URL to use. The *variables** kwargs-style argument collects all
-        variables for the query.
+        The *endpoint* argument specifies the endpoint URL to use. The
+        *variables* kwargs-style argument collects all variables for the query.
         """
         payload: Dict[str, Any] = {"query": query}
         if variables:
@@ -236,7 +235,7 @@ class GitHubAPI(abc.ABC):
             }
         )
         status_code, response_headers, response_data = await self._request(
-            "POST", endpoint_, request_headers, request_data
+            "POST", endpoint, request_headers, request_data
         )
         assert response_headers["content-type"] == _json_content_type
         response = json.loads(response_data.decode("utf-8"))
