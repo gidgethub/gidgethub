@@ -111,6 +111,7 @@ GraphQL-specific
 
    Inherits from :exc:`GitHubException`.
 
+
 .. exception:: BadGraphQLRequest(status_code, response)
 
    A 4XX HTTP response to a GraphQL request.
@@ -123,7 +124,8 @@ GraphQL-specific
 
    .. attribute:: response
 
-      The JSON response from GitHub.
+      The decoded JSON response from GitHub.
+
 
 .. exception:: GraphQLAuthorizationFailure(response)
 
@@ -139,6 +141,4 @@ GraphQL-specific
 
    .. attribute:: response
 
-      The JSON response from GitHub. The object will at least have an
-      ``"errors"`` key containing a list of objects with at least a
-      ``"message"`` key.
+      The decoded JSON response from GitHub.
