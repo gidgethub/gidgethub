@@ -1,13 +1,17 @@
 import http
 
 from gidgethub import (
+    BadGraphQLRequest,
     BadRequest,
     BadRequestUnknownError,
     GitHubBroken,
+    GraphQLAuthorizationFailure,
+    GraphQLException,
     HTTPException,
     InvalidField,
     RateLimitExceeded,
     RedirectionException,
+    QueryError,
 )
 from gidgethub import sansio
 
@@ -61,3 +65,32 @@ def test_InvalidField():
 def test_RedirectionException():
     exc = RedirectionException(http.HTTPStatus.MOVED_PERMANENTLY)
     assert exc.status_code == http.HTTPStatus.MOVED_PERMANENTLY
+
+
+def test_GraphQLException():
+    exc = GraphQLException("hello", {"hello": "world"})
+    assert exc.response == {"hello": "world"}
+    assert str(exc) == "hello"
+
+
+def test_BadGraphQLRequest():
+    response = {"message": "hello, world"}
+    exc = BadGraphQLRequest(http.HTTPStatus(400), response)
+    assert exc.status_code == http.HTTPStatus(400)
+    assert exc.response == response
+    assert str(exc) == response["message"]
+
+
+def test_GraphQLAuthorizationFailure():
+    response = {"message": "hello, world"}
+    exc = GraphQLAuthorizationFailure(response)
+    assert exc.response == response
+    assert exc.status_code == http.HTTPStatus(401)
+    assert str(exc) == response["message"]
+
+
+def test_QueryError():
+    response = {"errors": [{"message": "hello, world"}]}
+    exc = QueryError(response)
+    assert exc.response == response
+    assert str(exc) == response["errors"][0]["message"]

@@ -114,6 +114,7 @@ class BadGraphQLRequest(GraphQLException):
     """A 4XX HTTP response."""
 
     def __init__(self, status_code: http.HTTPStatus, response: Any) -> None:
+        assert 399 < status_code < 500
         self.status_code = status_code
         super().__init__(response["message"], response)
 
