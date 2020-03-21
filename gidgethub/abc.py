@@ -256,9 +256,10 @@ class GitHubAPI(abc.ABC):
                 return response["data"]
             else:
                 raise GraphQLException(
-                    f"response did not contain 'errors' or 'data': {response}"
+                    f"response did not contain 'errors' or 'data': {response}", response
                 )
         else:
             raise GraphQLException(
-                f"unexpected HTTP response to GraphQL request: {status_code}"
+                f"unexpected HTTP response to GraphQL request: {status_code}", response
             )
+

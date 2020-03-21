@@ -104,6 +104,10 @@ class GraphQLException(GitHubException):
 
     """Base exception for the GraphQL v4 API."""
 
+    def __init__(self, message: str, response: Any) -> None:
+        self.response = response
+        super().__init__(message)
+
 
 class BadGraphQLRequest(GraphQLException):
 
@@ -111,8 +115,7 @@ class BadGraphQLRequest(GraphQLException):
 
     def __init__(self, status_code: http.HTTPStatus, response: Any) -> None:
         self.status_code = status_code
-        self.response = response
-        super().__init__(response["message"])
+        super().__init__(response["message"], response)
 
 
 class GraphQLAuthorizationFailure(BadGraphQLRequest):
@@ -128,5 +131,4 @@ class QueryError(GraphQLException):
     """An error occurred while attempting to handle a GraphQL v4 query."""
 
     def __init__(self, response: Any) -> None:
-        self.response = response
-        super().__init__(response["errors"][0]["message"])
+        super().__init__(response["errors"][0]["message"], response)

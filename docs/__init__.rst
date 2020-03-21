@@ -105,11 +105,15 @@ Exceptions
 GraphQL-specific
 ''''''''''''''''
 
-.. exception:: GraphQLException
+.. exception:: GraphQLException(message, response)
 
    Base exception for all GraphQL-related exceptions.
 
    Inherits from :exc:`GitHubException`.
+
+   .. attribute:: response
+
+      The decoded JSON response from GitHub.
 
 
 .. exception:: BadGraphQLRequest(status_code, response)
@@ -117,10 +121,6 @@ GraphQL-specific
    A 4XX HTTP response to a GraphQL request.
 
    Inherits from :exc:`GraphQLException`.
-
-   .. attribute:: status_code
-
-      A :class:`http.HTTPStatus` status code representing the error.
 
    .. attribute:: response
 
@@ -138,7 +138,3 @@ GraphQL-specific
    An exception representing an error relating to the GraphQL query itself.
 
    Inherits from :exc:`GraphQLException`.
-
-   .. attribute:: response
-
-      The decoded JSON response from GitHub.

@@ -10,6 +10,7 @@ import pytest
 from gidgethub import (
     BadGraphQLRequest,
     GraphQLAuthorizationFailure,
+    GraphQLException,
     QueryError,
     RedirectionException,
 )
@@ -649,7 +650,6 @@ class TestGraphQL:
         payload = importlib_resources.read_binary(graphql_samples, payload_filename)
         status_code_match = re.match(r"^.+-(\d+)\.json$", payload_filename)
         status_code = int(status_code_match.group(1))
-        print(status_code)
         return (
             MockGitHubAPI(status_code, body=payload, oauth_token="oauth-token"),
             json.loads(payload.decode("utf-8")),
@@ -663,7 +663,7 @@ class TestGraphQL:
         assert exc.value.response == response_data
 
     @pytest.mark.asyncio
-    async def test_4XX_response(self):
+    async def test_4XX_status_code(self):
         """Test a 4XX response for which there is no pre-defined exception.
 
         The testing of the response to sending bad JSON is inconsequential.
@@ -747,3 +747,15 @@ class TestGraphQL:
         body = json.loads(gh.body.decode("utf-8"))
         assert body == {"query": _SAMPLE_QUERY}
         assert result == response_data["data"]
+
+    @pytest.mark.asyncio
+    async def test_unexpected_status_code(self):
+        response_data = {"hello": "World"}
+        gh = MockGitHubAPI(
+            300,
+            body=json.dumps(response_data).encode("utf-8"),
+            oauth_token="oauth-token",
+        )
+        with pytest.raises(GraphQLException) as exc:
+            await gh.graphql("does not matter")
+        assert exc.value.response == response_data
