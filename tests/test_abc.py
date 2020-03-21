@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import http
 import json
 import re
 import types
@@ -9,6 +10,7 @@ import pytest
 
 from gidgethub import (
     BadGraphQLRequest,
+    GitHubBroken,
     GraphQLAuthorizationFailure,
     GraphQLException,
     QueryError,
@@ -656,11 +658,24 @@ class TestGraphQL:
         )
 
     @pytest.mark.asyncio
+    async def test_5XX_status_code(self):
+        response_data = {"hello": "World"}
+        gh = MockGitHubAPI(
+            500,
+            body=json.dumps(response_data).encode("utf-8"),
+            oauth_token="oauth-token",
+        )
+        with pytest.raises(GitHubBroken) as exc:
+            await gh.graphql("does not matter")
+        assert exc.value.status_code == http.HTTPStatus(500)
+
+    @pytest.mark.asyncio
     async def test_bad_credentials(self):
         gh, response_data = self.gh_and_response("bad-credentials-401.json")
         with pytest.raises(GraphQLAuthorizationFailure) as exc:
             await gh.graphql(_SAMPLE_QUERY)
         assert exc.value.response == response_data
+        assert exc.value.status_code == http.HTTPStatus(401)
 
     @pytest.mark.asyncio
     async def test_4XX_status_code(self):
@@ -672,6 +687,7 @@ class TestGraphQL:
         with pytest.raises(BadGraphQLRequest) as exc:
             await gh.graphql(_SAMPLE_QUERY)
         assert exc.value.response == response_data
+        assert exc.value.status_code == http.HTTPStatus(400)
 
     @pytest.mark.asyncio
     async def test_malformed_query(self):
@@ -685,6 +701,19 @@ class TestGraphQL:
         gh, response_data = self.gh_and_response("missing-variable-in-request-200.json")
         with pytest.raises(QueryError) as exc:
             await gh.graphql(_SAMPLE_QUERY_WITH_VARIABLES)
+        assert exc.value.response == response_data
+
+    @pytest.mark.asyncio
+    async def test_unexpected_200_response(self):
+        """200 responses are expected to contain either an "errors" or "data" key."""
+        response_data = {"hello": "World"}
+        gh = MockGitHubAPI(
+            200,
+            body=json.dumps(response_data).encode("utf-8"),
+            oauth_token="oauth-token",
+        )
+        with pytest.raises(GraphQLException) as exc:
+            await gh.graphql("does not matter")
         assert exc.value.response == response_data
 
     @pytest.mark.asyncio
