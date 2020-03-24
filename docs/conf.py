@@ -20,6 +20,8 @@
 import os
 import sys
 
+from datetime import datetime
+
 sys.path.insert(0, os.path.abspath("."))
 
 
@@ -54,7 +56,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "gidgethub"
-copyright = "2017, Brett Cannon"
+copyright = f"2017 - {datetime.now():%Y}, Brett Cannon"
 author = "Brett Cannon"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -142,7 +144,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "gidgethub.tex", "gidgethub Documentation", "Brett Cannon", "manual"),
+    (master_doc, "gidgethub.tex", "gidgethub Documentation", "Brett Cannon", "manual")
 ]
 
 
@@ -167,7 +169,7 @@ texinfo_documents = [
         "gidgethub",
         "One line description of project.",
         "Miscellaneous",
-    ),
+    )
 ]
 
 
