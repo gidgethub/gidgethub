@@ -251,7 +251,7 @@ experimental APIs without issue.
 
             Added *jwt* and *oauth_token*.
 
-    .. coroutine:: graphql(query, *, endpoint, **variables)
+    .. coroutine:: graphql(query, *, endpoint="https://api.github.com/graphql", **variables)
 
        Make a request of the `GraphQL v4 API <https://developer.github.com/v4/>`_.
 
