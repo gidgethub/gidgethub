@@ -16,8 +16,8 @@ Changelog
 - Remove `gidgethub.test` from the distribution.
 - Introduce :mod:`gidgethub.actions`.
 - Add :exc:`gidgethub.ValidationError` for when the HTTP response is a 422 but not
-  field-related. ([#83](https://github.com/brettcannon/gidgethub/pull/83);
-  thanks [John Hossler](https://github.com/jmhossler))
+  field-related. (`#83 <https://github.com/brettcannon/gidgethub/pull/83>`_;
+  thanks `John Hossler <https://github.com/jmhossler>`_)
 
 3.3.0
 '''''
