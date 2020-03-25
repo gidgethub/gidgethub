@@ -521,14 +521,20 @@ class TestDecipherResponse:
 
 
 class TestFormatUrl:
-    def test_absolute_url(self):
-        original_url = "https://api.github.com/notifications"
-        url = sansio.format_url(original_url, {})
-        assert url == original_url
+    @pytest.mark.parametrize(
+        "base_url",
+        ["https://api.github.com/notifications", "https://my.host.com/notifications"],
+    )
+    def test_absolute_url(self, base_url):
+        url = sansio.format_url(base_url, {}, base_url=base_url)
+        assert url == base_url
 
-    def test_relative_url(self):
-        url = sansio.format_url("/notifications", {})
-        assert url == "https://api.github.com/notifications"
+    @pytest.mark.parametrize(
+        "base_url", ["https://api.github.com", "https://my.host.com"]
+    )
+    def test_relative_url(self, base_url):
+        url = sansio.format_url("/notifications", {}, base_url=base_url)
+        assert url == f"{base_url}/notifications"
 
     def test_template(self):
         template_url = "https://api.github.com/users/octocat/gists{/gist_id}"
@@ -543,8 +549,30 @@ class TestFormatUrl:
         url = sansio.format_url("/users/octocat/gists{/gist_id}", template_data)
         assert url == "https://api.github.com/users/octocat/gists/1234"
 
-    def test_quoting(self):
+    def test_template_with_base_url(self):
+        template_url = "https://my.host.com/users/octocat/gists{/gist_id}"
+        template_data = {"gist_id": "1234"}
+        # Substituting an absolute URL.
+        url = sansio.format_url(
+            template_url, template_data, base_url="https://my.host.com"
+        )
+        assert url == "https://my.host.com/users/octocat/gists/1234"
+        # No substituting an absolute URL.
+        url = sansio.format_url(template_url, {}, base_url="https://my.host.com")
+        assert url == "https://my.host.com/users/octocat/gists"
+        # Substituting a relative URL.
+        url = sansio.format_url(
+            "/users/octocat/gists{/gist_id}",
+            template_data,
+            base_url="https://my.host.com",
+        )
+        assert url == "https://my.host.com/users/octocat/gists/1234"
+
+    @pytest.mark.parametrize(
+        "base_url", ["https://api.github.com", "https://my.host.com"]
+    )
+    def test_quoting(self, base_url):
         template_url = "https://api.github.com/repos/python/cpython/labels{/name}"
         label = {"name": "CLA signed"}
-        url = sansio.format_url(template_url, label)
+        url = sansio.format_url(template_url, label, base_url=base_url)
         assert url == "https://api.github.com/repos/python/cpython/labels/CLA%20signed"

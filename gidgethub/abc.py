@@ -31,11 +31,13 @@ class GitHubAPI(abc.ABC):
         *,
         oauth_token: Opt[str] = None,
         cache: Opt[CACHE_TYPE] = None,
+        base_url: Opt[str] = None,
     ) -> None:
         self.requester = requester
         self.oauth_token = oauth_token
         self._cache = cache
         self.rate_limit: Opt[sansio.RateLimit] = None
+        self.base_url = base_url
 
     @abc.abstractmethod
     async def _request(
@@ -60,7 +62,7 @@ class GitHubAPI(abc.ABC):
         """Construct and make an HTTP request."""
         if oauth_token is not None and jwt is not None:
             raise ValueError("Cannot pass both oauth_token and jwt.")
-        filled_url = sansio.format_url(url, url_vars)
+        filled_url = sansio.format_url(url, url_vars, base_url=self.base_url)
         if jwt is not None:
             request_headers = sansio.create_headers(
                 self.requester, accept=accept, jwt=jwt

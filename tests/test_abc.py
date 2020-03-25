@@ -39,11 +39,14 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         *,
         cache=None,
         oauth_token=None,
+        base_url=None,
     ):
         self.response_code = status_code
         self.response_headers = headers
         self.response_body = body
-        super().__init__("test_abc", oauth_token=oauth_token, cache=cache)
+        super().__init__(
+            "test_abc", oauth_token=oauth_token, cache=cache, base_url=base_url
+        )
 
     async def _request(self, method, url, headers, body=b""):
         """Make an HTTP request."""
@@ -77,6 +80,19 @@ class TestGeneralGitHubAPI:
             sansio.accept_format(),
         )
         assert gh.url == "https://api.github.com/users/octocat/following/brettcannon"
+
+    @pytest.mark.asyncio
+    async def test_url_formatted_with_base_url(self):
+        """The URL is appropriately formatted."""
+        gh = MockGitHubAPI(base_url="https://my.host.com")
+        await gh._make_request(
+            "GET",
+            "/users/octocat/following{/other_user}",
+            {"other_user": "brettcannon"},
+            "",
+            sansio.accept_format(),
+        )
+        assert gh.url == "https://my.host.com/users/octocat/following/brettcannon"
 
     @pytest.mark.asyncio
     async def test_headers(self):

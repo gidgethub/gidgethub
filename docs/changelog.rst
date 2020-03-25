@@ -18,6 +18,8 @@ Changelog
 - Add :exc:`gidgethub.ValidationError` for when the HTTP response is a 422 but not
   field-related. (`#83 <https://github.com/brettcannon/gidgethub/pull/83>`_;
   thanks `John Hossler <https://github.com/jmhossler>`_)
+- Allow GitHub Enterprise users to specify a base URL, by passing in **base_url**
+  to the :meth:`gidgethub.abc.GitHubAPI` constructor.
 
 3.3.0
 '''''

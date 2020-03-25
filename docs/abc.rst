@@ -24,7 +24,7 @@ does not require an update to the library, allowing one to use
 experimental APIs without issue.
 
 
-.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None)
+.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None, base_url=None)
 
     Provide an :py:term:`abstract base class` which abstracts out the
     HTTP library being used to send requests to GitHub. The class is
@@ -66,6 +66,8 @@ experimental APIs without issue.
     .. versionchanged:: 2.3
         Introduced the *cache* argument to the constructor.
 
+    .. versionchanged:: 4.0
+        Introduced the *base_url* argument to the constructor.
 
     .. attribute:: requester
 
@@ -77,6 +79,10 @@ experimental APIs without issue.
 
         The provided OAuth token (if any).
 
+    .. attribute:: base_url
+
+        The base URL for the GitHub API. By default it is https://api.github.com.
+        Enterprise GitHub users can specify a custom url endpoint.
 
     .. attribute:: rate_limit
 
