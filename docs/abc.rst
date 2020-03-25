@@ -255,7 +255,7 @@ experimental APIs without issue.
 
        Make a request of the `GraphQL v4 API <https://developer.github.com/v4/>`_.
 
-       The *endpoint_* argument specifies the
+       The *endpoint* argument specifies the
        `root endpoint <https://developer.github.com/v4/guides/forming-calls/#the-graphql-endpoint>`_
        to use for the GraphQL request.
        The *variables* argument collects all other keyword arguments to pass in
