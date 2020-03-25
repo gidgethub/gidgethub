@@ -24,7 +24,7 @@ This module is to help provide support for `GitHub Actions`_ when writing a
 
 .. function:: command(cmd, val, **parameters)
 
-   Issue a `logging command <https://help.github.com/en/actions/reference/workflow-commands-for-github-actions>`_.
+   Issue a `workflow command <https://help.github.com/en/actions/reference/workflow-commands-for-github-actions>`_.
 
    Note that no automatic string conversion is performed on any arguments.
 
