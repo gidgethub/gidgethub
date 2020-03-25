@@ -1,14 +1,24 @@
 """Provide an abstract base class for easier requests."""
 import abc
+import http
 import json
 from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Tuple
 from typing import Optional as Opt
 
+from . import (
+    BadGraphQLRequest,
+    GitHubBroken,
+    GraphQLAuthorizationFailure,
+    GraphQLException,
+    QueryError,
+)
 from . import sansio
 
 
 # Value represents etag, last-modified, data, and next page.
 CACHE_TYPE = MutableMapping[str, Tuple[Opt[str], Opt[str], Any, Opt[str]]]
+
+_json_content_type = "application/json; charset=utf-8"
 
 
 class GitHubAPI(abc.ABC):
@@ -198,3 +208,57 @@ class GitHubAPI(abc.ABC):
         await self._make_request(
             "DELETE", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
         )
+
+    async def graphql(
+        self,
+        query: str,
+        *,
+        endpoint: str = "https://api.github.com/graphql",
+        **variables: Any,
+    ) -> Any:
+        """Query the GraphQL v4 API.
+
+        The *endpoint* argument specifies the endpoint URL to use. The
+        *variables* kwargs-style argument collects all variables for the query.
+        """
+        payload: Dict[str, Any] = {"query": query}
+        if variables:
+            payload["variables"] = variables
+        request_data = json.dumps(payload).encode("utf-8")
+        request_headers = sansio.create_headers(
+            self.requester, accept=_json_content_type, oauth_token=self.oauth_token
+        )
+        request_headers.update(
+            {
+                "content-type": _json_content_type,
+                "content-length": str(len(request_data)),
+            }
+        )
+        status_code, response_headers, response_data = await self._request(
+            "POST", endpoint, request_headers, request_data
+        )
+        assert response_headers["content-type"] == _json_content_type
+        response = json.loads(response_data.decode("utf-8"))
+        if status_code >= 500:
+            raise GitHubBroken(http.HTTPStatus(status_code))
+        elif status_code == 401:
+            raise GraphQLAuthorizationFailure(response)
+        elif status_code >= 400:
+            # 400 corresponds to malformed JSON, but that should never receive
+            # that as a response as json.dumps() should have raised its own
+            # exception before we made the request.
+            raise BadGraphQLRequest(http.HTTPStatus(status_code), response)
+        elif status_code == 200:
+            self.rate_limit = sansio.RateLimit.from_http(response_headers)
+            if "errors" in response:
+                raise QueryError(response)
+            if "data" in response:
+                return response["data"]
+            else:
+                raise GraphQLException(
+                    f"Response did not contain 'errors' or 'data': {response}", response
+                )
+        else:
+            raise GraphQLException(
+                f"Unexpected HTTP response to GraphQL request: {status_code}", response
+            )

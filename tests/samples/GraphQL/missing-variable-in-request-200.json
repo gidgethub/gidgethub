@@ -1,0 +1,22 @@
+{
+    "errors": [
+        {
+            "extensions": {
+                "value": null,
+                "problems": [
+                    {
+                        "path": [],
+                        "explanation": "Expected value to not be null"
+                    }
+                ]
+            },
+            "locations": [
+                {
+                    "line": 1,
+                    "column": 9
+                }
+            ],
+            "message": "Variable $number_of_repos of type Int! was provided invalid value"
+        }
+    ]
+}

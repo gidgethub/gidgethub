@@ -9,7 +9,7 @@ def install_flit_dev_deps(session):
 @nox.session(python=["3.6", "3.7", "3.8"])
 def tests(session):
     install_flit_dev_deps(session)
-    session.run("pytest", "--cov", "tests")
+    session.run("pytest", "--cov=gidgethub", "tests")
 
 
 @nox.session

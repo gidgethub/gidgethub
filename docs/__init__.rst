@@ -28,7 +28,7 @@ Exceptions
 
    .. attribute:: status_code
 
-      The status code that the exception represents.
+      The :class:`http.HTTPStatus` status code that the exception represents.
 
 
 .. exception:: RedirectionException
@@ -99,5 +99,42 @@ Exceptions
 
    An exception representing 5XX HTTP responses.
 
+   Inherits from :exc:`HTTPException`.
+
+
+GraphQL-specific
+''''''''''''''''
+
+.. exception:: GraphQLException(message, response)
+
+   Base exception for all GraphQL-related exceptions.
+
    Inherits from :exc:`GitHubException`.
 
+   .. attribute:: response
+
+      The decoded JSON response from GitHub.
+
+
+.. exception:: BadGraphQLRequest(status_code, response)
+
+   A 4XX HTTP response to a GraphQL request.
+
+   Inherits from :exc:`GraphQLException`.
+
+   .. attribute:: response
+
+      The decoded JSON response from GitHub.
+
+
+.. exception:: GraphQLAuthorizationFailure(response)
+
+   A 401 HTTP response due to an authorization failure.
+
+   Inherits from :exc:`BadGraphQLRequest`.
+
+.. exception:: QueryError(response)
+
+   An exception representing an error relating to the GraphQL query itself.
+
+   Inherits from :exc:`GraphQLException`.
