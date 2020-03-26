@@ -529,6 +529,14 @@ class TestFormatUrl:
         url = sansio.format_url(base_url, {}, base_url=base_url)
         assert url == base_url
 
+    def test_different_base_and_absolute_url(self):
+        url = sansio.format_url(
+            "https://api.github.com/notifications",
+            {},
+            base_url="https://my.host.com/notifications",
+        )
+        assert url == "https://api.github.com/notifications"
+
     @pytest.mark.parametrize(
         "base_url", ["https://api.github.com", "https://my.host.com"]
     )

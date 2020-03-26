@@ -82,7 +82,7 @@ experimental APIs without issue.
     .. attribute:: base_url
 
         The base URL for the GitHub API. By default it is https://api.github.com.
-        Enterprise GitHub users can specify a custom url endpoint.
+        Enterprise GitHub users can specify a custom URL endpoint.
 
     .. attribute:: rate_limit
 

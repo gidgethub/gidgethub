@@ -242,7 +242,7 @@ that are provided to you. Continuing from the example in the Requests_ section::
 Utilities
 ---------
 
-.. function:: format_url(url, url_vars, base_url=None)
+.. function:: format_url(url, url_vars, *, base_url=None)
 
     Construct a URL for the GitHub API.
 
