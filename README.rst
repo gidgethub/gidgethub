@@ -25,7 +25,7 @@ Gidgethub is `available on PyPI <https://pypi.org/project/gidgethub/>`_.
   python3 -m pip install gidgethub
 
 
-Gidgethub requires Python version 3.6 and up.
+Gidgethub requires Python version 3.8 and up.
 
 
 Goals
