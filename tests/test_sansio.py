@@ -521,9 +521,6 @@ class TestDecipherResponse:
 
 
 class TestFormatUrl:
-    def test_url_is_none_defaults_to_sansio_domain(self):
-        url = sansio.format_url("/notifications", {}, base_url=None)
-        assert url == f"{sansio.DOMAIN}/notifications"
 
     @pytest.mark.parametrize(
         "base_url",
