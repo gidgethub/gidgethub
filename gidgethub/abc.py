@@ -31,7 +31,7 @@ class GitHubAPI(abc.ABC):
         *,
         oauth_token: Opt[str] = None,
         cache: Opt[CACHE_TYPE] = None,
-        base_url: Opt[str] = None,
+        base_url: str = sansio.DOMAIN,
     ) -> None:
         self.requester = requester
         self.oauth_token = oauth_token

@@ -24,7 +24,7 @@ does not require an update to the library, allowing one to use
 experimental APIs without issue.
 
 
-.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None, base_url=None)
+.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None, base_url=sansio.DOMAIN)
 
     Provide an :py:term:`abstract base class` which abstracts out the
     HTTP library being used to send requests to GitHub. The class is
