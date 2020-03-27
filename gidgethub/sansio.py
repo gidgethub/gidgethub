@@ -16,6 +16,8 @@ from typing import Any, Dict, Mapping, Optional, Tuple, Type, Union
 import urllib.parse
 
 import uritemplate
+import time
+import jwt
 
 from . import (
     BadRequest,
@@ -382,3 +384,41 @@ def format_url(url: str, url_vars: Mapping[str, Any], *, base_url: str = DOMAIN)
     url = urllib.parse.urljoin(base_url, url)  # Works even if 'url' is fully-qualified.
     expanded_url: str = uritemplate.expand(url, var_dict=url_vars)
     return expanded_url
+
+
+def get_jwt(*, app_id: str, private_key:str) -> str:
+    """Construct the JWT token, used for GitHub App authentication."""
+    payload = {
+        "iat": int(time.time()),
+        "exp": int(time.time()) + (10 * 60),
+        "iss": app_id,
+    }
+    encoded = jwt.encode(payload, private_key, algorithm="RS256")
+    bearer_token = encoded.decode("utf-8")
+
+    return bearer_token
+
+
+async def get_installation_access_token(gh, *, installation_id:str, app_id:str, private_key:str) -> Dict:
+    """Obtain a GitHub App's installation access token.
+
+
+    Return a dictionary containing access token and expiration time.
+
+    Doc: https://developer.github.com/v3/apps/#create-a-new-installation-token
+    """
+    access_token_url = f"/app/installations/{installation_id}/access_tokens"
+    jwt = get_jwt(app_id=app_id, private_key=private_key)
+    response = await gh.post(
+        access_token_url,
+        data=b"",
+        jwt=jwt,
+        accept="application/vnd.github.machine-man-preview+json",
+    )
+    # example response
+    # {
+    #   "token": "v1.1f699f1069f60xxx",
+    #   "expires_at": "2016-07-11T22:14:10Z"
+    # }
+
+    return response

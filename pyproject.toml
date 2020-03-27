@@ -6,7 +6,7 @@ build-backend = "flit.buildapi"
 module = "gidgethub"
 author = "Brett Cannon"
 author-email = "brett@python.org"
-requires = ["uritemplate>=3.0.1"]
+requires = ["uritemplate>=3.0.1", "PyJWT", "cryptography"]
 requires-python = ">=3.6"
 license = "Apache"
 keywords = "github sans-io async"
