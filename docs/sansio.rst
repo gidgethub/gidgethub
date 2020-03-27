@@ -255,4 +255,4 @@ Utilities
     Appropriate URL quoting is automatically done on the values of the dict.
 
     Enterprise GitHub users can specify their custom base URL in *base_url*.
-    By default, ``https://api.github.com/`` is used as the base URL.
+    By default, https://api.github.com/ is used as the base URL.
