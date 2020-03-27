@@ -39,7 +39,7 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         *,
         cache=None,
         oauth_token=None,
-        base_url=None,
+        base_url=sansio.DOMAIN,
     ):
         self.response_code = status_code
         self.response_headers = headers
