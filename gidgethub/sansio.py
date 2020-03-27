@@ -370,7 +370,7 @@ DOMAIN = "https://api.github.com"
 
 
 def format_url(
-    url: str, url_vars: Mapping[str, Any], *, base_url: Optional[str] = DOMAIN
+    url: str, url_vars: Mapping[str, Any], *, base_url: str = DOMAIN
 ) -> str:
     """Construct a URL for the GitHub API.
 
