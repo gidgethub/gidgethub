@@ -521,7 +521,7 @@ class TestDecipherResponse:
 
 
 class TestFormatUrl:
-    
+
     """Tests for gidgethub.sansio.format_url()."""
 
     @pytest.mark.parametrize(
