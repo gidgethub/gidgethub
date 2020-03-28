@@ -369,7 +369,7 @@ def decipher_response(
 DOMAIN = "https://api.github.com"
 
 
-def format_url(url: str, url_vars: Mapping[str, Any]) -> str:
+def format_url(url: str, url_vars: Mapping[str, Any], *, base_url: str = DOMAIN) -> str:
     """Construct a URL for the GitHub API.
 
     The URL may be absolute or relative. In the latter case the appropriate
@@ -378,6 +378,7 @@ def format_url(url: str, url_vars: Mapping[str, Any]) -> str:
 
     The dict provided in url_vars is used in URI template formatting.
     """
-    url = urllib.parse.urljoin(DOMAIN, url)  # Works even if 'url' is fully-qualified.
+
+    url = urllib.parse.urljoin(base_url, url)  # Works even if 'url' is fully-qualified.
     expanded_url: str = uritemplate.expand(url, var_dict=url_vars)
     return expanded_url

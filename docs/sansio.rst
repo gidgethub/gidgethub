@@ -242,7 +242,7 @@ that are provided to you. Continuing from the example in the Requests_ section::
 Utilities
 ---------
 
-.. function:: format_url(url, url_vars)
+.. function:: format_url(url, url_vars, *, base_url=DOMAIN)
 
     Construct a URL for the GitHub API.
 
@@ -253,3 +253,6 @@ Utilities
     The dict provided in *url_vars* is used in
     `URI template expansion <https://developer.github.com/v3/#hypermedia>`_.
     Appropriate URL quoting is automatically done on the values of the dict.
+
+    Enterprise GitHub users can specify their custom base URL in *base_url*.
+    By default, https://api.github.com/ is used as the base URL.
