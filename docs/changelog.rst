@@ -4,9 +4,6 @@ Changelog
 4.0.0
 '''''
 
-.. note::
-   Under development
-
 - Add :meth:`gidgethub.abc.GitHubAPI.graphql` and related exceptions.
 - Add :exc:`gidgethub.BadRequestUnknownError` when something other than JSON is
   returned for a 422 response.
