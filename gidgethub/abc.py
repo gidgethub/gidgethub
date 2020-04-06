@@ -4,6 +4,8 @@ import http
 import json
 from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Tuple
 from typing import Optional as Opt
+import datetime
+
 
 from . import (
     BadGraphQLRequest,
@@ -32,12 +34,15 @@ class GitHubAPI(abc.ABC):
         oauth_token: Opt[str] = None,
         cache: Opt[CACHE_TYPE] = None,
         base_url: str = sansio.DOMAIN,
+        rate_limiter=None,
     ) -> None:
         self.requester = requester
         self.oauth_token = oauth_token
         self._cache = cache
         self.rate_limit: Opt[sansio.RateLimit] = None
         self.base_url = base_url
+        self.requests_in_flight: int = 0
+        self._rate_limiter = rate_limiter
 
     @abc.abstractmethod
     async def _request(
@@ -100,7 +105,13 @@ class GitHubAPI(abc.ABC):
             request_headers["content-length"] = str(len(body))
         if self.rate_limit is not None:
             self.rate_limit.remaining -= 1
-        response = await self._request(method, filled_url, request_headers, body)
+        self.requests_in_flight += 1
+        try:
+            if self._rate_limiter is not None:
+                await self._rate_limiter(self)
+            response = await self._request(method, filled_url, request_headers, body)
+        finally:
+            self.requests_in_flight -= 1
         if not (response[0] == 304 and cached):
             data, self.rate_limit, more = sansio.decipher_response(*response)
             has_cache_details = "etag" in response[1] or "last-modified" in response[1]
@@ -264,3 +275,35 @@ class GitHubAPI(abc.ABC):
             raise GraphQLException(
                 f"Unexpected HTTP response to GraphQL request: {status_code}", response
             )
+
+
+async def yolo_regulator(gh):
+    if gh.rate_limit is None:
+        return
+    now = datetime.datetime.now(datetime.timezone.utc)
+    if gh.rate_limit.reset_datetime < now:
+        return
+    left_estimate = gh.rate_limit.remaining - gh.requests_in_flight + 1
+    if left_estimate > 0:
+        return
+    else:
+        wait = gh.rate_limit.reset_datetime - now
+        await gh.sleep(wait.total_seconds())
+
+
+async def rationing_regulator(gh):
+    if gh.rate_limit is None:
+        return
+    now = datetime.datetime.now(datetime.timezone.utc)
+    if gh.rate_limit.reset_datetime < now:
+        # our numbers are likely lies due to reset, just return
+        return
+    wait_s = (gh.rate_limit.reset_datetime - now).total_seconds()
+    left_estimate = gh.rate_limit.remaining - gh.requests_in_flight + 1
+
+    if left_estimate <= 0:
+        # if we are all the way out, sleep till reset
+        await gh.sleep(wait_s)
+    else:
+        # otherwise, sleep to ration to a sustainable rate
+        await gh.sleep(wait_s / left_estimate)
