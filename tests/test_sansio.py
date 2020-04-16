@@ -600,9 +600,9 @@ class TestGitHubAppUtils:
     def test_get_jwt(self, time_mock):
         app_id = 12345
 
-        # copied from https://github.com/jpadilla/pyjwt/blob/master/tests/keys/testkey_rsa
         time_mock.return_value = 1587069751.5588422
 
+        # test file copied from https://github.com/jpadilla/pyjwt/blob/master/tests/keys/testkey_rsa
         with open("tests/samples/test_rsa_key", "r") as fp:
             private_key = fp.read()
 
