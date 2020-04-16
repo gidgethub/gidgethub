@@ -7,9 +7,9 @@ Changelog
 .. note::
    Under development
 
-- Add :meth:`gidgethub.sansio.get_installation_access_token` for obtaining an
-  installation access token that can be used to authenticate as a GitHub App
-  installation. (`Issue #71 <https://github.com/brettcannon/gidgethub/issues/71>`_
+- Introdyce :mod:`gidgethub.app` and :meth:`gidgethub.app.get_installation_access_token`
+  for obtaining an installation access token that can be used to authenticate as
+  a GitHub App installation. (`Issue #71 <https://github.com/brettcannon/gidgethub/issues/71>`_
 
 4.0.0
 '''''
