@@ -419,7 +419,7 @@ class TestDecipherResponse:
             "link": '<http://example.com>; test="unimportant"',
         }
         data = {
-            "id": 208045946,
+            "id": 208_045_946,
             "url": "https://api.github.com/repos/octocat/Hello-World/labels/bug",
             "name": "bug",
             "color": "f29513",
@@ -505,7 +505,7 @@ class TestDecipherResponse:
             "link": '<http://example.com>; test="unimportant"',
         }
         data = {
-            "id": 208045946,
+            "id": 208_045_946,
             "url": "https://api.github.com/repos/octocat/Hello-World/labels/bug",
             "name": "bug",
             "color": "f29513",

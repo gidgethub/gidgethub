@@ -386,7 +386,7 @@ def format_url(url: str, url_vars: Mapping[str, Any], *, base_url: str = DOMAIN)
     return expanded_url
 
 
-def get_jwt(*, app_id: str, private_key:str) -> str:
+def get_jwt(*, app_id: str, private_key: str) -> str:
     """Construct the JWT token, used for GitHub App authentication."""
     payload = {
         "iat": int(time.time()),
@@ -399,7 +399,9 @@ def get_jwt(*, app_id: str, private_key:str) -> str:
     return bearer_token
 
 
-async def get_installation_access_token(gh, *, installation_id:str, app_id:str, private_key:str) -> Dict:
+async def get_installation_access_token(
+    gh, *, installation_id: str, app_id: str, private_key: str
+) -> Dict:
     """Obtain a GitHub App's installation access token.
 
 
