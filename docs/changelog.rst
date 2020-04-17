@@ -7,7 +7,7 @@ Changelog
 .. note::
    Under development
 
-- Introduce :mod:`gidgethub.app` and :meth:`gidgethub.app.get_installation_access_token`
+- Introduce :meth:`gidgethub.app.get_installation_access_token`
   for obtaining an installation access token that can be used to authenticate as
   a GitHub App installation. (`Issue #71 <https://github.com/brettcannon/gidgethub/issues/71>`_
 
@@ -18,7 +18,7 @@ Changelog
 - Add :exc:`gidgethub.BadRequestUnknownError` when something other than JSON is
   returned for a 422 response.
 - Remove `gidgethub.treq`; tests were not passing and a request for help on
-  Twitter came back with no reponse (happy to add back if someone steps forward
+  Twitter came back with no response (happy to add back if someone steps forward
   to help out).
 - Remove `gidgethub.test` from the distribution.
 - Introduce :mod:`gidgethub.actions`.
