@@ -5,7 +5,7 @@
 
 .. versionadded:: 4.1.0
 
-This module is to help provide support for `GitHub App <https://developer.github.com/v3/apps/>`_.
+This module is to help provide support for `GitHub Apps <https://developer.github.com/v3/apps/>`_.
 
 Example on how you would obtain the access token for authenticating as a GitHub App installation::
 
@@ -31,4 +31,3 @@ Example on how you would obtain the access token for authenticating as a GitHub 
 
     It returns the response from GitHub's
     `Authenticating as an installation <https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-an-installation>`_ API endpoint.
-
