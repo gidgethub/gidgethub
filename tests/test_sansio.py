@@ -3,6 +3,7 @@ import http
 import json
 import pathlib
 
+
 import pytest
 
 from gidgethub import (
