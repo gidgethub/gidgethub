@@ -256,3 +256,7 @@ Utilities
 
     Enterprise GitHub users can specify their custom base URL in *base_url*.
     By default, https://api.github.com/ is used as the base URL.
+    
+    .. versionchanged:: 4.0
+
+       Added ``base_url`` argument.
