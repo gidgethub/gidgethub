@@ -17,7 +17,7 @@ Example on how you would obtain the access token for authenticating as a GitHub 
 
     access_token_response = await util.get_installation_access_token(installation_id=123, app_id=456, private_key=private_key)
 
-    data = gh.getitem("/rate_limit", oauth_token=access_token["token"])
+    data = gh.getitem("/rate_limit", oauth_token=access_token_response["token"])
 
 .. coroutine:: get_installation_access_token(gh, *, installation_id, app_id, private_key)
 
