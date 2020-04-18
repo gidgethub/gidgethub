@@ -4,7 +4,9 @@ import importlib_resources
 import jwt
 import pytest
 
-from gidgethub import app as gh_app  # app seems to clash with the pytest-tornasync fixture
+from gidgethub import (
+    app as gh_app,
+)  # app seems to clash with the pytest-tornasync fixture
 
 from .test_abc import MockGitHubAPI
 

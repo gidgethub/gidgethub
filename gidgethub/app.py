@@ -10,11 +10,7 @@ from gidgethub.abc import GitHubAPI
 def get_jwt(*, app_id: str, private_key: str) -> str:
     """Construct the JWT (JSON Web Token), used for GitHub App authentication."""
     time_int = int(time.time())
-    payload = {
-        "iat": time_int,
-        "exp": time_int + (10 * 60),
-        "iss": app_id,
-    }
+    payload = {"iat": time_int, "exp": time_int + (10 * 60), "iss": app_id}
     encoded = jwt.encode(payload, private_key, algorithm="RS256")
     bearer_token = encoded.decode("utf-8")
 
