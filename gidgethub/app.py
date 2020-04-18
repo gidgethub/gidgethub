@@ -1,5 +1,5 @@
 """Support for GitHub Actions."""
-from typing import Any
+from typing import Any, Dict
 
 import time
 import jwt
@@ -7,7 +7,7 @@ import jwt
 from gidgethub.abc import GitHubAPI
 
 
-def _get_jwt(*, app_id: str, private_key: str) -> str:
+def get_jwt(*, app_id: str, private_key: str) -> str:
     """Construct the JWT (JSON Web Token), used for GitHub App authentication."""
     time_int = int(time.time())
     payload = {
@@ -32,11 +32,11 @@ async def get_installation_access_token(
     Doc: https://developer.github.com/v3/apps/#create-a-new-installation-token
     """
     access_token_url = f"/app/installations/{installation_id}/access_tokens"
-    jwt = _get_jwt(app_id=app_id, private_key=private_key)
+    token = get_jwt(app_id=app_id, private_key=private_key)
     response = await gh.post(
         access_token_url,
         data=b"",
-        jwt=jwt,
+        jwt=token,
         accept="application/vnd.github.machine-man-preview+json",
     )
     # example response
