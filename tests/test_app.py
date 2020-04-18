@@ -4,7 +4,7 @@ import importlib_resources
 import jwt
 import pytest
 
-from gidgethub import app
+from gidgethub import app as gh_app  # app seems to clash with the pytest-tornasync fixture
 
 from .test_abc import MockGitHubAPI
 
@@ -24,7 +24,7 @@ class TestGitHubAppUtils:
         # test file copied from https://github.com/jpadilla/pyjwt/blob/master/tests/keys/testkey_rsa
         private_key = importlib_resources.read_binary(rsa_key_samples, "test_rsa_key")
 
-        result = app.get_jwt(app_id=app_id, private_key=private_key)
+        result = gh_app.get_jwt(app_id=app_id, private_key=private_key)
         expected_payload = {
             "iat": 1587069751,
             "exp": 1587069751 + (10 * 60),
@@ -36,19 +36,16 @@ class TestGitHubAppUtils:
         ).decode("utf-8")
 
     @pytest.mark.asyncio
-    @mock.patch("gidgethub.app.get_jwt")
-    async def test_get_installation_access_token(self, get_jwt_mock):
+    async def test_get_installation_access_token(self):
         gh = MockGitHubAPI()
         installation_id = 6789
         app_id = 12345
 
         private_key = importlib_resources.read_binary(rsa_key_samples, "test_rsa_key")
 
-        await app.get_installation_access_token(
+        await gh_app.get_installation_access_token(
             gh, installation_id=installation_id, app_id=app_id, private_key=private_key
         )
 
         assert gh.url == "https://api.github.com/app/installations/6789/access_tokens"
         assert gh.body == b""
-
-        get_jwt_mock.assert_called_once_with(app_id=app_id, private_key=private_key)
