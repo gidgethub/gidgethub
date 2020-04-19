@@ -1,5 +1,5 @@
 """Support for GitHub Actions."""
-from typing import Any, Dict
+from typing import cast, Any, Dict
 
 import time
 import jwt
@@ -19,13 +19,12 @@ def get_jwt(*, app_id: str, private_key: str) -> str:
 
 async def get_installation_access_token(
     gh: GitHubAPI, *, installation_id: str, app_id: str, private_key: str
-) -> Any:
+) -> Dict[str, Any]:
     """Obtain a GitHub App's installation access token.
 
 
     Return a dictionary containing access token and expiration time.
-
-    Doc: https://developer.github.com/v3/apps/#create-a-new-installation-token
+    (https://developer.github.com/v3/apps/#create-a-new-installation-token)
     """
     access_token_url = f"/app/installations/{installation_id}/access_tokens"
     token = get_jwt(app_id=app_id, private_key=private_key)
@@ -41,4 +40,4 @@ async def get_installation_access_token(
     #   "expires_at": "2016-07-11T22:14:10Z"
     # }
 
-    return response
+    return cast(Dict[str, Any], response)
