@@ -1,7 +1,7 @@
-:mod:`gidgethub.app` --- Support for GitHub App
-===============================================
+:mod:`gidgethub.apps` --- Support for GitHub App
+================================================
 
-.. module:: gidgethub.app
+.. module:: gidgethub.apps
 
 .. versionadded:: 4.1.0
 
@@ -9,7 +9,7 @@ This module is to help provide support for `GitHub Apps <https://developer.githu
 
 Example on how you would obtain the access token for authenticating as a GitHub App installation::
 
-    from gidgethub.app import get_installation_access_token
+    from gidgethub.apps import get_installation_access_token
 
     private_key = """-----BEGIN RSA PRIVATE KEY-----
     zBgqFIin/uQEb0he006F9pNC6Kga0AMY5b0cCdZ4ge9qyFro2eVA
@@ -46,7 +46,7 @@ Example on how you would obtain the access token for authenticating as a GitHub 
 
    Example::
 
-       from gidgethub.app import get_jwt
+       from gidgethub.apps import get_jwt
 
        private_key = """-----BEGIN RSA PRIVATE KEY-----
        zBgqFIin/uQEb0he006F9pNC6Kga0AMY5b0cCdZ4ge9qyFro2eVA

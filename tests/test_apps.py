@@ -4,10 +4,7 @@ import importlib_resources
 import jwt
 import pytest
 
-from gidgethub import (
-    app as gh_app,
-)  # app seems to clash with the pytest-tornasync fixture
-
+from gidgethub import apps
 from .test_abc import MockGitHubAPI
 
 from .samples import rsa_key as rsa_key_samples
@@ -26,7 +23,7 @@ class TestGitHubAppUtils:
         # test file copied from https://github.com/jpadilla/pyjwt/blob/master/tests/keys/testkey_rsa
         private_key = importlib_resources.read_binary(rsa_key_samples, "test_rsa_key")
 
-        result = gh_app.get_jwt(app_id=app_id, private_key=private_key)
+        result = apps.get_jwt(app_id=app_id, private_key=private_key)
         expected_payload = {
             "iat": 1587069751,
             "exp": 1587069751 + (10 * 60),
@@ -45,7 +42,7 @@ class TestGitHubAppUtils:
 
         private_key = importlib_resources.read_binary(rsa_key_samples, "test_rsa_key")
 
-        await gh_app.get_installation_access_token(
+        await apps.get_installation_access_token(
             gh, installation_id=installation_id, app_id=app_id, private_key=private_key
         )
 

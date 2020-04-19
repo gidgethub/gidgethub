@@ -130,7 +130,7 @@ Contents
    __init__
    sansio
    actions
-   app
+   apps
    routing
    abc
    aiohttp
