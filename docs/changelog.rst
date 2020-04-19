@@ -4,9 +4,6 @@ Changelog
 4.1.0
 '''''
 
-.. note::
-   Under development
-
 - Introduce :mod:`gidgethub.apps`.
 
 - Introduce :meth:`gidgethub.apps.get_installation_access_token`
