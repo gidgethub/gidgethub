@@ -8,8 +8,7 @@ author = "Brett Cannon"
 author-email = "brett@python.org"
 requires = [
     "uritemplate>=3.0.1",
-    "PyJWT>=1.7.1",
-    "cryptography>=2.9"
+    "PyJWT[crypto]"
 ]
 requires-python = ">=3.6"
 license = "Apache"
