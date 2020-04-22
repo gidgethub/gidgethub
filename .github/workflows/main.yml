@@ -67,6 +67,6 @@ jobs:
 
     - uses: brettcannon/release-often@master
       with:
-        changelog-path: doc/CHANGELOG.rst
+        changelog-path: docs/changelog.rst
         pypi-token: ${{ secrets.PYPI_TOKEN }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
