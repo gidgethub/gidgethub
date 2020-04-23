@@ -3,7 +3,7 @@
   dependency to ``cryptography`` (`Issue #116 <https://github.com/brettcannon/gidgethub/issues/116>`_).
 
 4.1.0
-======
+-----
 
 - Introduce :mod:`gidgethub.apps`.
 
@@ -15,7 +15,7 @@
   that can be used to access endpoints that require it.
 
 4.0.0
-=====
+-----
 
 - Add :meth:`gidgethub.abc.GitHubAPI.graphql` and related exceptions.
 - Add :exc:`gidgethub.BadRequestUnknownError` when something other than JSON is
@@ -32,14 +32,14 @@
   to the :meth:`gidgethub.abc.GitHubAPI` constructor.
 
 3.3.0
-=====
+-----
 
 - Adapt to the new ``httpx`` API to support
   `versions >= 0.11.0 <https://github.com/encode/httpx/blob/master/CHANGELOG.md>`_
   (thanks `Dave Hirschfeld <https://github.com/dhirschfeld>`_)
 
 3.2.0
-=====
+-----
 
 - Fix mypy warnings about the :class:`typing.Dict` and :class:`typing.Mapping`
   generic types lacking type parameters.
@@ -47,14 +47,14 @@
 - Add a ``py.typed`` file to mark the project as fully typed.
 
 3.1.0
-=====
+-----
 
 - :meth:`gidgethub.abc.GitHubAPI.getiter` now works with
   `GitHub's search API <https://developer.github.com/v3/search/>`_
   (thanks `Pablo Galindo <https://github.com/pablogsal>`_).
 
 3.0.0
-=====
+-----
 
 - :meth:`gidgethub.sansio.RateLimit.from_http` returns ``None`` if ratelimit is
   not found in the headers.
@@ -69,7 +69,7 @@
 - gidgethub is now packaged using `flit <https://flit.readthedocs.io/en/latest/>`_.
 
 2.5.0
-=====
+-----
 
 - Tighten type hints for parameters that have a default of ``None``
   but were not typed as :data:`typing.Optional`.
@@ -86,19 +86,19 @@
 
 
 2.4.1
-=====
+-----
 
 - Tighten up protections against caching ineligible responses.
 
 
 2.4.0
-=====
+-----
 
 - Expand :meth:`gidgethub.routing.Router.dispatch`.
 
 
 2.3.0
-=====
+-----
 
 - Add support for ``application/x-www-form-urlencoded`` webhook event payloads.
   (This also allows for API calls to return this content type, although GitHub
@@ -113,7 +113,7 @@
 
 
 2.2.0
-=====
+-----
 
 - Introduce :mod:`gidgethub.tornado` to support
   `Tornado <http://www.tornadoweb.org/>`_ (thanks to
@@ -121,7 +121,7 @@
 
 
 2.1.0
-=====
+-----
 
 - The default value for the *data* argument of :meth:`gidgethub.abc.GitHubAPI.put`
   was changed from ``""`` to ``b""``.
@@ -130,7 +130,7 @@
 
 
 2.0.0
-=====
+-----
 
 - Renamed ``gidgethub.abc.GitHubAPI._sleep()`` to
   :meth:`~gidgethub.abc.GitHubAPI.sleep()` to make the method public.
@@ -143,7 +143,7 @@
 
 
 1.2.0
-=====
+-----
 
 - :meth:`gidgethub.sansio.Event.from_http` raises a :exc:`gidgethub.BadRequest` of ``415``
   instead of ``400`` when a content-type other than ``application/json``
@@ -156,12 +156,12 @@
 
 
 1.1.0
-=====
+-----
 
 - Introduced ``gidgethub.treq`` (thanks to Cory Benfield).
 
 
 1.0.0
-=====
+-----
 
 Initial release.
