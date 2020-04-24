@@ -23,7 +23,7 @@ Example on how you would obtain the access token for authenticating as a GitHub 
         private_key=private_key
     )
 
-    data = gh.getitem("/rate_limit", oauth_token=access_token_response["token"])
+    data = await gh.getitem("/rate_limit", oauth_token=access_token_response["token"])
 
 .. coroutine:: get_installation_access_token(gh, *, installation_id, app_id, private_key)
 
