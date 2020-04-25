@@ -1,8 +1,7 @@
 Changelog
 =========
 
-- Specify PyJWT[crypto] as a dependency, and dropped the explicit
-  dependency to ``cryptography`` (`Issue #116 <https://github.com/brettcannon/gidgethub/issues/116>`_).
+Specify PyJWT[crypto] as a dependency, and dropped the explicit dependency to ``cryptography`` (`Issue #116 <https://github.com/brettcannon/gidgethub/issues/116>`_).
 
 4.1.0
 -----
