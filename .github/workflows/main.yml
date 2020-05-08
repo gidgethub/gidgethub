@@ -2,13 +2,11 @@ name: CI
 
 on:
   pull_request:
-    #types: [opened, synchronize, reopened, closed]
   push:
     branches: master
 
 jobs:
   test:
-    if: github.event.action != 'closed' || github.event.pull_request.merged
     name: test w/ Python ${{ matrix.python-version }}
 
     runs-on: ubuntu-latest
@@ -55,18 +53,3 @@ jobs:
           python-version: "3.8"
       - run: pip install nox
       - run: nox --session lint
-
-#   release:
-#     needs: [test, lint]
-#     if: github.event_name == 'pull_request' && github.ref == 'master' && github.event.action == 'closed' && github.event.pull_request.merged
-
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - uses: actions/checkout@v2
-
-#     - uses: brettcannon/release-often@master
-#       with:
-#         changelog-path: docs/changelog.rst
-#         pypi-token: ${{ secrets.PYPI_TOKEN }}
-#         github-token: ${{ secrets.GITHUB_TOKEN }}
