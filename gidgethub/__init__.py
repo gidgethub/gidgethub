@@ -1,5 +1,5 @@
 """An async GitHub API library"""
-__version__ = "4.1.0"  # DO NOT CHANGE MANUALLY! Updated automatically via GH Action.
+__version__ = "4.1.0"
 
 import http
 from typing import Any
