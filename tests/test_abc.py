@@ -804,3 +804,12 @@ class TestGraphQL:
         with pytest.raises(GraphQLException) as exc:
             await gh.graphql("does not matter")
         assert exc.value.response == response_data
+
+    @pytest.mark.asyncio
+    async def test_response_content_type_parsing_gh121(self):
+        gh, response_data = self.gh_and_response("success-200.json")
+        # Test that a json content type still works if formatted without spaces
+        gh.response_headers["content-type"] = "application/json;charset=utf-8"
+        # Should not fail
+        resp = await gh.graphql("does not matter")
+        assert resp is not None

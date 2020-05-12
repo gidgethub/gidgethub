@@ -239,8 +239,7 @@ class GitHubAPI(abc.ABC):
         status_code, response_headers, response_data = await self._request(
             "POST", endpoint, request_headers, request_data
         )
-        assert response_headers["content-type"] == _json_content_type
-        response = json.loads(response_data.decode("utf-8"))
+        response = sansio._decode_body(response_headers.get("content-type"), response_data)
         if status_code >= 500:
             raise GitHubBroken(http.HTTPStatus(status_code))
         elif status_code == 401:
