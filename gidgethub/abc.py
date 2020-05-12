@@ -11,6 +11,7 @@ from . import (
     GraphQLAuthorizationFailure,
     GraphQLException,
     QueryError,
+    GraphQLResponseTypeError,
 )
 from . import sansio
 
@@ -239,7 +240,18 @@ class GitHubAPI(abc.ABC):
         status_code, response_headers, response_data = await self._request(
             "POST", endpoint, request_headers, request_data
         )
-        response = sansio._decode_body(response_headers.get("content-type"), response_data)
+
+        # Decode content
+        resp_content_type = response_headers.get("content-type")
+        type_, encoding = sansio._parse_content_type(resp_content_type)
+        if not len(response_data) or not resp_content_type:
+            return None
+        response = response_data.decode(encoding)
+        if type_ == "application/json":
+            response = json.loads(response)
+        else:
+            raise GraphQLResponseTypeError(resp_content_type, response)
+
         if status_code >= 500:
             raise GitHubBroken(http.HTTPStatus(status_code))
         elif status_code == 401:

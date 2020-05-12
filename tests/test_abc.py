@@ -15,6 +15,7 @@ from gidgethub import (
     GraphQLException,
     QueryError,
     RedirectionException,
+    GraphQLResponseTypeError,
 )
 from gidgethub import abc as gh_abc
 from gidgethub import sansio
@@ -813,3 +814,12 @@ class TestGraphQL:
         # Should not fail
         resp = await gh.graphql("does not matter")
         assert resp is not None
+
+    @pytest.mark.asyncio
+    async def test_unknown_response_content_type_gh121(self):
+        gh, response_data = self.gh_and_response("success-200.json")
+        # Test that a json content type still works if formatted without spaces
+        gh.response_headers["content-type"] = "application/gidget;charset=utf-8"
+        with pytest.raises(GraphQLResponseTypeError) as exc:
+            await gh.graphql("does not matter")
+        assert exc is not None
