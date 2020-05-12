@@ -246,11 +246,11 @@ class GitHubAPI(abc.ABC):
         type_, encoding = sansio._parse_content_type(resp_content_type)
         if not len(response_data) or not resp_content_type:
             return None
-        response = response_data.decode(encoding)
+        response_str = response_data.decode(encoding)
         if type_ == "application/json":
-            response = json.loads(response)
+            response: Dict[str, Any] = json.loads(response_str)
         else:
-            raise GraphQLResponseTypeError(resp_content_type, response)
+            raise GraphQLResponseTypeError(resp_content_type, response_str)
 
         if status_code >= 500:
             raise GitHubBroken(http.HTTPStatus(status_code))

@@ -139,7 +139,7 @@ class GraphQLResponseTypeError(GraphQLException):
 
     """The graphql response has an unexpected content type."""
 
-    def __init__(self, content_type, response: Any) -> None:
+    def __init__(self, content_type: str, response: Any) -> None:
         super().__init__(
             f"Response was an unexpected content-type, '{content_type}'", response
         )
