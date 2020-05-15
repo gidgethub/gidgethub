@@ -241,11 +241,11 @@ class GitHubAPI(abc.ABC):
             "POST", endpoint, request_headers, request_data
         )
 
-        # Decode content
+        # Decode content.
         resp_content_type = response_headers.get("content-type")
         type_, encoding = sansio._parse_content_type(resp_content_type)
-        if not len(response_data) or not resp_content_type:
-            return None
+        if not response_data:
+            raise GraphQLException("Response contained no data")
         response_str = response_data.decode(encoding)
         if type_ == "application/json":
             response: Dict[str, Any] = json.loads(response_str)
