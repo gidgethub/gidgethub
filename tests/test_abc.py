@@ -814,6 +814,7 @@ class TestGraphQL:
         # Should not fail.
         resp = await gh.graphql("does not matter")
         assert resp is not None
+        # Spaces in the content-type header should not be a problem.
         gh.response_headers["content-type"] = "application/json; charset=utf-8"
         # Should not fail.
         resp = await gh.graphql("does not matter")
@@ -824,27 +825,23 @@ class TestGraphQL:
         gh, response_data = self.gh_and_response("success-200.json")
         # A non-JSON response should raise an exception.
         gh.response_headers["content-type"] = "application/gidget;charset=utf-8"
-        with pytest.raises(GraphQLResponseTypeError) as exc:
+        with pytest.raises(GraphQLResponseTypeError):
             await gh.graphql("does not matter")
-        assert exc is not None
 
     @pytest.mark.asyncio
     async def test_no_response_content_type_gh121(self):
         gh, response_data = self.gh_and_response("success-200.json")
         # An empty content type should raise an exception.
         gh.response_headers["content-type"] = ""
-        with pytest.raises(GraphQLException) as exc:
+        with pytest.raises(GraphQLException):
             await gh.graphql("does not matter")
-        assert exc is not None
-        gh.response_headers["content-type"] = None
-        with pytest.raises(GraphQLException) as exc:
+        del gh.response_headers["content-type"]
+        with pytest.raises(GraphQLException):
             await gh.graphql("does not matter")
-        assert exc is not None
 
     @pytest.mark.asyncio
     async def test_no_response_data(self):
         # An empty response should raise an exception.
         gh = MockGitHubAPI(200, body=b"", oauth_token="oauth-token",)
-        with pytest.raises(GraphQLException) as exc:
+        with pytest.raises(GraphQLException):
             await gh.graphql("does not matter")
-        assert exc is not None
