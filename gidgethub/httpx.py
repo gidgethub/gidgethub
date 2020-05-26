@@ -16,7 +16,13 @@ class GitHubAPI(gh_abc.GitHubAPI):
     ) -> Tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
         response = await self._client.request(
-            method, url, headers=dict(headers), data=body
+            method,
+            url,
+            # Reason: see discussion at https://github.com/brettcannon/gidgethub/pull/122#issuecomment-633738024.
+            # httpx 0.13.1 updated the HeaderTypes and it is acting invariant, causing our Mapping[str, str] to be
+            # technically incompatible with their Mapping[Union[str, bytes], Union[str, bytes]].
+            headers=dict(headers),  # type: ignore
+            data=body,
         )
         return response.status_code, response.headers, response.content
 
