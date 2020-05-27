@@ -15,12 +15,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
         self, method: str, url: str, headers: Mapping[str, str], body: bytes = b""
     ) -> Tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
-        response = await self._client.request(
-            method,
-            url,
-            headers=dict(headers),
-            data=body,
-        )
+        response = await self._client.request(method, url, headers=dict(headers), data=body)
         return response.status_code, response.headers, response.content
 
     async def sleep(self, seconds: float) -> None:
