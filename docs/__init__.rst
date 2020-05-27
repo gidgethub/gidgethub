@@ -138,3 +138,17 @@ GraphQL-specific
    An exception representing an error relating to the GraphQL query itself.
 
    Inherits from :exc:`GraphQLException`.
+
+.. exception:: GraphQLResponseTypeError(content_type, response)
+
+   An exception raised when a GraphQL query response is not JSON.
+
+   Inherits from :exc:`GraphQLException`.
+
+   .. attribute:: content_type
+
+      The value of the content-type header in the response from GitHub.
+
+   .. attribute:: response
+
+      The decoded response value from GitHub.

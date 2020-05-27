@@ -44,7 +44,7 @@ without requiring the use of the :class:`Event` class.
 
    .. attribute:: data
 
-      The `payload <https://developer.github.com/webhooks/#payloads>`_ of the
+      The `payload <https://developer.github.com/webhooks/event-payloads/>`_ of the
       event.
 
 

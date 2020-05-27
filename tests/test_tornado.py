@@ -18,7 +18,7 @@ class TornadoTestCase(AsyncTestCase):
         gh = gh_tornado.GitHubAPI("gidgethub")
         await gh.sleep(delay)
         stop = datetime.datetime.now()
-        assert (stop - start) > datetime.timedelta(seconds=delay)
+        assert (stop - start) >= datetime.timedelta(seconds=delay)
 
     @tornado.testing.gen_test
     async def test__request(self):

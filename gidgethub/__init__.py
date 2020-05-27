@@ -2,7 +2,7 @@
 __version__ = "4.1.0"
 
 import http
-from typing import Any
+from typing import Any, Optional
 
 
 class GitHubException(Exception):
@@ -133,3 +133,13 @@ class QueryError(GraphQLException):
 
     def __init__(self, response: Any) -> None:
         super().__init__(response["errors"][0]["message"], response)
+
+
+class GraphQLResponseTypeError(GraphQLException):
+
+    """The GraphQL response has an unexpected content type."""
+
+    def __init__(self, content_type: Optional[str], response: Any) -> None:
+        super().__init__(
+            f"Response had an unexpected content-type: '{content_type!r}'", response
+        )
