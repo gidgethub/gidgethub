@@ -37,7 +37,6 @@ jobs:
           file: ./cov.xml
 
   lint:
-    if: github.event.action != 'closed' || github.event.pull_request.merged
     runs-on: ubuntu-latest
 
     steps:
