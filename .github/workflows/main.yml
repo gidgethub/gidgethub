@@ -34,7 +34,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./cov.xml
+          file: ./coverage.xml
 
   lint:
     runs-on: ubuntu-latest
