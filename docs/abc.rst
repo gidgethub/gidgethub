@@ -171,7 +171,7 @@ experimental APIs without issue.
             :meth:`getitem`.
 
 
-    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None, content_type=None)
 
         Send a ``POST`` request to GitHub.
 
@@ -185,8 +185,19 @@ experimental APIs without issue.
         raised if both are passed. If neither was passed, it defaults to the
         value of the *oauth_token* attribute.
 
+        *content_type* is the value of the desired request header's content type.
+        If supplied, the data will be passed as the body in its raw format.
+        If not supplied, it will assume the default "application/json" content type,
+        and the data will be parsed as JSON.
+
         A few GitHub POST endpoints do not take any *data* argument, for example
-        the endpoint to `create an installation access token <https://developer.github.com/v3/apps/#create-a-github-app-from-a-manifest>`_. For this situation, you can pass ``data=b""``.
+        the endpoint to `create an installation access token <https://developer.github.com/v3/apps/#create-a-github-app-from-a-manifest>`_.
+        For this situation, you can pass ``data=b""``.
+
+
+        .. versionchanged:: 4.12
+            Added *content_type*.
+
 
         .. versionchanged:: 3.0
 

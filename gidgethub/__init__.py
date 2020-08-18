@@ -1,5 +1,5 @@
 """An async GitHub API library"""
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 
 import http
 from typing import Any, Optional

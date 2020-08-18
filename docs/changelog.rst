@@ -1,6 +1,16 @@
 Changelog
 =========
 
+4.2.0
+-----
+
+- :meth:`gidgethub.abc.GitHubAPI.post` now accepts ``content_type`` parameter.
+  If supplied, the ``content_type`` value will be used in the request headers,
+  and the raw form of the data will be passed to the request. If not supplied,
+  by default the data will be parsed as JSON, and the "application/json" content
+  type will be used. (`Issue #115 <https://github.com/brettcannon/gidgethub/issues/115>`_).
+
+
 4.1.1
 -----
 

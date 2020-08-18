@@ -59,6 +59,7 @@ class GitHubAPI(abc.ABC):
         accept: str,
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
+        content_type: Opt[str] = None,
     ) -> Tuple[bytes, Opt[str]]:
         """Construct and make an HTTP request."""
         if oauth_token is not None and jwt is not None:
@@ -95,10 +96,17 @@ class GitHubAPI(abc.ABC):
                     if last_modified is not None:
                         request_headers["if-modified-since"] = last_modified
         else:
-            charset = "utf-8"
-            body = json.dumps(data).encode(charset)
-            request_headers["content-type"] = f"application/json; charset={charset}"
-            request_headers["content-length"] = str(len(body))
+            if content_type is not None and "application/json" not in content_type:
+                # special case if the specified content type is not application/json
+                # Use the provided content type, and pass the body in its raw format
+                request_headers["content-type"] = content_type
+                body = data
+            else:
+                # for everything else, assume JSON type
+                charset = "utf-8"
+                body = json.dumps(data).encode(charset)
+                request_headers["content-type"] = f"application/json; charset={charset}"
+                request_headers["content-length"] = str(len(body))
         if self.rate_limit is not None:
             self.rate_limit.remaining -= 1
         response = await self._request(method, filled_url, request_headers, body)
@@ -162,9 +170,17 @@ class GitHubAPI(abc.ABC):
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
+        content_type: Opt[str] = None,
     ) -> Any:
         data, _ = await self._make_request(
-            "POST", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
+            "POST",
+            url,
+            url_vars,
+            data,
+            accept,
+            jwt=jwt,
+            oauth_token=oauth_token,
+            content_type=content_type,
         )
         return data
 

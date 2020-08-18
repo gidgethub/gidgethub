@@ -387,6 +387,15 @@ class TestGitHubAPIPost:
 
         assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
 
+    @pytest.mark.asyncio
+    async def test_with_passed_content_type(self):
+        """Assert that the body is not parsed to JSON and the content-type header is set."""
+        gh = MockGitHubAPI()
+        await gh.post("/fake", data="blabla", content_type="application/zip")
+        assert gh.method == "POST"
+        assert gh.headers["content-type"] == "application/zip"
+        assert gh.body == "blabla"
+
 
 class TestGitHubAPIPatch:
     @pytest.mark.asyncio
@@ -842,6 +851,6 @@ class TestGraphQL:
     @pytest.mark.asyncio
     async def test_no_response_data(self):
         # An empty response should raise an exception.
-        gh = MockGitHubAPI(200, body=b"", oauth_token="oauth-token",)
+        gh = MockGitHubAPI(200, body=b"", oauth_token="oauth-token")
         with pytest.raises(GraphQLException):
             await gh.graphql("does not matter")
