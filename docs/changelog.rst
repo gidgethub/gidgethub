@@ -4,7 +4,7 @@ Changelog
 4.1.1
 -----
 
-- Fix func:`abc.GitHubAPI.graphql` to accept response content types lacking
+- Fix :meth:`gidgethub.abc.GitHubAPI.graphql` to accept response content types lacking
   spaces; affects GitHub Enterprise
   (`Issue #122 <https://github.com/brettcannon/gidgethub/pull/122>`_)
 
