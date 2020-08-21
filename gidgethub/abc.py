@@ -106,7 +106,7 @@ class GitHubAPI(abc.ABC):
                 charset = "utf-8"
                 body = json.dumps(data).encode(charset)
                 request_headers["content-type"] = f"application/json; charset={charset}"
-                request_headers["content-length"] = str(len(body))
+            request_headers["content-length"] = str(len(body))
         if self.rate_limit is not None:
             self.rate_limit.remaining -= 1
         response = await self._request(method, filled_url, request_headers, body)
