@@ -391,10 +391,12 @@ class TestGitHubAPIPost:
     async def test_with_passed_content_type(self):
         """Assert that the body is not parsed to JSON and the content-type header is set."""
         gh = MockGitHubAPI()
-        await gh.post("/fake", data="blabla", content_type="application/zip")
+        data = "blabla"
+        await gh.post("/fake", data=data, content_type="application/zip")
         assert gh.method == "POST"
         assert gh.headers["content-type"] == "application/zip"
-        assert gh.body == "blabla"
+        assert gh.body == data
+        assert gh.headers["content-length"] == str(len(data))
 
 
 class TestGitHubAPIPatch:
