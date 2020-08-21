@@ -171,7 +171,7 @@ experimental APIs without issue.
             :meth:`getitem`.
 
 
-    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None, content_type=None)
+    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None, content_type="application/json")
 
         Send a ``POST`` request to GitHub.
 
