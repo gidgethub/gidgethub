@@ -102,7 +102,7 @@ class GitHubAPI(abc.ABC):
                 request_headers["content-type"] = content_type
                 body = data
             else:
-                # for everything else, assume JSON type
+                # Since JSON is so common, add some niceties.
                 charset = "utf-8"
                 body = json.dumps(data).encode(charset)
                 request_headers["content-type"] = f"application/json; charset={charset}"
