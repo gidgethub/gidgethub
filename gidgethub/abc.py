@@ -96,9 +96,8 @@ class GitHubAPI(abc.ABC):
                     if last_modified is not None:
                         request_headers["if-modified-since"] = last_modified
         else:
-            if content_type is not None and "application/json" not in content_type:
-                # special case if the specified content type is not application/json
-                # Use the provided content type, and pass the body in its raw format
+            if content_type != "application/json":
+            # We don't know how to handle other content types, so just pass things along.
                 request_headers["content-type"] = content_type
                 body = data
             else:
