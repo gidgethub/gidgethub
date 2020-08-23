@@ -22,6 +22,8 @@ from gidgethub import sansio
 
 from .samples import GraphQL as graphql_samples
 
+from gidgethub.abc import JSON_UTF_8_CHARSET
+
 
 class MockGitHubAPI(gh_abc.GitHubAPI):
 
@@ -29,7 +31,7 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         "x-ratelimit-limit": "2",
         "x-ratelimit-remaining": "1",
         "x-ratelimit-reset": "0",
-        "content-type": "application/json; charset=utf-8",
+        "content-type": JSON_UTF_8_CHARSET,
     }
 
     def __init__(
@@ -343,42 +345,41 @@ class TestGitHubAPIPost:
         send_json = json.dumps(send).encode("utf-8")
         receive = {"hello": "world"}
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
-        headers["content-type"] = "application/json; charset=utf-8"
         gh = MockGitHubAPI(headers=headers, body=json.dumps(receive).encode("utf-8"))
         await gh.post("/fake", data=send)
         assert gh.method == "POST"
         assert gh.headers["content-type"] == "application/json; charset=utf-8"
         assert gh.body == send_json
         assert gh.headers["content-length"] == str(len(send_json))
+        assert gh.headers["content-type"] == JSON_UTF_8_CHARSET
 
     @pytest.mark.asyncio
     async def test_with_passed_jwt(self):
         send = [1, 2, 3]
         receive = {"hello": "world"}
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
-        headers["content-type"] = "application/json; charset=utf-8"
         gh = MockGitHubAPI(headers=headers, body=json.dumps(receive).encode("utf-8"))
         await gh.post("/fake", data=send, jwt="json web token")
         assert gh.method == "POST"
         assert gh.headers["authorization"] == "bearer json web token"
+        assert gh.headers["content-type"] == JSON_UTF_8_CHARSET
 
     @pytest.mark.asyncio
     async def test_with_passed_oauth_token(self):
         send = [1, 2, 3]
         receive = {"hello": "world"}
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
-        headers["content-type"] = "application/json; charset=utf-8"
         gh = MockGitHubAPI(headers=headers, body=json.dumps(receive).encode("utf-8"))
         await gh.post("/fake", data=send, oauth_token="my oauth token")
         assert gh.method == "POST"
         assert gh.headers["authorization"] == "token my oauth token"
+        assert gh.headers["content-type"] == JSON_UTF_8_CHARSET
 
     @pytest.mark.asyncio
     async def test_cannot_pass_both_oauth_and_jwt(self):
         send = [1, 2, 3]
         receive = {"hello": "world"}
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
-        headers["content-type"] = "application/json; charset=utf-8"
         gh = MockGitHubAPI(headers=headers, body=json.dumps(receive).encode("utf-8"))
         with pytest.raises(ValueError) as exc_info:
             await gh.post(
@@ -386,6 +387,17 @@ class TestGitHubAPIPost:
             )
 
         assert str(exc_info.value) == "Cannot pass both oauth_token and jwt."
+
+    @pytest.mark.asyncio
+    async def test_with_passed_content_type(self):
+        """Assert that the body is not parsed to JSON and the content-type header is set."""
+        gh = MockGitHubAPI()
+        data = "blabla"
+        await gh.post("/fake", data=data, content_type="application/zip")
+        assert gh.method == "POST"
+        assert gh.headers["content-type"] == "application/zip"
+        assert gh.body == data
+        assert gh.headers["content-length"] == str(len(data))
 
 
 class TestGitHubAPIPatch:
@@ -842,6 +854,6 @@ class TestGraphQL:
     @pytest.mark.asyncio
     async def test_no_response_data(self):
         # An empty response should raise an exception.
-        gh = MockGitHubAPI(200, body=b"", oauth_token="oauth-token",)
+        gh = MockGitHubAPI(200, body=b"", oauth_token="oauth-token")
         with pytest.raises(GraphQLException):
             await gh.graphql("does not matter")
