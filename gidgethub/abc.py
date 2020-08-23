@@ -19,7 +19,9 @@ from . import sansio
 # Value represents etag, last-modified, data, and next page.
 CACHE_TYPE = MutableMapping[str, Tuple[Opt[str], Opt[str], Any, Opt[str]]]
 
-_json_content_type = "application/json; charset=utf-8"
+JSON_CONTENT_TYPE = "application/json"
+UTF_8_CHARSET = "utf-8"
+JSON_UTF_8_CHARSET = f"{JSON_CONTENT_TYPE}; charset={UTF_8_CHARSET}"
 
 
 class GitHubAPI(abc.ABC):
@@ -59,7 +61,7 @@ class GitHubAPI(abc.ABC):
         accept: str,
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
-        content_type: Opt[str] = None,
+        content_type: str = JSON_CONTENT_TYPE,
     ) -> Tuple[bytes, Opt[str]]:
         """Construct and make an HTTP request."""
         if oauth_token is not None and jwt is not None:
@@ -96,15 +98,14 @@ class GitHubAPI(abc.ABC):
                     if last_modified is not None:
                         request_headers["if-modified-since"] = last_modified
         else:
-            if content_type != "application/json":
-            # We don't know how to handle other content types, so just pass things along.
+            if content_type != JSON_CONTENT_TYPE:
+                # We don't know how to handle other content types, so just pass things along.
                 request_headers["content-type"] = content_type
                 body = data
             else:
                 # Since JSON is so common, add some niceties.
-                charset = "utf-8"
-                body = json.dumps(data).encode(charset)
-                request_headers["content-type"] = f"application/json; charset={charset}"
+                body = json.dumps(data).encode(UTF_8_CHARSET)
+                request_headers["content-type"] = JSON_UTF_8_CHARSET
             request_headers["content-length"] = str(len(body))
         if self.rate_limit is not None:
             self.rate_limit.remaining -= 1
@@ -169,7 +170,7 @@ class GitHubAPI(abc.ABC):
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
-        content_type: Opt[str] = None,
+        content_type: str = JSON_CONTENT_TYPE,
     ) -> Any:
         data, _ = await self._make_request(
             "POST",
@@ -244,11 +245,11 @@ class GitHubAPI(abc.ABC):
             payload["variables"] = variables
         request_data = json.dumps(payload).encode("utf-8")
         request_headers = sansio.create_headers(
-            self.requester, accept=_json_content_type, oauth_token=self.oauth_token
+            self.requester, accept=JSON_UTF_8_CHARSET, oauth_token=self.oauth_token
         )
         request_headers.update(
             {
-                "content-type": _json_content_type,
+                "content-type": JSON_UTF_8_CHARSET,
                 "content-length": str(len(request_data)),
             }
         )
