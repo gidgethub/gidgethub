@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, Dict, List, Optional
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Set
 
 from . import sansio
 
@@ -62,12 +62,12 @@ class Router:
 
         return decorator
 
-    async def dispatch(self, event: sansio.Event, *args: Any, **kwargs: Any) -> None:
-        """Dispatch an event to all registered function(s)."""
-
-        found_callbacks = []
+    def fetch(self, event: sansio.Event) -> Set[AsyncCallback]:
+        """Return a set of function(s) registered to the router that the event would
+        be called on."""
+        found_callbacks = set()
         try:
-            found_callbacks.extend(self._shallow_routes[event.event])
+            found_callbacks.update(self._shallow_routes[event.event])
         except KeyError:
             pass
         try:
@@ -79,6 +79,12 @@ class Router:
                 if data_key in event.data:
                     event_value = event.data[data_key]
                     if event_value in data_values:
-                        found_callbacks.extend(data_values[event_value])
+                        found_callbacks.update(data_values[event_value])
+        return found_callbacks
+
+    async def dispatch(self, event: sansio.Event, *args: Any, **kwargs: Any) -> None:
+        """Dispatch an event to all registered function(s)."""
+
+        found_callbacks = self.fetch(event)
         for callback in found_callbacks:
             await callback(event, *args, **kwargs)
