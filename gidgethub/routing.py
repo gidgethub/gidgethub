@@ -1,4 +1,4 @@
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Set
+from typing import Any, Awaitable, Callable, Dict, List, Set
 
 from . import sansio
 
@@ -35,7 +35,6 @@ class Router:
         key of the data in the event being dispatched.
         """
         if len(data_detail) > 1:
-            msg = ()
             raise TypeError(
                 "dispatching based on data details is only "
                 "supported up to one level deep; "
