@@ -1,6 +1,6 @@
 gidgethub
 =========
-An asynchronous `GitHub API <https://developer.github.com/>`_ library.
+An asynchronous `GitHub API <https://docs.github.com/en>`_ library.
 
 
 Development status
@@ -45,7 +45,7 @@ Alternative libraries
 ---------------------
 
 If you think you want a different approach to the GitHub API,
-`GitHub maintains a list of libraries <https://developer.github.com/libraries/>`_.
+`GitHub maintains a list of libraries <https://developer.github.com/v3/libraries/>`_.
 
 
 *Aside*: what's with the name?
