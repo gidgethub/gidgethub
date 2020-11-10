@@ -16,7 +16,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
     ) -> Tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
         response = await self._client.request(
-            method, url, headers=dict(headers), data=body
+            method, url, headers=dict(headers), content=body
         )
         return response.status_code, response.headers, response.content
 
