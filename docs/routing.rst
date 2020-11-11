@@ -75,7 +75,7 @@ in user code.
 
     .. method:: fetch(event)
 
-        Return a set of asynchronous callbacks registered
+        Return a frozenset of asynchronous callbacks registered
         to the router that the *event* would be called on. The *event*
         argument corresponds to :class:`gidgethub.sansio.Event`.
 
