@@ -195,7 +195,7 @@ experimental APIs without issue.
         For this situation, you can pass ``data=b""``.
 
 
-        .. versionchanged:: 4.1.2
+        .. versionchanged:: 4.2.0
             Added *content_type*.
 
 
