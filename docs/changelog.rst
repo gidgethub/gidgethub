@@ -9,6 +9,11 @@ Changelog
   and the raw form of the data will be passed to the request. If not supplied,
   by default the data will be parsed as JSON, and the "application/json" content
   type will be used. (`Issue #115 <https://github.com/brettcannon/gidgethub/issues/115>`_).
+- Add :meth:`gidgethub.routing.Router.fetch` for obtaining a frozenset of functions 
+  registered to the router that the event would be called on.
+  (`Issue #74 <https://github.com/brettcannon/gidgethub/issues/74>`_).
+- Fix mypy errors in ``gidgethub.httpx.GitHubAPI._request`` 
+  (`Issue #133 <https://github.com/brettcannon/gidgethub/issues/133>`_).
 
 
 4.1.1
