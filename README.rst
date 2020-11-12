@@ -32,7 +32,7 @@ Goals
 -----
 
 The key goal is to provide a base library for the
-`GitHub API <https://docs.github.com/en>`_ which performs no I/O of its own (a
+`GitHub API <https://docs.github.com/>`_ which performs no I/O of its own (a
 `sans-I/O <https://sans-io.readthedocs.io/>`_ library). This allows users to
 choose whatever HTTP library they prefer while parceling out GitHub-specific
 details to this library. This base library is then built upon to provide an
@@ -62,4 +62,3 @@ Changelog
 ---------
 
 See the documentation for the `full changelog <https://gidgethub.readthedocs.io/en/latest/changelog.html>`_.
-
