@@ -3,7 +3,7 @@ import functools
 import json
 import os
 import pathlib
-from typing import Any
+from typing import Any, Union
 import urllib.parse
 
 
@@ -43,3 +43,24 @@ def command(cmd: str, data: str = "", **parameters: str) -> None:
     )
     cmd_parts.append(f"::{data}")
     print("".join(cmd_parts))
+
+
+_DELIMITER = "END"
+
+
+def setenv(name: str, value: str) -> None:
+    """Creates or updates an environment variable for any actions running next in a
+    job."""
+    # {name}<<{delimiter}
+    # {value}
+    # {delimiter}
+    write_value = f"{name}<<{_DELIMITER}{os.linesep}{value}{os.linesep}{_DELIMITER}"
+    with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as file:
+        file.write(write_value + os.linesep)
+
+
+def addpath(path: Union[str, pathlib.Path]) -> None:
+    """Prepends a directory to the system PATH variable for all subsequent actions
+    in the current job."""
+    with open(os.environ["GITHUB_PATH"], "a", encoding="utf-8") as file:
+        file.write(str(path) + os.linesep)
