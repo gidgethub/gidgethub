@@ -79,7 +79,7 @@ in user code.
         to the router that the *event* would be called on. The *event*
         argument corresponds to :class:`gidgethub.sansio.Event`.
 
-        .. versionadded:: 4.2.0
+        .. versionadded:: 5.0.0
 
 
     .. coroutine:: dispatch(event, *args, **kwargs)
