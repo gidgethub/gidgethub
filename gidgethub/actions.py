@@ -51,9 +51,7 @@ _DELIMITER = "END"
 def setenv(name: str, value: str) -> None:
     """Creates or updates an environment variable for any actions running next in a
     job."""
-    # {name}<<{delimiter}
-    # {value}
-    # {delimiter}
+    # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#multiline-strings
     write_value = f"{name}<<{_DELIMITER}{os.linesep}{value}{os.linesep}{_DELIMITER}"
     with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as file:
         file.write(write_value + os.linesep)
