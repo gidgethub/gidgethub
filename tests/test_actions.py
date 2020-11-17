@@ -153,11 +153,14 @@ class TestSetenv:
         actions.setenv("MULTILINE", multiline)
         data = tmp_envfile.read_text(encoding="utf-8")
         assert os.environ["MULTILINE"] == multiline
-        assert data == f"""MULTILINE<<END{os.linesep}This
+        assert (
+            data
+            == f"""MULTILINE<<END{os.linesep}This
                         is
                         a
                         multiline
                         string.{os.linesep}END{os.linesep}"""
+        )
 
 
 class TestAddpath:
