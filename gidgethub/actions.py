@@ -49,16 +49,18 @@ _DELIMITER = "END"
 
 
 def setenv(name: str, value: str) -> None:
-    """Creates or updates an environment variable for any actions running next in a
-    job."""
+    """Creates or updates an environment variable for this action and future actions
+    running in the job."""
     # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#multiline-strings
+    os.environ[name] = value
     write_value = f"{name}<<{_DELIMITER}{os.linesep}{value}{os.linesep}{_DELIMITER}"
     with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as file:
         file.write(write_value + os.linesep)
 
 
 def addpath(path: Union[str, pathlib.Path]) -> None:
-    """Prepends a directory to the system PATH variable for all subsequent actions
-    in the current job."""
+    """Prepends a directory to the system PATH variable for this action and all
+    subsequent actions in the current job."""
+    os.environ["PATH"] = f"{path!s}{os.pathsep}{os.environ['PATH']}"
     with open(os.environ["GITHUB_PATH"], "a", encoding="utf-8") as file:
         file.write(str(path) + os.linesep)
