@@ -136,14 +136,17 @@ class TestSetenv:
     def test_creating(self, tmp_envfile):
         actions.setenv("HELLO", "WORLD")
         data = tmp_envfile.read_text(encoding="utf-8")
+        assert os.environ["HELLO"] == "WORLD"
         assert data == f"HELLO<<END{os.linesep}WORLD{os.linesep}END{os.linesep}"
 
     def test_updating(self, tmp_envfile):
         actions.setenv("CHANGED", "FALSE")
         data = tmp_envfile.read_text(encoding="utf-8")
+        assert os.environ["CHANGED"] == "FALSE"
         assert data == f"CHANGED<<END{os.linesep}FALSE{os.linesep}END{os.linesep}"
         actions.setenv("CHANGED", "TRUE")
         updated = tmp_envfile.read_text(encoding="utf-8")
+        assert os.environ["CHANGED"] == "TRUE"
         # Rendering of the updated variable is done by GitHub.
         assert (
             updated == data + f"CHANGED<<END{os.linesep}TRUE{os.linesep}END{os.linesep}"
@@ -157,6 +160,7 @@ class TestSetenv:
                         string."""
         actions.setenv("MULTILINE", multiline)
         data = tmp_envfile.read_text(encoding="utf-8")
+        assert os.environ["MULTILINE"] == multiline
         assert data == f"""MULTILINE<<END{os.linesep}This
                         is
                         a
@@ -171,11 +175,13 @@ class TestAddpath:
     def test_string_path(self, tmp_pathfile):
         actions.addpath("/path/to/random/dir")
         data = tmp_pathfile[0].read_text(encoding="utf-8")
+        assert f"/path/to/random/dir{os.pathsep}" in os.environ["PATH"]
         assert data == f"/path/to/random/dir{os.linesep}"
 
     def test_path_object(self, tmp_pathfile):
         actions.addpath(tmp_pathfile[1])
         data = tmp_pathfile[0].read_text(encoding="utf-8")
+        assert f"{tmp_pathfile[1]!s}{os.pathsep}" in os.environ["PATH"]
         assert data == f"{tmp_pathfile[1]!s}{os.linesep}"
 
     def test_multiple_paths(self, tmp_pathfile):
@@ -183,4 +189,6 @@ class TestAddpath:
         random_path = tmp_pathfile[1] / "random.txt"
         actions.addpath(random_path)
         data = tmp_pathfile[0].read_text(encoding="utf-8")
+        # Last path added comes first.
+        assert f"{random_path!s}{os.pathsep}/path/to/random/dir{os.pathsep}"
         assert data == f"/path/to/random/dir{os.linesep}{random_path!s}{os.linesep}"
