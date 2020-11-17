@@ -77,17 +77,9 @@ class TestCommand:
         assert stdout
         return stdout.strip()
 
-    def test_set_env(self, capsys):
-        actions.command("set-env", "yellow", name="action_state")
-        assert self._stdout(capsys) == "::set-env name=action_state::yellow"
-
     def test_set_output(self, capsys):
         actions.command("set-output", "strawberry", name="action_fruit")
         assert self._stdout(capsys) == "::set-output name=action_fruit::strawberry"
-
-    def test_add_path(self, capsys):
-        actions.command("add-path", "/path/to/dir")
-        assert self._stdout(capsys) == "::add-path::/path/to/dir"
 
     def test_debug(self, capsys):
         actions.command(
