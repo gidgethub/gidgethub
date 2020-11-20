@@ -130,3 +130,46 @@ async def test_router_copy():
     await other_router.dispatch(event)
     assert deep_callback.called
     assert shallow_callback.called
+
+
+def test_fetch_callbacks():
+    router = routing.Router()
+    event = sansio.Event(
+        {"action": "opened", "count": 42, "status": "completed"},
+        event="yeah",
+        delivery_id="1234",
+    )
+    callbacks = router.fetch(event)
+    assert not callbacks  # No callbacks registered.
+
+    never_called = Callback()
+    # Wrong event.
+    router.add(never_called.meth, "nope")
+    # Wrong event and data detail.
+    router.add(never_called.meth, "nope", action="new")
+    # Wrong data detail key.
+    router.add(never_called.meth, "yeah", never=42)
+    # Wrong data detail value.
+    router.add(never_called.meth, "yeah", count=-13)
+    callbacks = router.fetch(event)
+    assert not callbacks  # No callbacks found.
+    assert not never_called.called
+
+    shallow_registration_1 = Callback()
+    shallow_registration_2 = Callback()
+    deep_registration_1 = Callback()
+    deep_registration_2 = Callback()
+    router = routing.Router()
+    router.add(shallow_registration_1.meth, "yeah")
+    router.add(shallow_registration_2.meth, "nope")
+    router.add(deep_registration_1.meth, "nope", status="completed")
+    router.add(deep_registration_2.meth, "yeah", count=42)
+    callbacks = router.fetch(event)
+    assert shallow_registration_1.meth in callbacks
+    assert shallow_registration_2.meth not in callbacks
+    assert deep_registration_1.meth not in callbacks
+    assert deep_registration_2.meth in callbacks
+    assert not shallow_registration_1.called
+    assert not shallow_registration_2.called
+    assert not deep_registration_1.called
+    assert not deep_registration_2.called
