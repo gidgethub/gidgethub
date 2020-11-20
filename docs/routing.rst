@@ -90,3 +90,6 @@ in user code.
 
         .. versionchanged:: 2.4
             Added ``*args`` and ``**kwargs``.
+            
+        .. versionchanged:: 5.0.0
+            Execution order is non-deterministic.
