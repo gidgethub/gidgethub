@@ -151,8 +151,8 @@ def test_fetch_callbacks():
     router.add(never_called.meth, "yeah", never=42)
     # Wrong data detail value.
     router.add(never_called.meth, "yeah", count=-13)
-    no_callbacks = router.fetch(event)
-    assert not no_callbacks  # No callbacks found.
+    callbacks = router.fetch(event)
+    assert not callbacks  # No callbacks found.
     assert not never_called.called
 
     shallow_registration_1 = Callback()
