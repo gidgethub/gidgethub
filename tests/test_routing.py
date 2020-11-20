@@ -139,8 +139,8 @@ def test_fetch_callbacks():
         event="yeah",
         delivery_id="1234",
     )
-    no_callbacks = router.fetch(event)
-    assert not no_callbacks  # No callbacks registered.
+    callbacks = router.fetch(event)
+    assert not callbacks  # No callbacks registered.
 
     never_called = Callback()
     # Wrong event.
