@@ -4,7 +4,6 @@ import json
 import os
 import pathlib
 from typing import Any, Union
-import urllib.parse
 
 
 @functools.lru_cache(maxsize=1)
