@@ -161,8 +161,7 @@ class TestSetenv:
         data = tmp_envfile.read_text(encoding="utf-8")
         assert os.environ["MULTILINE"] == multiline
         assert (
-            data
-            == f"MULTILINE<<__GIDGETHUB_DELIMITER__{os.linesep}{multiline}"
+            data == f"MULTILINE<<__GIDGETHUB_DELIMITER__{os.linesep}{multiline}"
             f"{os.linesep}__GIDGETHUB_DELIMITER__{os.linesep}"
         )
 
