@@ -1,6 +1,6 @@
 gidgethub
 =========
-An asynchronous `GitHub API <https://docs.github.com/en>`_ library.
+An asynchronous `GitHub API <https://docs.github.com/>`_ library.
 
 
 Development status
