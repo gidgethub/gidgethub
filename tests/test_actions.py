@@ -129,19 +129,26 @@ class TestSetenv:
         actions.setenv("HELLO", "WORLD")
         data = tmp_envfile.read_text(encoding="utf-8")
         assert os.environ["HELLO"] == "WORLD"
-        assert data == f"HELLO<<END{os.linesep}WORLD{os.linesep}END{os.linesep}"
+        assert (
+            data == f"HELLO<<__GIDGETHUB_DELIMITER__{os.linesep}WORLD{os.linesep}"
+            f"__GIDGETHUB_DELIMITER__{os.linesep}"
+        )
 
     def test_updating(self, tmp_envfile):
         actions.setenv("CHANGED", "FALSE")
         data = tmp_envfile.read_text(encoding="utf-8")
         assert os.environ["CHANGED"] == "FALSE"
-        assert data == f"CHANGED<<END{os.linesep}FALSE{os.linesep}END{os.linesep}"
+        assert (
+            data == f"CHANGED<<__GIDGETHUB_DELIMITER__{os.linesep}FALSE{os.linesep}"
+            f"__GIDGETHUB_DELIMITER__{os.linesep}"
+        )
         actions.setenv("CHANGED", "TRUE")
         updated = tmp_envfile.read_text(encoding="utf-8")
         assert os.environ["CHANGED"] == "TRUE"
         # Rendering of the updated variable is done by GitHub.
         assert updated.endswith(
-            f"CHANGED<<END{os.linesep}TRUE{os.linesep}END{os.linesep}"
+            f"CHANGED<<__GIDGETHUB_DELIMITER__{os.linesep}TRUE{os.linesep}"
+            f"__GIDGETHUB_DELIMITER__{os.linesep}"
         )
 
     def test_creating_multiline(self, tmp_envfile):
@@ -155,7 +162,8 @@ class TestSetenv:
         assert os.environ["MULTILINE"] == multiline
         assert (
             data
-            == f"""MULTILINE<<END{os.linesep}{multiline}{os.linesep}END{os.linesep}"""
+            == f"MULTILINE<<__GIDGETHUB_DELIMITER__{os.linesep}{multiline}"
+            f"{os.linesep}__GIDGETHUB_DELIMITER__{os.linesep}"
         )
 
 
