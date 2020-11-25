@@ -140,9 +140,7 @@ class TestSetenv:
         updated = tmp_envfile.read_text(encoding="utf-8")
         assert os.environ["CHANGED"] == "TRUE"
         # Rendering of the updated variable is done by GitHub.
-        assert (
-            updated == data + f"CHANGED<<END{os.linesep}TRUE{os.linesep}END{os.linesep}"
-        )
+        assert updated.endswith(f"CHANGED<<END{os.linesep}TRUE{os.linesep}END{os.linesep}")
 
     def test_creating_multiline(self, tmp_envfile):
         multiline = """This
@@ -153,14 +151,7 @@ class TestSetenv:
         actions.setenv("MULTILINE", multiline)
         data = tmp_envfile.read_text(encoding="utf-8")
         assert os.environ["MULTILINE"] == multiline
-        assert (
-            data
-            == f"""MULTILINE<<END{os.linesep}This
-                        is
-                        a
-                        multiline
-                        string.{os.linesep}END{os.linesep}"""
-        )
+        assert data == f"""MULTILINE<<END{os.linesep}{multiline}{os.linesep}END{os.linesep}"""
 
 
 class TestAddpath:

@@ -44,12 +44,15 @@ def command(cmd: str, data: str = "", **parameters: str) -> None:
     print("".join(cmd_parts))
 
 
-_DELIMITER = "END"
+_DELIMITER = "__GIDGETHUB_DELIMITER__"
 
 
 def setenv(name: str, value: str) -> None:
-    """Creates or updates an environment variable for this action and future actions
-    running in the job."""
+    """Create or update an environment variable.
+    
+     The change applies to this action and future actions running in the job.
+     """
+     # https://github.com/actions/toolkit/blob/af821474235d3c5e1f49cee7c6cf636abb0874c4/packages/core/src/core.ts#L35-L53
     os.environ[name] = value
     # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#multiline-strings
     write_value = f"{name}<<{_DELIMITER}{os.linesep}{value}{os.linesep}{_DELIMITER}"
@@ -58,8 +61,12 @@ def setenv(name: str, value: str) -> None:
 
 
 def addpath(path: Union[str, pathlib.Path]) -> None:
-    """Prepends a directory to the system PATH variable for this action and all
-    subsequent actions in the current job."""
+    """Prepend to PATH.
+    
+     
+      This affects this action and all subsequent actions in the current job.
+      """
+      # https://github.com/actions/toolkit/blob/af821474235d3c5e1f49cee7c6cf636abb0874c4/packages/core/src/core.ts#L63-L75
     os.environ["PATH"] = f"{path!s}{os.pathsep}{os.environ['PATH']}"
     with open(os.environ["GITHUB_PATH"], "a", encoding="utf-8") as file:
         file.write(str(path) + os.linesep)
