@@ -1,6 +1,6 @@
 gidgethub
 =========
-An asynchronous `GitHub API <https://developer.github.com/>`_ library.
+An asynchronous `GitHub API <https://docs.github.com/>`_ library.
 
 
 Development status
@@ -32,7 +32,7 @@ Goals
 -----
 
 The key goal is to provide a base library for the
-`GitHub API <https://developer.github.com/>`_ which performs no I/O of its own (a
+`GitHub API <https://docs.github.com/>`_ which performs no I/O of its own (a
 `sans-I/O <https://sans-io.readthedocs.io/>`_ library). This allows users to
 choose whatever HTTP library they prefer while parceling out GitHub-specific
 details to this library. This base library is then built upon to provide an
@@ -45,7 +45,7 @@ Alternative libraries
 ---------------------
 
 If you think you want a different approach to the GitHub API,
-`GitHub maintains a list of libraries <https://developer.github.com/libraries/>`_.
+`GitHub maintains a list of libraries <https://developer.github.com/v3/libraries/>`_.
 
 
 *Aside*: what's with the name?
@@ -62,4 +62,3 @@ Changelog
 ---------
 
 See the documentation for the `full changelog <https://gidgethub.readthedocs.io/en/latest/changelog.html>`_.
-
