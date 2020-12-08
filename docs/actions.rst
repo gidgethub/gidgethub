@@ -48,7 +48,7 @@ This module is to help provide support for `GitHub Actions`_ when writing a
 
     Prepends the given *path* to the system PATH variable for this action and all the
     subsequent actions running in the job. The *path* argument can be either :class:`str` or
-    :class:`pathlib.Path`.
+    :class:`os.PathLike`/:class:`pathlib.Path`.
 
     .. versionadded:: 5.0.0
 

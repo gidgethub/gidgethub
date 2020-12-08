@@ -60,7 +60,7 @@ def setenv(name: str, value: str) -> None:
         file.write(write_value + os.linesep)
 
 
-def addpath(path: Union[str, pathlib.Path]) -> None:
+def addpath(path: Union[str, "os.PathLike[Any]"]) -> None:
     """Prepend to PATH.
 
     This affects this action and all subsequent actions in the current job.
@@ -68,4 +68,4 @@ def addpath(path: Union[str, pathlib.Path]) -> None:
     # https://github.com/actions/toolkit/blob/af821474235d3c5e1f49cee7c6cf636abb0874c4/packages/core/src/core.ts#L63-L75
     os.environ["PATH"] = f"{path!s}{os.pathsep}{os.environ['PATH']}"
     with open(os.environ["GITHUB_PATH"], "a", encoding="utf-8") as file:
-        file.write(str(path) + os.linesep)
+        file.write(os.fspath(path) + os.linesep)
