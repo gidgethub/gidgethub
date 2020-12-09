@@ -60,7 +60,7 @@ def setenv(name: str, value: str) -> None:
         file.write(write_value + os.linesep)
 
 
-def addpath(path: Union[str, "os.PathLike[Any]"]) -> None:
+def addpath(path: Union[str, "os.PathLike[str]"]) -> None:
     """Prepend to PATH.
 
     This affects this action and all subsequent actions in the current job.
