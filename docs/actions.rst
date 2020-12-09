@@ -34,4 +34,23 @@ This module is to help provide support for `GitHub Actions`_ when writing a
      gidgethub.actions.command("warning", "Missing semicolon", file="app.js", line="1", col="5")
 
 
+.. function:: setenv(name, value)
+
+    Creates or updates an environment variable for this action and all the subsequent actions
+    running in the job.
+
+    Note that no automatic string conversion is performed on any arguments.
+
+    .. versionadded:: 5.0.0
+
+
+.. function:: addpath(path)
+
+    Prepends the given *path* to the system PATH variable for this action and all the
+    subsequent actions running in the job. The *path* argument can be either :class:`str` or
+    :class:`os.PathLike`/:class:`pathlib.Path`.
+
+    .. versionadded:: 5.0.0
+
+
 .. _GitHub Actions: https://help.github.com/en/actions

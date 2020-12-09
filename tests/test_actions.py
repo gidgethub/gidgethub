@@ -4,6 +4,7 @@ import os
 import pytest
 
 from gidgethub import actions
+from gidgethub.actions import _DELIMITER
 
 
 @pytest.fixture
@@ -12,6 +13,22 @@ def tmp_webhook(tmp_path, monkeypatch):
     tmp_file_path = tmp_path / "event.json"
     monkeypatch.setenv("GITHUB_EVENT_PATH", os.fspath(tmp_file_path))
     return tmp_file_path
+
+
+@pytest.fixture
+def tmp_envfile(tmp_path, monkeypatch):
+    """Create a temporary environment file."""
+    tmp_file_path = tmp_path / "setenv.txt"
+    monkeypatch.setenv("GITHUB_ENV", os.fspath(tmp_file_path))
+    return tmp_file_path
+
+
+@pytest.fixture
+def tmp_pathfile(tmpdir, tmp_path, monkeypatch):
+    """Create a temporary system path file and a temporary directory path."""
+    tmp_file_path = tmp_path / "addpath.txt"
+    monkeypatch.setenv("GITHUB_PATH", os.fspath(tmp_file_path))
+    return tmp_file_path, tmpdir
 
 
 class TestWorkspace:
@@ -61,17 +78,9 @@ class TestCommand:
         assert stdout
         return stdout.strip()
 
-    def test_set_env(self, capsys):
-        actions.command("set-env", "yellow", name="action_state")
-        assert self._stdout(capsys) == "::set-env name=action_state::yellow"
-
     def test_set_output(self, capsys):
         actions.command("set-output", "strawberry", name="action_fruit")
         assert self._stdout(capsys) == "::set-output name=action_fruit::strawberry"
-
-    def test_add_path(self, capsys):
-        actions.command("add-path", "/path/to/dir")
-        assert self._stdout(capsys) == "::add-path::/path/to/dir"
 
     def test_debug(self, capsys):
         actions.command(
@@ -111,3 +120,77 @@ class TestCommand:
     def test_resume_command(self, capsys):
         actions.command("pause-logging")
         assert self._stdout(capsys) == "::pause-logging::"
+
+
+class TestSetenv:
+
+    """Tests for gidgethub.actions.setenv()."""
+
+    def test_creating(self, tmp_envfile):
+        actions.setenv("HELLO", "WORLD")
+        data = tmp_envfile.read_text(encoding="utf-8")
+        assert os.environ["HELLO"] == "WORLD"
+        assert (
+            data == f"HELLO<<{_DELIMITER}{os.linesep}WORLD{os.linesep}"
+            f"{_DELIMITER}{os.linesep}"
+        )
+
+    def test_updating(self, tmp_envfile):
+        actions.setenv("CHANGED", "FALSE")
+        data = tmp_envfile.read_text(encoding="utf-8")
+        assert os.environ["CHANGED"] == "FALSE"
+        assert (
+            data == f"CHANGED<<{_DELIMITER}{os.linesep}FALSE{os.linesep}"
+            f"{_DELIMITER}{os.linesep}"
+        )
+        actions.setenv("CHANGED", "TRUE")
+        updated = tmp_envfile.read_text(encoding="utf-8")
+        assert os.environ["CHANGED"] == "TRUE"
+        # Rendering of the updated variable is done by GitHub.
+        assert updated.endswith(
+            f"CHANGED<<{_DELIMITER}{os.linesep}TRUE{os.linesep}"
+            f"{_DELIMITER}{os.linesep}"
+        )
+
+    def test_creating_multiline(self, tmp_envfile):
+        multiline = """This
+                        is
+                        a
+                        multiline
+                        string."""
+        actions.setenv("MULTILINE", multiline)
+        data = tmp_envfile.read_text(encoding="utf-8")
+        assert os.environ["MULTILINE"] == multiline
+        assert (
+            data == f"MULTILINE<<{_DELIMITER}{os.linesep}{multiline}"
+            f"{os.linesep}{_DELIMITER}{os.linesep}"
+        )
+
+
+class TestAddpath:
+
+    """Tests for gidgethub.actions.addpath()."""
+
+    def test_string_path(self, tmp_pathfile):
+        actions.addpath("/path/to/random/dir")
+        data = tmp_pathfile[0].read_text(encoding="utf-8")
+        assert f"/path/to/random/dir{os.pathsep}" in os.environ["PATH"]
+        assert data == f"/path/to/random/dir{os.linesep}"
+
+    def test_path_object(self, tmp_pathfile):
+        actions.addpath(tmp_pathfile[1])
+        data = tmp_pathfile[0].read_text(encoding="utf-8")
+        assert f"{tmp_pathfile[1]!s}{os.pathsep}" in os.environ["PATH"]
+        assert data == f"{tmp_pathfile[1]!s}{os.linesep}"
+
+    def test_multiple_paths(self, tmp_pathfile):
+        actions.addpath("/path/to/random/dir")
+        random_path = tmp_pathfile[1] / "random.txt"
+        actions.addpath(random_path)
+        data = tmp_pathfile[0].read_text(encoding="utf-8")
+        # Last path added comes first.
+        assert (
+            f"{random_path!s}{os.pathsep}/path/to/random/dir{os.pathsep}"
+            in os.environ["PATH"]
+        )
+        assert data == f"/path/to/random/dir{os.linesep}{random_path!s}{os.linesep}"

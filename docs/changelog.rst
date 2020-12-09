@@ -7,9 +7,12 @@ Changelog
 - Add :meth:`gidgethub.routing.Router.fetch` for obtaining a frozenset of functions
   registered to the router that the event would be called on.
   (`Issue #74 <https://github.com/brettcannon/gidgethub/issues/74>`_).
+- Add support for GitHub Actions Environment Files with :meth:`gidgethub.actions.setenv`
+  and :meth:`gidgethub.actions.addpath`.
+  (`Issue #137 <https://github.com/brettcannon/gidgethub/issues/132>`_).
 - Make router callback execution order non-deterministic to avoid relying on
-   registration order.
-   (`Issue #74 <https://github.com/brettcannon/gidgethub/issues/74>`_).
+  registration order.
+  (`Issue #74 <https://github.com/brettcannon/gidgethub/issues/74>`_).
 - Fix mypy errors in ``gidgethub.httpx.GitHubAPI._request``
   (`Issue #133 <https://github.com/brettcannon/gidgethub/issues/133>`_).
 
