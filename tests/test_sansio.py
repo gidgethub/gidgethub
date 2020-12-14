@@ -180,7 +180,7 @@ class TestCreateHeaders:
             user_agent, accept=test_api, oauth_token=oauth_token
         )
         assert len(headers) == 3
-        for key in headers.keys():
+        for key in headers:
             assert key == key.lower()
         assert headers["user-agent"] == user_agent
         assert headers["accept"] == test_api
