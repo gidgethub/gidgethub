@@ -122,13 +122,15 @@ class GitHubAPI(abc.ABC):
     async def getitem(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Dict[str, str] = None,
         *,
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
     ) -> Any:
         """Send a GET request for a single item to the specified endpoint."""
+        if url_vars is None:
+            url_vars = {}
 
         data, _ = await self._make_request(
             "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
@@ -138,13 +140,15 @@ class GitHubAPI(abc.ABC):
     async def getiter(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Dict[str, str] = None,
         *,
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
     ) -> AsyncGenerator[Any, None]:
         """Return an async iterable for all the items at a specified endpoint."""
+        if url_vars is None:
+            url_vars = {}
         data, more = await self._make_request(
             "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
         )
@@ -164,7 +168,7 @@ class GitHubAPI(abc.ABC):
     async def post(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Dict[str, str] = None,
         *,
         data: Any,
         accept: str = sansio.accept_format(),
@@ -172,6 +176,8 @@ class GitHubAPI(abc.ABC):
         oauth_token: Opt[str] = None,
         content_type: str = JSON_CONTENT_TYPE,
     ) -> Any:
+        if url_vars is None:
+            url_vars = {}
         data, _ = await self._make_request(
             "POST",
             url,
@@ -187,13 +193,15 @@ class GitHubAPI(abc.ABC):
     async def patch(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Dict[str, str] = None,
         *,
         data: Any,
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
     ) -> Any:
+        if url_vars is None:
+            url_vars = {}
         data, _ = await self._make_request(
             "PATCH", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
         )
@@ -202,13 +210,15 @@ class GitHubAPI(abc.ABC):
     async def put(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Dict[str, str] = None,
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
     ) -> Any:
+        if url_vars is None:
+            url_vars = {}
         data, _ = await self._make_request(
             "PUT", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
         )
@@ -217,13 +227,15 @@ class GitHubAPI(abc.ABC):
     async def delete(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Dict[str, str] = None,
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
     ) -> None:
+        if url_vars is None:
+            url_vars = {}
         await self._make_request(
             "DELETE", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
         )

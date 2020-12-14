@@ -37,13 +37,15 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
     def __init__(
         self,
         status_code=200,
-        headers=DEFAULT_HEADERS,
+        headers=None,
         body=b"",
         *,
         cache=None,
         oauth_token=None,
         base_url=sansio.DOMAIN,
     ):
+        if headers is None:
+            headers = DEFAULT_HEADERS
         self.response_code = status_code
         self.response_headers = headers
         self.response_body = body
