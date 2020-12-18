@@ -32,7 +32,7 @@ experimental APIs without issue.
     OAuth token and a cache object.
 
     To allow for
-    `conditional requests <https://developer.github.com/v3/#conditional-requests>`_,
+    `conditional requests <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#conditional-requests>`_,
     one can provide a :class:`collections.abc.MutableMapping` object
     for the *cache* argument to cache requests. It is up to the
     caching object to provide any caching scheme that is desired
