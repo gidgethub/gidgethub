@@ -24,7 +24,7 @@ async def get_installation_access_token(
 
 
     Return a dictionary containing access token and expiration time.
-    (https://developer.github.com/v3/apps/#create-a-new-installation-token)
+    (https://docs.github.com/en/free-pro-team@latest/rest/reference/apps#create-an-installation-access-token-for-an-app)
     """
     access_token_url = f"/app/installations/{installation_id}/access_tokens"
     token = get_jwt(app_id=app_id, private_key=private_key)

@@ -7,7 +7,7 @@ gidgethub --- An async library for calling GitHub's API
 =======================================================
 
 While there are many
-`GitHub libraries <https://developer.github.com/libraries/>`_ for
+`GitHub libraries <https://docs.github.com/en/free-pro-team@latest/rest/overview/libraries>`_ for
 Python, when this library was created there were none oriented towards
 asynchronous usage. On top of that, there were also no libraries which
 took a `sans-I/O approach <https://sans-io.readthedocs.io/>`_ to their

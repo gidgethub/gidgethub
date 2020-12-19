@@ -45,7 +45,7 @@ Alternative libraries
 ---------------------
 
 If you think you want a different approach to the GitHub API,
-`GitHub maintains a list of libraries <https://developer.github.com/v3/libraries/>`_.
+`GitHub maintains a list of libraries <https://docs.github.com/en/free-pro-team@latest/rest/overview/libraries>`_.
 
 
 *Aside*: what's with the name?

@@ -69,7 +69,7 @@ def _decode_body(
 
 def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
     """Validate the signature of a webhook event."""
-    # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
+    # https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github
     signature_prefix = "sha1="
     if not signature.startswith(signature_prefix):
         raise ValidationFailure(
@@ -86,8 +86,8 @@ class Event:
     """Details of a GitHub webhook event."""
 
     def __init__(self, data: Any, *, event: str, delivery_id: str) -> None:
-        # https://developer.github.com/v3/activity/events/types/
-        # https://developer.github.com/webhooks/#delivery-headers
+        # https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/webhook-events-and-payloads
+        # https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/webhook-events-and-payloads#delivery-headers
         self.data = data
         # Event is not an enum as GitHub provides the string. This allows them
         # to add new events without having to mirror them here. There's also no
@@ -151,8 +151,8 @@ def accept_format(
     version of the GitHub API in the default format that this library is
     designed to support.
     """
-    # https://developer.github.com/v3/media/
-    # https://developer.github.com/v3/#current-version
+    # https://docs.github.com/en/free-pro-team@latest/rest/overview/media-types
+    # https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#current-version
     accept = f"application/vnd.github.{version}"
     if media is not None:
         accept += f".{media}"
@@ -190,11 +190,11 @@ def create_headers(
 
     For consistency, all keys in the returned dict will be lowercased.
     """
-    # user-agent: https://developer.github.com/v3/#user-agent-required
-    # accept: https://developer.github.com/v3/#current-version
-    #         https://developer.github.com/v3/media/
-    # authorization: https://developer.github.com/v3/#authentication
-    # authenticating as a GitHub App: https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app
+    # user-agent: https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#user-agent-required
+    # accept: https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#current-version
+    #         https://docs.github.com/en/free-pro-team@latest/rest/overview/media-types
+    # authorization: https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#authentication
+    # authenticating as a GitHub App: https://docs.github.com/en/free-pro-team@latest/developers/apps/authenticating-with-github-apps#authenticating-as-a-github-app
 
     if oauth_token is not None and jwt is not None:
         raise ValueError("Cannot pass both oauth_token and jwt.")
@@ -225,7 +225,7 @@ class RateLimit:
     reset datetime has passed.
     """
 
-    # https://developer.github.com/v3/#rate-limiting
+    # https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#rate-limiting
 
     def __init__(self, *, limit: int, remaining: int, reset_epoch: float) -> None:
         """Instantiate a RateLimit object.
@@ -277,7 +277,7 @@ _link_re = re.compile(
 
 
 def _next_link(link: Optional[str]) -> Optional[str]:
-    # https://developer.github.com/v3/#pagination
+    # https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#pagination
     # https://tools.ietf.org/html/rfc5988
     if link is None:
         return None

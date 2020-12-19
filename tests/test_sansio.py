@@ -367,7 +367,7 @@ class TestDecipherResponse:
         body = json.dumps(
             {
                 "message": "Reference does not exist",
-                "documentation_url": "https://developer.github.com/v3/git/refs/#delete-a-reference",
+                "documentation_url": "https://docs.github.com/en/free-pro-team@latest/rest/reference/git#delete-a-reference",
             }
         )
         body = body.encode("utf-8")
