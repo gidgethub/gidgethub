@@ -14,7 +14,7 @@ class ValidationFailure(GitHubException):
 
     """An exception representing failed validation of a webhook event."""
 
-    # https://developer.github.com/webhooks/securing/#validating-payloads-from-github
+    # https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github
 
 
 class HTTPException(GitHubException):
@@ -40,7 +40,7 @@ class BadRequest(HTTPException):
     Used for 4XX HTTP errors.
     """
 
-    # https://developer.github.com/v3/#client-errors
+    # https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#client-errors
 
 
 class BadRequestUnknownError(BadRequest):

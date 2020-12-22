@@ -15,7 +15,7 @@ Exceptions
 .. exception:: ValidationFailure
 
    An exception representing
-   `failed validation of a webhook event <https://developer.github.com/webhooks/securing/#validating-payloads-from-github>`_.
+   `failed validation of a webhook event <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github>`_.
 
    Inherits from :exc:`GitHubException`.
 
@@ -73,7 +73,7 @@ Exceptions
 .. exception:: InvalidField(errors, *args)
 
    Raised when a
-   `field in a request is invalid <https://developer.github.com/v3/#client-errors>`_.
+   `field in a request is invalid <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#client-errors>`_.
 
    Inherits from :exc:`BadRequest` and explicitly specifies a ``422`` status
    code. Details of what fields were invalid are stored in the :attr:`errors`

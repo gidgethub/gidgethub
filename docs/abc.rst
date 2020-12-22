@@ -32,7 +32,7 @@ experimental APIs without issue.
     OAuth token and a cache object.
 
     To allow for
-    `conditional requests <https://developer.github.com/v3/#conditional-requests>`_,
+    `conditional requests <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#conditional-requests>`_,
     one can provide a :class:`collections.abc.MutableMapping` object
     for the *cache* argument to cache requests. It is up to the
     caching object to provide any caching scheme that is desired
@@ -41,7 +41,7 @@ experimental APIs without issue.
 
     There are common arguments across methods that make requests to
     GitHub. The *url_vars* argument is used to perform
-    `URI template expansion <https://developer.github.com/v3/#hypermedia>`_
+    `URI template expansion <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#hypermedia>`_
     via :func:`gidgethub.sansio.format_url`.The *accept* argument
     specifies what response format is acceptable and can be
     constructed by using :func:`gidgethub.sansio.accept_format`. For
@@ -59,7 +59,7 @@ experimental APIs without issue.
     .. versionchanged:: 2.0
         Methods no longer automatically sleep when there is a chance
         of exceeding the
-        `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
+        `rate limit <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#rate-limiting>`_.
         This leads to :exc:`~gidgethub.RateLimitExceeded` being raised
         when the rate limit has been execeeded.
 
@@ -108,7 +108,7 @@ experimental APIs without issue.
         An abstract :term:`coroutine` which causes the coroutine to
         sleep for the specified number of seconds. This is provided to
         help prevent from going over one's
-        `rate limit <https://developer.github.com/v3/#rate-limiting>`_.
+        `rate limit <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#rate-limiting>`_.
 
         .. versionchanged:: 2.0
 
@@ -144,7 +144,7 @@ experimental APIs without issue.
 
         An asynchronous iterable is returned which will yield all items
         from the endpoint (i.e. use ``async for`` on the result). Any
-        `pagination <https://developer.github.com/v3/#pagination>`_
+        `pagination <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#pagination>`_
         will automatically be followed.
 
         *jwt* is the value of the JSON web token, for authenticating as a GitHub
@@ -191,7 +191,7 @@ experimental APIs without issue.
         and the data will be parsed as JSON.
 
         A few GitHub POST endpoints do not take any *data* argument, for example
-        the endpoint to `create an installation access token <https://developer.github.com/v3/apps/#create-a-github-app-from-a-manifest>`_.
+        the endpoint to `create an installation access token <https://docs.github.com/en/free-pro-team@latest/developers/apps/creating-a-github-app-from-a-manifest#implementing-the-github-app-manifest-flow>`_.
         For this situation, you can pass ``data=b""``.
 
 
@@ -228,7 +228,7 @@ experimental APIs without issue.
         Send a ``PUT`` request to GitHub.
 
         Be aware that some ``PUT`` endpoints such as
-        `locking an issue <https://developer.github.com/v3/issues/#lock-an-issue>`_
+        `locking an issue <https://docs.github.com/en/free-pro-team@latest/rest/reference/issues#lock-an-issue>`_
         will return no content, leading to ``None`` being returned.
 
         *jwt* is the value of the JSON web token, for authenticating as a GitHub
@@ -270,13 +270,13 @@ experimental APIs without issue.
 
     .. coroutine:: graphql(query, *, endpoint="https://api.github.com/graphql", **variables)
 
-       Make a request of the `GraphQL v4 API <https://developer.github.com/v4/>`_.
+       Make a request of the `GraphQL v4 API <https://docs.github.com/en/free-pro-team@latest/graphql>`_.
 
        The *endpoint* argument specifies the
-       `root endpoint <https://developer.github.com/v4/guides/forming-calls/#the-graphql-endpoint>`_
+       `root endpoint <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#the-graphql-endpoint>`_
        to use for the GraphQL request.
        The *variables* argument collects all other keyword arguments to pass in
-       `variables <https://developer.github.com/v4/guides/forming-calls/#working-with-variables>`_
+       `variables <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#working-with-variables>`_
        for the query.
 
        Exceptions raised directly by this method all subclass

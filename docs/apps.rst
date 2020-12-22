@@ -5,7 +5,7 @@
 
 .. versionadded:: 4.1.0
 
-This module is to help provide support for `GitHub Apps <https://developer.github.com/v3/apps/>`_.
+This module is to help provide support for `GitHub Apps <https://docs.github.com/en/free-pro-team@latest/rest/reference/apps>`_.
 
 Example on how you would obtain the access token for authenticating as a GitHub App installation::
 
@@ -36,7 +36,7 @@ Example on how you would obtain the access token for authenticating as a GitHub 
     **private_key** is the content of the GitHub App's private key (``.PEM`` format) file.
 
     It returns the response from GitHub's
-    `Authenticating as an installation <https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-an-installation>`_ API endpoint.
+    `Authenticating as an installation <https://docs.github.com/en/free-pro-team@latest/developers/apps/authenticating-with-github-apps#authenticating-as-an-installation>`_ API endpoint.
 
 
 .. function:: get_jwt(*, app_id, private_key)

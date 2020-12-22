@@ -55,7 +55,7 @@
       "updated_at": "2017-03-27T01:07:03Z",
       "closed_at": "2017-03-27T01:07:03Z",
       "author_association": "OWNER",
-      "body": "Detect a [403 response and `X-RateLimit-Remaining` is 0](https://developer.github.com/v3/#rate-limiting). This would allow users to do what they want when their rate limit is reached instead of gidgethub making that decision for them by sleeping. It also has the perk of simplifying gidgethub's own code. 😁 ",
+      "body": "Detect a [403 response and `X-RateLimit-Remaining` is 0](https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#rate-limiting). This would allow users to do what they want when their rate limit is reached instead of gidgethub making that decision for them by sleeping. It also has the perk of simplifying gidgethub's own code. 😁 ",
       "score": 0.04832509
     },
     {

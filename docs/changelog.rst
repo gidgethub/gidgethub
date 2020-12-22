@@ -83,7 +83,7 @@ Changelog
 -----
 
 - :meth:`gidgethub.abc.GitHubAPI.getiter` now works with
-  `GitHub's search API <https://developer.github.com/v3/search/>`_
+  `GitHub's search API <https://docs.github.com/en/free-pro-team@latest/rest/reference/search>`_
   (thanks `Pablo Galindo <https://github.com/pablogsal>`_).
 
 3.0.0

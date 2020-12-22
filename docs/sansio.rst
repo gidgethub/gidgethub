@@ -5,7 +5,7 @@
 
 Webhook events
 --------------
-`Webhook events <https://developer.github.com/webhooks/>`_ are represented by
+`Webhook events <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/about-webhooks>`_ are represented by
 :class:`Event` objects. The expectation is that a server will receive an HTTP
 request from GitHub and then use :meth:`Event.from_http` to create an
 :class:`Event` instance. For example::
@@ -28,7 +28,7 @@ without requiring the use of the :class:`Event` class.
 
 .. function:: validate_event(payload, *, signature, secret)
 
-   `Validate the signature <https://developer.github.com/webhooks/securing/#validating-payloads-from-github>`_
+   `Validate the signature <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github>`_
    of a webhook event.
 
    :exc:`~gidgethub.ValidationFailure` is raised if the signature is malformed
@@ -44,14 +44,14 @@ without requiring the use of the :class:`Event` class.
 
    .. attribute:: data
 
-      The `payload <https://developer.github.com/webhooks/event-payloads/>`_ of the
+      The `payload <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/webhook-events-and-payloads>`_ of the
       event.
 
 
    .. attribute:: event
 
       The string representation of the
-      `triggering event <https://developer.github.com/webhooks/#events>`_.
+      `triggering event <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/about-webhooks#events>`_.
 
 
    .. attribute:: delivery_id
@@ -66,7 +66,7 @@ without requiring the use of the :class:`Event` class.
       The *headers* mapping is expected to support lowercase keys.
 
       Since this method assumes the body of the HTTP request is only of the
-      `content type that GitHub sends <https://developer.github.com/webhooks/creating/#content-type>`_,
+      `content type that GitHub sends <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/creating-webhooks#content-type>`_,
       :exc:`~gidgethub.BadRequest` is raised if the content type is
       unexpected.
 
@@ -79,7 +79,7 @@ without requiring the use of the :class:`Event` class.
 Calling the GitHub API
 ----------------------
 As well as receiving webhook events in response to actions occurring on GitHub,
-you can use the `GitHub API <https://developer.github.com/v3/>`_ to make calls
+you can use the `GitHub API <https://docs.github.com/en/free-pro-team@latest/rest>`_ to make calls
 to REST endpoints. This library provides support to both construct a request to
 the GitHub API as well as deciphering the response to a request.
 
@@ -101,7 +101,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
 
    Construct the specification of the format that a request should return. This
    is used in the ``accept`` header field of a request to specify the
-   `media type <https://developer.github.com/v3/media/>`_.
+   `media type <https://docs.github.com/en/free-pro-team@latest/rest/overview/media-types>`_.
 
    The *version* argument specifies what version of the GitHub API that the
    request applies to. Typically this only needs to be specified if you are
@@ -117,7 +117,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
    to get a media type of ``application/vnd.github.v3.diff``.
 
    The default arguments of this function will always return the
-   `latest version <https://developer.github.com/v3/#current-version>`_ of the
+   `latest version <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#current-version>`_ of the
    GitHub API with the default response format that this library is designed to
    support.
 
@@ -127,7 +127,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
    Create a dict representing GitHub-specific header fields.
 
    The user agent is set according to who the *requester* is.
-   `GitHub asks <https://developer.github.com/v3/#user-agent-required>`_ it be
+   `GitHub asks <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#user-agent-required>`_ it be
    either a username or project name.
 
    The *accept* argument corresponds to the ``'accept'`` field and defaults to
@@ -137,12 +137,12 @@ by helping to automate the GitHub-specific aspects of a REST call.
    response, e.g. wanting the rendered HTML of a Markdown file.
 
    The *oauth_token* allows making an
-   `authenticated request <https://developer.github.com/v3/#authentication>`_.
+   `authenticated request <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#authentication>`_.
    This can be important if you need the expanded rate limit provided by an
    authenticated request.
 
    The *jwt* allows making an authenticated request as a `GitHub App
-   <https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-a-github-app>`_.
+   <https://docs.github.com/en/free-pro-team@latest/developers/apps/authenticating-with-github-apps#authenticating-as-a-github-app>`_.
    You can pass only one: *oauth_token* or *jwt*, but not both.
 
    ``ValueError`` will be raised if both *jwt* and *oauth_token* are supplied.
@@ -179,7 +179,7 @@ that are provided to you. Continuing from the example in the Requests_ section::
 
 .. class:: RateLimit(*, limit, remaining, reset_epoch)
 
-    The `rate limit <https://developer.github.com/v3/#rate-limiting>`_ imposed
+    The `rate limit <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#rate-limiting>`_ imposed
     upon the requester.
 
     The *reset_epoch* argument is expected to be UTC seconds from the epoch.
@@ -229,10 +229,10 @@ that are provided to you. Continuing from the example in the Requests_ section::
     based on what the response specified.
 
     The last item of the tuple is the URL where to request the
-    `next set of results <https://developer.github.com/v3/#pagination>`_.
+    `next set of results <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#pagination>`_.
     If there are no more results then ``None`` is returned. Do be aware
     that the URL
-    `can be a URI template <https://developer.github.com/v3/#link-header>`_
+    `can be a URI template <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#link-header>`_
     and so it may need to be expanded.
 
     If the status code is anything other than ``200``, ``201``, or ``204``,
@@ -251,7 +251,7 @@ Utilities
     from the GitHub developer documentation.
 
     The dict provided in *url_vars* is used in
-    `URI template expansion <https://developer.github.com/v3/#hypermedia>`_.
+    `URI template expansion <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#hypermedia>`_.
     Appropriate URL quoting is automatically done on the values of the dict.
 
     Enterprise GitHub users can specify their custom base URL in *base_url*.
