@@ -30,9 +30,7 @@ class TestGitHubAppUtils:
             "iss": app_id,
         }
 
-        assert result == jwt.encode(
-            expected_payload, private_key, algorithm="RS256"
-        ).decode("utf-8")
+        assert result == jwt.encode(expected_payload, private_key, algorithm="RS256")
 
     @pytest.mark.asyncio
     async def test_get_installation_access_token(self):
