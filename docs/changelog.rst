@@ -15,6 +15,7 @@ Changelog
   (`Issue #74 <https://github.com/brettcannon/gidgethub/issues/74>`_).
 - Fix mypy errors in ``gidgethub.httpx.GitHubAPI._request``
   (`Issue #133 <https://github.com/brettcannon/gidgethub/issues/133>`_).
+- Make the minimum version of PyJWT be v2.0.0.
 
 4.2.0
 -----
