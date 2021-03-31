@@ -61,5 +61,4 @@ Example on how you would obtain the access token for authenticating as a GitHub 
        data = gh.getitem(
            "/app/installations",
            jwt=token,
-           accept="application/vnd.github.machine-man-preview+json",
        )
