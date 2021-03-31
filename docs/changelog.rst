@@ -1,6 +1,15 @@
 Changelog
 =========
 
+5.0.1 (in development)
+----------------------
+
+- Drop the ``machine-man-preview`` header from :meth:`gidgethub.apps.get_installation_access_token`
+  because it is out of preview. The ``machine-man-preview`` is `no longer
+  required <https://developer.github.com/changes/#--machine-man-and-sailor-v-previews-graduate>`_
+  as of August 20, 2020.
+
+
 5.0.0
 -----
 

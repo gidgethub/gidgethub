@@ -31,7 +31,6 @@ async def get_installation_access_token(
         access_token_url,
         data=b"",
         jwt=token,
-        accept="application/vnd.github.machine-man-preview+json",
     )
     # example response
     # {
