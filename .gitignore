@@ -101,3 +101,5 @@ ENV/
 
 # nox
 .nox
+
+.idea
