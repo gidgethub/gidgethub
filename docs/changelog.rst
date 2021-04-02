@@ -1,8 +1,8 @@
 Changelog
 =========
 
-5.0.1 (in development)
-----------------------
+5.0.1
+-----
 
 - Drop the ``machine-man-preview`` header from :meth:`gidgethub.apps.get_installation_access_token`
   because it is out of preview. The ``machine-man-preview`` is `no longer
