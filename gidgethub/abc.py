@@ -159,7 +159,7 @@ class GitHubAPI(abc.ABC):
             async for item in self.getiter(
                 more, url_vars, accept=accept, jwt=jwt, oauth_token=oauth_token
             ):
-                yield item
+                yield item  # pragma: nocover
 
     async def post(
         self,
