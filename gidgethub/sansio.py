@@ -70,12 +70,12 @@ def _decode_body(
 def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
     """Validate the signature of a webhook event."""
     # https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github
-    signature_prefix = "sha1="
+    signature_prefix = "sha256="
     if not signature.startswith(signature_prefix):
         raise ValidationFailure(
             "signature does not start with " f"{repr(signature_prefix)}"
         )
-    hmac_ = hmac.new(secret.encode("UTF-8"), msg=payload, digestmod="sha1")
+    hmac_ = hmac.new(secret.encode("UTF-8"), msg=payload, digestmod="sha256")
     calculated_sig = signature_prefix + hmac_.hexdigest()
     if not hmac.compare_digest(signature, calculated_sig):
         raise ValidationFailure("payload's signature does not align " "with the secret")
@@ -114,10 +114,12 @@ class Event:
         (including not providing a secret) will lead to ValidationFailure being
         raised.
         """
-        if "x-hub-signature" in headers:
+        if "x-hub-signature-256" in headers:
             if secret is None:
                 raise ValidationFailure("secret not provided")
-            validate_event(body, signature=headers["x-hub-signature"], secret=secret)
+            validate_event(
+                body, signature=headers["x-hub-signature-256"], secret=secret
+            )
         elif secret is not None:
             raise ValidationFailure("signature is missing")
 
