@@ -4,6 +4,9 @@ Changelog
 5.0.1.dev (under development)
 -----------------------------
 
+- Use ``X-Hub-Signature-256`` header for webhook validation when available.
+  (`PR #160 <https://github.com/brettcannon/gidgethub/pull/160>`_).
+
 5.0.1
 -----
 
