@@ -30,7 +30,7 @@ class TestValidateEvent:
     signature = "sha256=" + hash_signature
 
     def test_malformed_signature(self):
-        """Error out if the signature doesn't start with "sha1="."""
+        """Error out if the signature doesn't start with "sha256=" or "sha1="."""
         with pytest.raises(ValidationFailure):
             sansio.validate_event(
                 self.payload, secret=self.secret, signature=self.hash_signature
@@ -60,6 +60,7 @@ class TestEvent:
         "content-type": "application/json",
         "x-github-event": "pull_request",
         "x-github-delivery": "72d3162e-cc78-11e3-81ab-4c9367dc0958",
+        "x-hub-signature": "sha1=c28e33b2e56e548956c446e890929a6cbec3ac89",
         "x-hub-signature-256": "sha256=0340d06469a1b35662ebd7a67ea2c0c328239f319f1cfafb221451de629e0430",
     }
 
@@ -117,6 +118,7 @@ class TestEvent:
         """Secret but no signature raises ValidationFailure."""
         headers_no_sig = self.headers.copy()
         del headers_no_sig["x-hub-signature-256"]
+        del headers_no_sig["x-hub-signature"]
         with pytest.raises(ValidationFailure):
             sansio.Event.from_http(headers_no_sig, self.data_bytes, secret=self.secret)
 
@@ -126,9 +128,16 @@ class TestEvent:
                 self.headers, self.data_bytes, secret=self.secret + "no secret"
             )
 
+    def test_from_http_sha1_signature(self):
+        headers = self.headers.copy()
+        del headers["x-hub-signature-256"]
+        event = sansio.Event.from_http(headers, self.data_bytes, secret=self.secret)
+        self.check_event(event)
+
     def test_from_http_no_signature(self):
         headers = self.headers.copy()
         del headers["x-hub-signature-256"]
+        del headers["x-hub-signature"]
         event = sansio.Event.from_http(headers, self.data_bytes)
         self.check_event(event)
 
