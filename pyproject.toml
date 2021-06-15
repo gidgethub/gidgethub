@@ -25,7 +25,7 @@ classifiers = ["Intended Audience :: Developers",
 
 [tool.flit.metadata.requires-extra]
 test = ["importlib-resources", "pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync"]
-doc = ["sphinx>=4.0.0", "sphinx-rtd-theme"]
+doc = ["sphinx>=4.0.0", "sphinx-rtd-theme>=0.5.2"]
 # The 'dev' target should contain all dependencies listed in any extras coming
 # after it to make sure that the test suite will run successfully.
 dev = ["aiohttp", "black", "coverage[toml]>=5.0.3", "httpx", "mypy", "pytest-cov",
