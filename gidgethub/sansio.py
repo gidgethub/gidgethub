@@ -69,16 +69,25 @@ def _decode_body(
 
 def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
     """Validate the signature of a webhook event."""
-    # https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github
-    signature_prefix = "sha1="
-    if not signature.startswith(signature_prefix):
+    # https://docs.github.com/en/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github
+    sha256_signature_prefix = "sha256="
+    sha1_signature_prefix = "sha1="
+    if signature.startswith(sha256_signature_prefix):
+        hmac_sig = hmac.new(
+            secret.encode("UTF-8"), msg=payload, digestmod="sha256"
+        ).hexdigest()
+        calculated_sig = sha256_signature_prefix + hmac_sig
+    elif signature.startswith(sha1_signature_prefix):
+        hmac_sig = hmac.new(
+            secret.encode("UTF-8"), msg=payload, digestmod="sha1"
+        ).hexdigest()
+        calculated_sig = sha1_signature_prefix + hmac_sig
+    else:
         raise ValidationFailure(
-            "signature does not start with " f"{repr(signature_prefix)}"
+            f"signature does not start with {repr(sha256_signature_prefix)} or {repr(sha1_signature_prefix)}"
         )
-    hmac_ = hmac.new(secret.encode("UTF-8"), msg=payload, digestmod="sha1")
-    calculated_sig = signature_prefix + hmac_.hexdigest()
     if not hmac.compare_digest(signature, calculated_sig):
-        raise ValidationFailure("payload's signature does not align " "with the secret")
+        raise ValidationFailure("payload's signature does not align with the secret")
 
 
 class Event:
@@ -114,10 +123,11 @@ class Event:
         (including not providing a secret) will lead to ValidationFailure being
         raised.
         """
-        if "x-hub-signature" in headers:
+        signature = headers.get("x-hub-signature-256", headers.get("x-hub-signature"))
+        if signature is not None:
             if secret is None:
                 raise ValidationFailure("secret not provided")
-            validate_event(body, signature=headers["x-hub-signature"], secret=secret)
+            validate_event(body, signature=signature, secret=secret)
         elif secret is not None:
             raise ValidationFailure("signature is missing")
 
