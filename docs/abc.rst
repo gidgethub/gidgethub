@@ -91,7 +91,9 @@ experimental APIs without issue.
         This attribute is automatically updated after every successful
         HTTP request.
 
-    .. abstractcoroutine:: _request(method, url, headers, body=b'')
+    .. py:method:: _request(method, url, headers, body=b'')
+        :async:
+        :abstractmethod:
 
         An abstract :term:`coroutine` to make an HTTP request. The
         given *headers* will have lower-case keys and include not only
@@ -103,7 +105,9 @@ experimental APIs without issue.
         dictionary is expected to work with lower-case keys.
 
 
-    .. abstractcoroutine:: sleep(seconds)
+    .. py:method:: sleep(seconds)
+        :async:
+        :abstractmethod:
 
         An abstract :term:`coroutine` which causes the coroutine to
         sleep for the specified number of seconds. This is provided to
@@ -115,7 +119,8 @@ experimental APIs without issue.
             Renamed from ``_sleep()``.
 
 
-    .. coroutine:: getitem(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: getitem(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+        :async:
 
         Get a single item from GitHub.
 
@@ -138,7 +143,8 @@ experimental APIs without issue.
             potentially require pagination, see ``getiter()``.
 
 
-    .. coroutine:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+        :async:
 
         Get all items from a GitHub API endpoint.
 
@@ -171,7 +177,8 @@ experimental APIs without issue.
             :meth:`getitem`.
 
 
-    .. coroutine:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None, content_type="application/json")
+    .. py:method:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None, content_type="application/json")
+        :async:
 
         Send a ``POST`` request to GitHub.
 
@@ -204,7 +211,8 @@ experimental APIs without issue.
             Added *jwt* and *oauth_token*.
 
 
-    .. coroutine:: patch(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: patch(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+        :async:
 
         Send a ``PATCH`` request to GitHub.
 
@@ -223,7 +231,8 @@ experimental APIs without issue.
             Added *jwt* and *oauth_token*.
 
 
-    .. coroutine:: put(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: put(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None)
+        :async:
 
         Send a ``PUT`` request to GitHub.
 
@@ -246,7 +255,8 @@ experimental APIs without issue.
             Added *jwt* and *oauth_token*.
 
 
-    .. coroutine:: delete(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: delete(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None)
+        :async:
 
         Send a ``DELETE`` request to GitHub.
 
@@ -268,7 +278,8 @@ experimental APIs without issue.
 
             Added *jwt* and *oauth_token*.
 
-    .. coroutine:: graphql(query, *, endpoint="https://api.github.com/graphql", **variables)
+    .. py:method:: graphql(query, *, endpoint="https://api.github.com/graphql", **variables)
+        :async:
 
        Make a request of the `GraphQL v4 API <https://docs.github.com/en/free-pro-team@latest/graphql>`_.
 
