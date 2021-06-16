@@ -1,11 +1,14 @@
 Changelog
 =========
 
-5.0.1.dev (under development)
+5.1.0.dev (under development)
 -----------------------------
 
 - Use ``X-Hub-Signature-256`` header for webhook validation when available.
   (`PR #160 <https://github.com/brettcannon/gidgethub/pull/160>`_).
+
+- The documentation is now built using Sphinx v>= 4.0.0.
+  (`Issue #143 <https://github.com/brettcannon/gidgethub/issues/143>`_)
 
 5.0.1
 -----
