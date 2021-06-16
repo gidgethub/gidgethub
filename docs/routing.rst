@@ -82,7 +82,8 @@ in user code.
         .. versionadded:: 5.0.0
 
 
-    .. coroutine:: dispatch(event, *args, **kwargs)
+    .. py:method:: dispatch(event, *args, **kwargs)
+        :async:
 
         Call the appropriate asynchronous callbacks for the *event*.
         The provided event and any other arguments will be passed
@@ -90,6 +91,6 @@ in user code.
 
         .. versionchanged:: 2.4
             Added ``*args`` and ``**kwargs``.
-            
+
         .. versionchanged:: 5.0.0
             Execution order is non-deterministic.
