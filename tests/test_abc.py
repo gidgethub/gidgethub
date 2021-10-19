@@ -337,6 +337,30 @@ class TestGitHubAPIGetiter:
         assert data[2] == 1
         assert data[3] == 2
 
+    @pytest.mark.asyncio
+    async def test_checks_api(self):
+        """Same as search API, but using the `checks_runs` parameter instead of `items`."""
+        original_data = {"check_runs": [1, 2]}
+        next_url = "https://api.github.com/fake{/extra}?page=2"
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["content-type"] = "application/json; charset=UTF-8"
+        headers["link"] = f'<{next_url}>; rel="next"'
+        gh = MockGitHubAPI(
+            headers=headers, body=json.dumps(original_data).encode("utf8")
+        )
+        data = []
+        async for item in gh.getiter(
+            "/fake", {"extra": "stuff"}, iterable_key="check_runs"
+        ):
+            data.append(item)
+        assert gh.method == "GET"
+        assert gh.url == "https://api.github.com/fake/stuff?page=2"
+        assert len(data) == 4
+        assert data[0] == 1
+        assert data[1] == 2
+        assert data[2] == 1
+        assert data[3] == 2
+
 
 class TestGitHubAPIPost:
     @pytest.mark.asyncio
