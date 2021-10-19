@@ -2,8 +2,10 @@
 import abc
 import http
 import json
-from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Tuple
+from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Optional, Tuple
 from typing import Optional as Opt
+
+from uritemplate import variable
 
 from . import (
     BadGraphQLRequest,
@@ -57,7 +59,7 @@ class GitHubAPI(abc.ABC):
         self,
         method: str,
         url: str,
-        url_vars: Dict[str, str],
+        url_vars: Optional[variable.VariableValueDict],
         data: Any,
         accept: str,
         jwt: Opt[str] = None,
@@ -123,7 +125,7 @@ class GitHubAPI(abc.ABC):
     async def getitem(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
@@ -139,7 +141,7 @@ class GitHubAPI(abc.ABC):
     async def getiter(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
@@ -170,7 +172,7 @@ class GitHubAPI(abc.ABC):
     async def post(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         data: Any,
         accept: str = sansio.accept_format(),
@@ -193,7 +195,7 @@ class GitHubAPI(abc.ABC):
     async def patch(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         data: Any,
         accept: str = sansio.accept_format(),
@@ -208,7 +210,7 @@ class GitHubAPI(abc.ABC):
     async def put(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
@@ -223,7 +225,7 @@ class GitHubAPI(abc.ABC):
     async def delete(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
