@@ -175,7 +175,7 @@ experimental APIs without issue.
             Added support for endpoints which return a JSON object with an
             ``items`` value instead of a list.
 
-       .. versionchanged:: 5.1.0
+        .. versionchanged:: 5.1.0
 
             Added *iterable_key*.
 
@@ -288,16 +288,16 @@ experimental APIs without issue.
     .. py:method:: graphql(query, *, endpoint="https://api.github.com/graphql", **variables)
         :async:
 
-       Make a request of the `GraphQL v4 API <https://docs.github.com/en/free-pro-team@latest/graphql>`_.
+        Make a request of the `GraphQL v4 API <https://docs.github.com/en/free-pro-team@latest/graphql>`_.
 
-       The *endpoint* argument specifies the
-       `root endpoint <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#the-graphql-endpoint>`_
-       to use for the GraphQL request.
-       The *variables* argument collects all other keyword arguments to pass in
-       `variables <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#working-with-variables>`_
-       for the query.
+        The *endpoint* argument specifies the
+        `root endpoint <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#the-graphql-endpoint>`_
+        to use for the GraphQL request.
+        The *variables* argument collects all other keyword arguments to pass in
+        `variables <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#working-with-variables>`_
+        for the query.
 
-       Exceptions raised directly by this method all subclass
-       :exc:`~gidgethub.GraphQLException`.
+        Exceptions raised directly by this method all subclass
+        :exc:`~gidgethub.GraphQLException`.
 
-       .. versionadded:: 4.0
+        .. versionadded:: 4.0

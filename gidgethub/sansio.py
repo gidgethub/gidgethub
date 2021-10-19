@@ -7,7 +7,6 @@ API version you want your request to work against).
 """
 import cgi
 import datetime
-import hashlib
 import hmac
 import http
 import json
@@ -16,6 +15,7 @@ from typing import Any, Dict, Mapping, Optional, Tuple, Type, Union
 import urllib.parse
 
 import uritemplate
+from uritemplate import variable
 
 from . import (
     BadRequest,
@@ -379,7 +379,9 @@ def decipher_response(
 DOMAIN = "https://api.github.com"
 
 
-def format_url(url: str, url_vars: Mapping[str, Any], *, base_url: str = DOMAIN) -> str:
+def format_url(
+    url: str, url_vars: Optional[variable.VariableValueDict], *, base_url: str = DOMAIN
+) -> str:
     """Construct a URL for the GitHub API.
 
     The URL may be absolute or relative. In the latter case the appropriate
