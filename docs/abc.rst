@@ -143,7 +143,7 @@ experimental APIs without issue.
             potentially require pagination, see ``getiter()``.
 
 
-    .. py:method:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None, iterable_key="items")
         :async:
 
         Get all items from a GitHub API endpoint.
@@ -163,14 +163,21 @@ experimental APIs without issue.
         raised if both are passed. If neither was passed, it defaults to the
         value of the *oauth_token* attribute.
 
+        *iterable_key* is the value of the dictionary key to be iterated upon.
+        It defaults to ``"items"``.
+
         .. versionchanged:: 3.0
 
             Added *jwt* and *oauth_token*.
 
         .. versionchanged:: 3.1
 
-            Added support for for endpoints which return a JSON object with an
+            Added support for endpoints which return a JSON object with an
             ``items`` value instead of a list.
+
+        .. versionchanged:: 5.1.0
+
+            Added *iterable_key*.
 
         .. note::
             For ``GET`` calls that return only a single item, see
@@ -281,16 +288,16 @@ experimental APIs without issue.
     .. py:method:: graphql(query, *, endpoint="https://api.github.com/graphql", **variables)
         :async:
 
-       Make a request of the `GraphQL v4 API <https://docs.github.com/en/free-pro-team@latest/graphql>`_.
+        Make a request of the `GraphQL v4 API <https://docs.github.com/en/free-pro-team@latest/graphql>`_.
 
-       The *endpoint* argument specifies the
-       `root endpoint <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#the-graphql-endpoint>`_
-       to use for the GraphQL request.
-       The *variables* argument collects all other keyword arguments to pass in
-       `variables <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#working-with-variables>`_
-       for the query.
+        The *endpoint* argument specifies the
+        `root endpoint <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#the-graphql-endpoint>`_
+        to use for the GraphQL request.
+        The *variables* argument collects all other keyword arguments to pass in
+        `variables <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#working-with-variables>`_
+        for the query.
 
-       Exceptions raised directly by this method all subclass
-       :exc:`~gidgethub.GraphQLException`.
+        Exceptions raised directly by this method all subclass
+        :exc:`~gidgethub.GraphQLException`.
 
-       .. versionadded:: 4.0
+        .. versionadded:: 4.0

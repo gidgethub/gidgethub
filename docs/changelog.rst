@@ -10,6 +10,10 @@ Changelog
 - The documentation is now built using Sphinx v>= 4.0.0.
   (`Issue #143 <https://github.com/brettcannon/gidgethub/issues/143>`_)
 
+- :meth:`gidgethub.abc.GitHubAPI.getiter` now accepts ``iterable_key`` parameter
+  in order to support the Checks API.
+  (`Issue #164 <https://github.com/brettcannon/gidgethub/issues/164>`_)
+
 5.0.1
 -----
 

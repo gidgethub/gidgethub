@@ -2,8 +2,10 @@
 import abc
 import http
 import json
-from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Tuple
+from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Optional, Tuple
 from typing import Optional as Opt
+
+from uritemplate import variable
 
 from . import (
     BadGraphQLRequest,
@@ -22,6 +24,7 @@ CACHE_TYPE = MutableMapping[str, Tuple[Opt[str], Opt[str], Any, Opt[str]]]
 JSON_CONTENT_TYPE = "application/json"
 UTF_8_CHARSET = "utf-8"
 JSON_UTF_8_CHARSET = f"{JSON_CONTENT_TYPE}; charset={UTF_8_CHARSET}"
+ITERABLE_KEY = "items"
 
 
 class GitHubAPI(abc.ABC):
@@ -56,7 +59,7 @@ class GitHubAPI(abc.ABC):
         self,
         method: str,
         url: str,
-        url_vars: Dict[str, str],
+        url_vars: Optional[variable.VariableValueDict],
         data: Any,
         accept: str,
         jwt: Opt[str] = None,
@@ -122,7 +125,7 @@ class GitHubAPI(abc.ABC):
     async def getitem(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
@@ -138,33 +141,38 @@ class GitHubAPI(abc.ABC):
     async def getiter(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
+        iterable_key: Opt[str] = ITERABLE_KEY,
     ) -> AsyncGenerator[Any, None]:
         """Return an async iterable for all the items at a specified endpoint."""
         data, more = await self._make_request(
             "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
         )
 
-        if isinstance(data, dict) and "items" in data:
-            data = data["items"]
-
+        if isinstance(data, dict) and iterable_key in data:
+            data = data[iterable_key]
         for item in data:
             yield item
         if more:
             # `yield from` is not supported in coroutines.
             async for item in self.getiter(
-                more, url_vars, accept=accept, jwt=jwt, oauth_token=oauth_token
+                more,
+                url_vars,
+                accept=accept,
+                jwt=jwt,
+                oauth_token=oauth_token,
+                iterable_key=iterable_key,
             ):
                 yield item  # pragma: nocover
 
     async def post(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         data: Any,
         accept: str = sansio.accept_format(),
@@ -187,7 +195,7 @@ class GitHubAPI(abc.ABC):
     async def patch(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         data: Any,
         accept: str = sansio.accept_format(),
@@ -202,7 +210,7 @@ class GitHubAPI(abc.ABC):
     async def put(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
@@ -217,7 +225,7 @@ class GitHubAPI(abc.ABC):
     async def delete(
         self,
         url: str,
-        url_vars: Dict[str, str] = {},
+        url_vars: Optional[variable.VariableValueDict] = {},
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
