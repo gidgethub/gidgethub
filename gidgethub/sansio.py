@@ -323,7 +323,7 @@ def decipher_response(
     an HTTPException is raised.
     """
     data = _decode_body(headers.get("content-type"), body)
-    if status_code in {200, 201, 204}:
+    if status_code in {200, 201, 202, 204}:
         return data, RateLimit.from_http(headers), _next_link(headers.get("link"))
     else:
         try:
