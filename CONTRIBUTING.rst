@@ -27,7 +27,7 @@ branch.
 
 Ensure that the tests are all passing, and that the coverage remains at 100%.
 
-Ensure that the code the quality checks by running `nox --session lint`.
+Ensure that the code the quality checks by running ``nox --session lint``.
 
 Update the documentation as needed.
 
