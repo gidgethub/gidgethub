@@ -442,6 +442,28 @@ class TestDecipherResponse:
         assert rate_limit.limit == 60
         assert returned_data == data
 
+    def test_202(self):
+        # https://github.com/brettcannon/gidgethub/issues/171
+        status_code = 202
+        headers = {
+            "x-ratelimit-limit": "5000",
+            "x-ratelimit-remaining": "4987",
+            "x-ratelimit-reset": "1641847010",
+            "content-type": "application/json; charset=utf-8",
+        }
+        data = {
+            "id": 446_568_946,
+            "name": "Hello-World",
+            "fork": True,
+            "forks": 0,
+        }
+        body = json.dumps(data).encode("UTF-8")
+        returned_data, rate_limit, more = sansio.decipher_response(
+            status_code, headers, body
+        )
+        assert more is None
+        assert returned_data == data
+
     def test_204(self):
         """Test both a 204 response and an empty response body."""
         status_code = 204

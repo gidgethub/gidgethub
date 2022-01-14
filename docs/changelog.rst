@@ -14,6 +14,9 @@ Changelog
   in order to support the Checks API.
   (`Issue #164 <https://github.com/brettcannon/gidgethub/issues/164>`_)
 
+- Accept HTTP 202 ACCEPTED as successful.
+  (`PR #174 <https://github.com/brettcannon/gidgethub/pull/174>`_)
+
 5.0.1
 -----
 
