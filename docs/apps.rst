@@ -8,7 +8,7 @@
 .. versionchanged:: 5.0.1
    The ``machine-man-preview`` header was removed from the API endpoint.
 
-This module is to help provide support for `GitHub Apps <https://docs.github.com/en/free-pro-team@latest/rest/reference/apps>`_.
+This module is to help provide support for `GitHub Apps <https://docs.github.com/en/rest/apps>`_.
 
 Example on how you would obtain the access token for authenticating as a GitHub App installation::
 
