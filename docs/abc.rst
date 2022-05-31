@@ -244,7 +244,7 @@ experimental APIs without issue.
         Send a ``PUT`` request to GitHub.
 
         Be aware that some ``PUT`` endpoints such as
-        `locking an issue <https://docs.github.com/en/free-pro-team@latest/rest/reference/issues#lock-an-issue>`_
+        `locking an issue <https://docs.github.com/en/rest/issues/issues#lock-an-issue>`_
         will return no content, leading to ``None`` being returned.
 
         *jwt* is the value of the JSON web token, for authenticating as a GitHub
