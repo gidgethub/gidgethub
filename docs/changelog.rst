@@ -1,6 +1,11 @@
 Changelog
 =========
 
+5.2.0
+-----
+
+- Make the minimum version of PyJWT be v2.4.0.
+
 5.1.0
 -----
 
