@@ -3,7 +3,9 @@ name: CI
 on:
   pull_request:
   push:
-    branches: main
+
+env:
+  FORCE_COLOR: 1
 
 jobs:
   test:
@@ -12,18 +14,27 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.9-dev", "3.10-dev"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.9-dev", "3.10", "3.10-dev"]
+        include:
+          - { python-version: "3.6", nox-python-version: "3.6" }
+          - { python-version: "3.7", nox-python-version: "3.7" }
+          - { python-version: "3.8", nox-python-version: "3.8" }
+          - { python-version: "3.9", nox-python-version: "3.9" }
+          - { python-version: "3.9-dev", nox-python-version: "3.9" }
+          - { python-version: "3.10", nox-python-version: "3.10" }
+          - { python-version: "3.10-dev", nox-python-version: "3.10" }
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         if: "!endsWith(matrix.python-version, '-dev')"
         with:
           python-version: ${{ matrix.python-version }}
@@ -32,10 +43,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install nox
-      - run: nox --session tests-${{ matrix.python-version }}
+      - run: nox --session tests-${{ matrix.nox-python-version }}
         env:
           PYTHONDEVMODE: 1
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v3
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -45,15 +56,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v3
         with:
-          python-version: "3.8"
+          python-version: "3.10"
       - run: pip install nox
       - run: nox --session lint
