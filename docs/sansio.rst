@@ -117,7 +117,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
    to get a media type of ``application/vnd.github.v3.diff``.
 
    The default arguments of this function will always return the
-   `latest version <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#current-version>`_ of the
+   `latest version <https://docs.github.com/en/rest/overview/media-types>`_ of the
    GitHub API with the default response format that this library is designed to
    support.
 
