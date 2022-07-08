@@ -16,14 +16,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.9-dev", "3.10", "3.10-dev"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.10-dev", "3.11-dev"]
         include:
           - { python-version: "3.7", nox-python-version: "3.7" }
           - { python-version: "3.8", nox-python-version: "3.8" }
           - { python-version: "3.9", nox-python-version: "3.9" }
-          - { python-version: "3.9-dev", nox-python-version: "3.9" }
           - { python-version: "3.10", nox-python-version: "3.10" }
           - { python-version: "3.10-dev", nox-python-version: "3.10" }
+          - { python-version: "3.11-dev", nox-python-version: "3.11" }
 
     steps:
       - uses: actions/checkout@v3
