@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # gidgethub documentation build configuration file, created by
 # sphinx-quickstart on Mon Jan 23 19:03:20 2017.

@@ -25,7 +25,7 @@ class TestValidateEvent:
     """Tests for gidgethub.sansio.validate_event()."""
 
     secret = "123456"
-    payload = "gidget".encode("UTF-8")
+    payload = b"gidget"
     hash_signature = "091319196718d5bcb1c20ad25fc890597423ecdbad1f947f560afd643b5000de"
     signature = "sha256=" + hash_signature
 
@@ -54,7 +54,7 @@ class TestEvent:
     """Tests for gidgethub.sansio.Event."""
 
     data = {"action": "opened"}
-    data_bytes = '{"action": "opened"}'.encode("UTF-8")
+    data_bytes = b'{"action": "opened"}'
     secret = "123456"
     headers = {
         "content-type": "application/json",
