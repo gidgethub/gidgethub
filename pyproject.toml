@@ -10,7 +10,7 @@ requires = [
     "uritemplate>=3.0.1",
     "PyJWT[crypto]>=2.4.0"
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.7"
 license = "Apache"
 keywords = "github sans-io async"
 description-file = "README.rst"
@@ -18,7 +18,6 @@ classifiers = ["Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",

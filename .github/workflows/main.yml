@@ -16,9 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.9-dev", "3.10", "3.10-dev"]
+        python-version: ["3.7", "3.8", "3.9", "3.9-dev", "3.10", "3.10-dev"]
         include:
-          - { python-version: "3.6", nox-python-version: "3.6" }
           - { python-version: "3.7", nox-python-version: "3.7" }
           - { python-version: "3.8", nox-python-version: "3.8" }
           - { python-version: "3.9", nox-python-version: "3.9" }
