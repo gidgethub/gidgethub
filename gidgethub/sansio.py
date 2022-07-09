@@ -44,7 +44,7 @@ def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str
         m["content-type"] = content_type
         type_ = m.get_content_type()
         encoding = m.get_param("charset") or "utf-8"
-        return type_, encoding
+        return type_, str(encoding)
 
 
 def _decode_body(
