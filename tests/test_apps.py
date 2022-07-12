@@ -21,7 +21,9 @@ class TestGitHubAppUtils:
         time_mock.return_value = 1587069751.5588422
 
         # test file copied from https://github.com/jpadilla/pyjwt/blob/master/tests/keys/testkey_rsa
-        private_key = importlib_resources.read_binary(rsa_key_samples, "test_rsa_key")
+        private_key = (
+            importlib_resources.files(rsa_key_samples) / "test_rsa_key"
+        ).read_bytes()
 
         result = apps.get_jwt(app_id=app_id, private_key=private_key)
         expected_payload = {
@@ -38,7 +40,9 @@ class TestGitHubAppUtils:
         installation_id = 6789
         app_id = 12345
 
-        private_key = importlib_resources.read_binary(rsa_key_samples, "test_rsa_key")
+        private_key = (
+            importlib_resources.files(rsa_key_samples) / "test_rsa_key"
+        ).read_bytes()
 
         await apps.get_installation_access_token(
             gh, installation_id=installation_id, app_id=app_id, private_key=private_key

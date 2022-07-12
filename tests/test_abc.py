@@ -702,7 +702,9 @@ class TestGraphQL:
     """Test gidgethub.abc.GitHubAPI.graphql()."""
 
     def gh_and_response(self, payload_filename):
-        payload = importlib_resources.read_binary(graphql_samples, payload_filename)
+        payload = (
+            importlib_resources.files(graphql_samples) / payload_filename
+        ).read_bytes()
         status_code_match = re.match(r"^.+-(\d+)\.json$", payload_filename)
         status_code = int(status_code_match.group(1))
         return (

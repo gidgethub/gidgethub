@@ -5,8 +5,8 @@ use any HTTP library you prefer while not having to implement common details
 when working with GitHub's API (e.g. validating webhook events or specifying the
 API version you want your request to work against).
 """
-import cgi
 import datetime
+from email.message import Message
 import hmac
 import http
 import json
@@ -40,9 +40,11 @@ def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str
     if not content_type:
         return None, "utf-8"
     else:
-        type_, parameters = cgi.parse_header(content_type)
-        encoding = parameters.get("charset", "utf-8")
-        return type_, encoding
+        m = Message()
+        m["content-type"] = content_type
+        type_ = m.get_content_type()
+        encoding = m.get_param("charset") or "utf-8"
+        return type_, str(encoding)
 
 
 def _decode_body(
