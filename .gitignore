@@ -103,3 +103,5 @@ ENV/
 .nox
 
 .idea
+
+.DS_Store
