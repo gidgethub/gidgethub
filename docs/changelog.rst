@@ -1,6 +1,15 @@
 Changelog
 =========
 
+5.2.1
+-----
+
+- Fix cgi and importlib_resources deprecations.
+  (`PR #185 <https://github.com/brettcannon/gidgethub/pull/185>_`)
+
+- Add support for Python 3.11 and drop EOL Python 3.6
+  (`PR #184 <https://github.com/brettcannon/gidgethub/pull/184>_`)
+
 5.2.0
 -----
 
