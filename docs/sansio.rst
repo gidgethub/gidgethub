@@ -91,11 +91,11 @@ This module provides functions to help in the construction of a URL request
 by helping to automate the GitHub-specific aspects of a REST call.
 ::
 
-  import requests
+  import httpx
 
   request_headers = create_headers("brettcannon", oauth_token=auth)
   url = "https://api.github.com/repos/brettcannon/gidgethub/issues/1"
-  response = requests.get(url, headers=request_headers)
+  response = httpx.get(url, headers=request_headers)
 
 .. function:: accept_format(*, version="v3", media=None, json=True)
 
@@ -160,7 +160,7 @@ Responses
 Decipher a response from the GitHub API gather together all of the details
 that are provided to you. Continuing from the example in the Requests_ section::
 
-  # Assuming `response` contains a requests.Response object.
+  # Assuming `response` contains a httpx.Response object.
   import datetime
 
 
@@ -174,7 +174,7 @@ that are provided to you. Continuing from the example in the Requests_ section::
           now = datetime.datetime.now(datetime.tzinfo.utc)
           wait = rate.reset_datetime - now
           time.sleep(wait.total_seconds())
-      response_more = requests.get(more, headers=request_headers)
+      response_more = httpx.get(more, headers=request_headers)
       # Decipher `response_more` ...
 
 .. class:: RateLimit(*, limit, remaining, reset_epoch)
@@ -256,7 +256,7 @@ Utilities
 
     Enterprise GitHub users can specify their custom base URL in *base_url*.
     By default, https://api.github.com/ is used as the base URL.
-    
+
     .. versionchanged:: 4.0
 
        Added ``base_url`` argument.
