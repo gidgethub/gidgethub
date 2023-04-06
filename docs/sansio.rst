@@ -142,7 +142,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
    authenticated request.
 
    The *jwt* allows making an authenticated request as a `GitHub App
-   <https://docs.github.com/en/free-pro-team@latest/developers/apps/authenticating-with-github-apps#authenticating-as-a-github-app>`_.
+   <https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/about-authentication-with-a-github-app#authentication-as-a-github-app>`_.
    You can pass only one: *oauth_token* or *jwt*, but not both.
 
    ``ValueError`` will be raised if both *jwt* and *oauth_token* are supplied.
@@ -229,10 +229,10 @@ that are provided to you. Continuing from the example in the Requests_ section::
     based on what the response specified.
 
     The last item of the tuple is the URL where to request the
-    `next set of results <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#pagination>`_.
+    `next set of results <https://docs.github.com/en/rest/overview/resources-in-the-rest-api?apiVersion=latest#hypermedia>`_.
     If there are no more results then ``None`` is returned. Do be aware
     that the URL
-    `can be a URI template <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#link-header>`_
+    `can be a URI template <https://docs.github.com/en/rest/overview/resources-in-the-rest-api?apiVersion=latest#hypermedia>`_
     and so it may need to be expanded.
 
     If the status code is anything other than ``200``, ``201``, or ``204``,
