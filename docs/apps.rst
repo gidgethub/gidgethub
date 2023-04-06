@@ -40,7 +40,7 @@ Example on how you would obtain the access token for authenticating as a GitHub 
     **private_key** is the content of the GitHub App's private key (``.PEM`` format) file.
 
     It returns the response from GitHub's
-    `Authenticating as an installation <https://docs.github.com/en/free-pro-team@latest/developers/apps/authenticating-with-github-apps#authenticating-as-an-installation>`_ API endpoint.
+    `Authenticating as an installation <https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/about-authentication-with-a-github-app#authentication-as-an-app-installation>`_ API endpoint.
 
 
 .. function:: get_jwt(*, app_id, private_key)

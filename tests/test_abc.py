@@ -1,9 +1,6 @@
-import asyncio
-import datetime
 import http
 import json
 import re
-import types
 
 import importlib_resources
 import pytest
@@ -13,20 +10,18 @@ from gidgethub import (
     GitHubBroken,
     GraphQLAuthorizationFailure,
     GraphQLException,
+    GraphQLResponseTypeError,
     QueryError,
     RedirectionException,
-    GraphQLResponseTypeError,
+    sansio,
 )
 from gidgethub import abc as gh_abc
-from gidgethub import sansio
+from gidgethub.abc import JSON_UTF_8_CHARSET
 
 from .samples import GraphQL as graphql_samples
 
-from gidgethub.abc import JSON_UTF_8_CHARSET
-
 
 class MockGitHubAPI(gh_abc.GitHubAPI):
-
     DEFAULT_HEADERS = {
         "x-ratelimit-limit": "2",
         "x-ratelimit-remaining": "1",
