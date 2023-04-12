@@ -65,6 +65,7 @@ class GitHubAPI(abc.ABC):
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
         content_type: str = JSON_CONTENT_TYPE,
+        extra_headers: Optional[Dict[str, str]] = None,
     ) -> Tuple[bytes, Opt[str]]:
         """Construct and make an HTTP request."""
         if oauth_token is not None and jwt is not None:
@@ -83,6 +84,8 @@ class GitHubAPI(abc.ABC):
             request_headers = sansio.create_headers(
                 self.requester, accept=accept, oauth_token=self.oauth_token
             )
+        if extra_headers is not None:
+            request_headers.update(extra_headers)
         cached = cacheable = False
         # Can't use None as a "no body" sentinel as it's a legitimate JSON type.
         if data == b"":
@@ -130,11 +133,19 @@ class GitHubAPI(abc.ABC):
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
+        extra_headers: Optional[Dict[str, str]] = None,
     ) -> Any:
         """Send a GET request for a single item to the specified endpoint."""
 
         data, _ = await self._make_request(
-            "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
+            "GET",
+            url,
+            url_vars,
+            b"",
+            accept,
+            jwt=jwt,
+            oauth_token=oauth_token,
+            extra_headers=extra_headers,
         )
         return data
 
@@ -146,11 +157,19 @@ class GitHubAPI(abc.ABC):
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
+        extra_headers: Optional[Dict[str, str]] = None,
         iterable_key: Opt[str] = ITERABLE_KEY,
     ) -> AsyncGenerator[Any, None]:
         """Return an async iterable for all the items at a specified endpoint."""
         data, more = await self._make_request(
-            "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
+            "GET",
+            url,
+            url_vars,
+            b"",
+            accept,
+            jwt=jwt,
+            oauth_token=oauth_token,
+            extra_headers=extra_headers,
         )
 
         if isinstance(data, dict) and iterable_key in data:
@@ -178,6 +197,7 @@ class GitHubAPI(abc.ABC):
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
+        extra_headers: Optional[Dict[str, str]] = None,
         content_type: str = JSON_CONTENT_TYPE,
     ) -> Any:
         data, _ = await self._make_request(
@@ -189,6 +209,7 @@ class GitHubAPI(abc.ABC):
             jwt=jwt,
             oauth_token=oauth_token,
             content_type=content_type,
+            extra_headers=extra_headers,
         )
         return data
 
@@ -201,9 +222,17 @@ class GitHubAPI(abc.ABC):
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
+        extra_headers: Optional[Dict[str, str]] = None,
     ) -> Any:
         data, _ = await self._make_request(
-            "PATCH", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
+            "PATCH",
+            url,
+            url_vars,
+            data,
+            accept,
+            jwt=jwt,
+            oauth_token=oauth_token,
+            extra_headers=extra_headers,
         )
         return data
 
@@ -216,9 +245,17 @@ class GitHubAPI(abc.ABC):
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
+        extra_headers: Optional[Dict[str, str]] = None,
     ) -> Any:
         data, _ = await self._make_request(
-            "PUT", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
+            "PUT",
+            url,
+            url_vars,
+            data,
+            accept,
+            jwt=jwt,
+            oauth_token=oauth_token,
+            extra_headers=extra_headers,
         )
         return data
 
@@ -231,9 +268,17 @@ class GitHubAPI(abc.ABC):
         accept: str = sansio.accept_format(),
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
+        extra_headers: Optional[Dict[str, str]] = None,
     ) -> None:
         await self._make_request(
-            "DELETE", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
+            "DELETE",
+            url,
+            url_vars,
+            data,
+            accept,
+            jwt=jwt,
+            oauth_token=oauth_token,
+            extra_headers=extra_headers,
         )
 
     async def graphql(
