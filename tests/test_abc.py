@@ -256,6 +256,31 @@ class TestGitHubAPIGetiter:
         assert data[3] == 2
 
     @pytest.mark.asyncio
+    async def test_getiter_with_extra_headers(self):
+        """Test that getiter() sends extra headers correctly."""
+        original_data = [1, 2]
+        next_url = "https://api.github.com/fake{/extra}?page=2"
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["content-type"] = "application/json; charset=UTF-8"
+        headers["link"] = f'<{next_url}>; rel="next"'
+        gh = MockGitHubAPI(
+            headers=headers, body=json.dumps(original_data).encode("utf8")
+        )
+        extra_headers = {"X-Custom-Header": "custom_value"}
+        data = []
+        async for item in gh.getiter(
+            "/fake", {"extra": "stuff"}, extra_headers=extra_headers
+        ):
+            data.append(item)
+        assert gh.method == "GET"
+        assert gh.headers["X-Custom-Header"] == "custom_value"
+        assert len(data) == 4
+        assert data[0] == 1
+        assert data[1] == 2
+        assert data[2] == 1
+        assert data[3] == 2
+
+    @pytest.mark.asyncio
     async def test_with_passed_jwt(self):
         original_data = [1, 2]
         next_url = "https://api.github.com/fake{/extra}?page=2"
@@ -355,6 +380,20 @@ class TestGitHubAPIGetiter:
         assert data[1] == 2
         assert data[2] == 1
         assert data[3] == 2
+
+    @pytest.mark.asyncio
+    async def test_extra_headers(self):
+        """Test that extra headers are passed correctly."""
+        accept = sansio.accept_format()
+        extra_headers = {"X-Custom-Header": "custom_value"}
+        gh = MockGitHubAPI()
+        await gh._make_request(
+            "GET", "/rate_limit", {}, "", accept, extra_headers=extra_headers
+        )
+        assert gh.headers["user-agent"] == "test_abc"
+        assert gh.headers["accept"] == accept
+        assert "X-Custom-Header" in gh.headers
+        assert gh.headers["X-Custom-Header"] == "custom_value"
 
 
 class TestGitHubAPIPost:

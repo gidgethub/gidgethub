@@ -185,6 +185,7 @@ class GitHubAPI(abc.ABC):
                 jwt=jwt,
                 oauth_token=oauth_token,
                 iterable_key=iterable_key,
+                extra_headers=extra_headers,
             ):
                 yield item  # pragma: nocover
 
