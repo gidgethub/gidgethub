@@ -12,6 +12,7 @@ from . import (
     GitHubBroken,
     GraphQLAuthorizationFailure,
     GraphQLException,
+    HTTPException,
     QueryError,
     GraphQLResponseTypeError,
 )
@@ -149,9 +150,13 @@ class GitHubAPI(abc.ABC):
     ) -> int:
         """Send a GET request for a single item to the specifie endpoint and return its status code."""
 
-        _, _, status_code = await self._make_request(
-            "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
-        )
+        try:
+            _, _, status_code = await self._make_request(
+                "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
+            )
+        except HTTPException as e:
+            status_code = e.status_code
+
         return status_code
 
     async def getiter(

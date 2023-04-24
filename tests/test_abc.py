@@ -254,6 +254,30 @@ class TestGitHubAPIGetStatus:
         assert gh.method == "GET"
         assert data == original_status
 
+    @pytest.mark.asyncio
+    async def test_getstatus_4xx(self):
+        original_status = 404
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["content-type"] = "application/json; charset=UTF-8"
+        gh = MockGitHubAPI(
+            headers=headers, status_code=original_status
+        )
+        data = await gh.getstatus("/fake")
+        assert gh.method == "GET"
+        assert data == original_status
+
+    @pytest.mark.asyncio
+    async def test_getstatus_5xx(self):
+        original_status = 504
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["content-type"] = "application/json; charset=UTF-8"
+        gh = MockGitHubAPI(
+            headers=headers, status_code=original_status
+        )
+        data = await gh.getstatus("/fake")
+        assert gh.method == "GET"
+        assert data == original_status
+
 
 class TestGitHubAPIGetiter:
     @pytest.mark.asyncio
