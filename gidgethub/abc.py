@@ -65,7 +65,7 @@ class GitHubAPI(abc.ABC):
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
         content_type: str = JSON_CONTENT_TYPE,
-    ) -> Tuple[bytes, Opt[str]]:
+    ) -> Tuple[bytes, Opt[str], int]:
         """Construct and make an HTTP request."""
         if oauth_token is not None and jwt is not None:
             raise ValueError("Cannot pass both oauth_token and jwt.")
@@ -120,7 +120,7 @@ class GitHubAPI(abc.ABC):
                 etag = response[1].get("etag")
                 last_modified = response[1].get("last-modified")
                 self._cache[filled_url] = etag, last_modified, data, more
-        return data, more
+        return data, more, response[0]
 
     async def getitem(
         self,
@@ -133,10 +133,26 @@ class GitHubAPI(abc.ABC):
     ) -> Any:
         """Send a GET request for a single item to the specified endpoint."""
 
-        data, _ = await self._make_request(
+        data, _, _ = await self._make_request(
             "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
         )
         return data
+
+    async def getstatus(
+        self,
+        url: str,
+        url_vars: Optional[variable.VariableValueDict] = {},
+        *,
+        accept: str = sansio.accept_format(),
+        jwt: Opt[str] = None,
+        oauth_token: Opt[str] = None,
+    ) -> int:
+        """Send a GET request for a single item to the specifie endpoint and return its status code."""
+
+        _, _, status_code = await self._make_request(
+            "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
+        )
+        return status_code
 
     async def getiter(
         self,
@@ -149,7 +165,7 @@ class GitHubAPI(abc.ABC):
         iterable_key: Opt[str] = ITERABLE_KEY,
     ) -> AsyncGenerator[Any, None]:
         """Return an async iterable for all the items at a specified endpoint."""
-        data, more = await self._make_request(
+        data, more, _ = await self._make_request(
             "GET", url, url_vars, b"", accept, jwt=jwt, oauth_token=oauth_token
         )
 
@@ -180,7 +196,7 @@ class GitHubAPI(abc.ABC):
         oauth_token: Opt[str] = None,
         content_type: str = JSON_CONTENT_TYPE,
     ) -> Any:
-        data, _ = await self._make_request(
+        data, _, _ = await self._make_request(
             "POST",
             url,
             url_vars,
@@ -202,7 +218,7 @@ class GitHubAPI(abc.ABC):
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
     ) -> Any:
-        data, _ = await self._make_request(
+        data, _, _ = await self._make_request(
             "PATCH", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
         )
         return data
@@ -217,7 +233,7 @@ class GitHubAPI(abc.ABC):
         jwt: Opt[str] = None,
         oauth_token: Opt[str] = None,
     ) -> Any:
-        data, _ = await self._make_request(
+        data, _, _ = await self._make_request(
             "PUT", url, url_vars, data, accept, jwt=jwt, oauth_token=oauth_token
         )
         return data
