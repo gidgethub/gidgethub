@@ -175,7 +175,9 @@ class TestGeneralGitHubAPI:
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
         headers["link"] = "<https://api.github.com/fake?page=2>; " 'rel="next"'
         gh = MockGitHubAPI(headers=headers)
-        _, more, _ = await gh._make_request("GET", "/fake", {}, "", sansio.accept_format())
+        _, more, _ = await gh._make_request(
+            "GET", "/fake", {}, "", sansio.accept_format()
+        )
         assert more == "https://api.github.com/fake?page=2"
 
     @pytest.mark.asyncio
@@ -184,7 +186,9 @@ class TestGeneralGitHubAPI:
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
         headers["link"] = "<https://api.github.com/fake?page=2>; " 'rel="next"'
         gh = MockGitHubAPI(headers=headers)
-        _, _, status_code = await gh._make_request("GET", "/fake", {}, "", sansio.accept_format())
+        _, _, status_code = await gh._make_request(
+            "GET", "/fake", {}, "", sansio.accept_format()
+        )
         assert status_code == 200
 
 
@@ -247,9 +251,7 @@ class TestGitHubAPIGetStatus:
         original_status = 204
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
         headers["content-type"] = "application/json; charset=UTF-8"
-        gh = MockGitHubAPI(
-            headers=headers, status_code=original_status
-        )
+        gh = MockGitHubAPI(headers=headers, status_code=original_status)
         data = await gh.getstatus("/fake")
         assert gh.method == "GET"
         assert data == original_status
@@ -259,9 +261,7 @@ class TestGitHubAPIGetStatus:
         original_status = 404
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
         headers["content-type"] = "application/json; charset=UTF-8"
-        gh = MockGitHubAPI(
-            headers=headers, status_code=original_status
-        )
+        gh = MockGitHubAPI(headers=headers, status_code=original_status)
         data = await gh.getstatus("/fake")
         assert gh.method == "GET"
         assert data == original_status
@@ -271,9 +271,7 @@ class TestGitHubAPIGetStatus:
         original_status = 504
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
         headers["content-type"] = "application/json; charset=UTF-8"
-        gh = MockGitHubAPI(
-            headers=headers, status_code=original_status
-        )
+        gh = MockGitHubAPI(headers=headers, status_code=original_status)
         data = await gh.getstatus("/fake")
         assert gh.method == "GET"
         assert data == original_status
