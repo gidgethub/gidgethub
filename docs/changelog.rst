@@ -1,14 +1,11 @@
 Changelog
 =========
 
-5.2.2
+5.3.0
 -----
 
 - Add a getstatus() method for APIs that do not return content.
   (`PR #194 <https://github.com/brettcannon/gidgethub/pull/194>_`)
-
-- Update the interspinx mapping to 1.0-style.
-  (`PR #195 <https://github.com/brettcannon/gidgethub/pull/195>_`)
 
 5.2.1
 -----
