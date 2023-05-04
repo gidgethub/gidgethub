@@ -1,6 +1,12 @@
 Changelog
 =========
 
+5.3.0
+-----
+
+- Add a getstatus() method for APIs that do not return content.
+  (`PR #194 <https://github.com/brettcannon/gidgethub/pull/194>_`)
+
 5.2.1
 -----
 

@@ -142,6 +142,25 @@ experimental APIs without issue.
             For ``GET`` calls that can return multiple values and
             potentially require pagination, see ``getiter()``.
 
+    .. py:method:: getstatus(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+        :async:
+
+        Get a single item's *HTTP status* from GitHub.
+
+        *jwt* is the value of the JSON web token, for authenticating as a GitHub
+        App.
+
+        *oauth_token* is the value of the oauth token, for making an authenticated
+        API call.
+
+        Only one of *oauth_token* or *jwt* may be passed. A ``ValueError`` is
+        raised if both are passed. If neither was passed, it defaults to the
+        value of the *oauth_token* attribute.
+
+        .. note::
+            This method discards any returned content, and is only for use
+            on API endpoints like /orgs/{org}/members/{username} where the
+            HTTP response code is the relevant answer.
 
     .. py:method:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None, iterable_key="items")
         :async:
