@@ -1,14 +1,17 @@
 Changelog
 =========
 
-Unreleased
-----------
+5.3.0
+-----
 
 - Add extra_headers option to HTTP methods in GitHubAPI
   (`Issue #193 <https://github.com/brettcannon/gidgethub/pull/193>_`)
 
 - Add support passing ``extra_headers`` when making requests
   (`PR #192 <https://github.com/brettcannon/gidgethub/pull/192>_`)
+
+- Add a getstatus() method for APIs that do not return content.
+  (`PR #194 <https://github.com/brettcannon/gidgethub/pull/194>_`)
 
 5.2.1
 -----
