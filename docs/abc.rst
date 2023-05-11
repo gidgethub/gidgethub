@@ -164,7 +164,7 @@ experimental APIs without issue.
             on API endpoints like /orgs/{org}/members/{username} where the
             HTTP response code is the relevant answer.
 
-    .. py:method:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None, iterable_key="items", , extra_headers=None)
+    .. py:method:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None, iterable_key="items", extra_headers=None)
         :async:
 
         Get all items from a GitHub API endpoint.
