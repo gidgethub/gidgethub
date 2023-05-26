@@ -48,7 +48,9 @@ experimental APIs without issue.
     methods that send data to GitHub, there is a *data* argument which
     accepts an object which can be serialized to JSON (because
     ``None`` is a legitimate JSON value, ``""`` is used to represent
-    no data).
+    no data). The *extra_headers* argument optionally is ``dict[str, str]``,
+    and allows passing extra headers to the request specifying extra
+    options that the GitHub API allows.
 
     The returned value for GitHub requests is the decoded body of the
     response according to :func:`gidgethub.sansio.decipher_response`.
@@ -119,7 +121,7 @@ experimental APIs without issue.
             Renamed from ``_sleep()``.
 
 
-    .. py:method:: getitem(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: getitem(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None, extra_headers=None)
         :async:
 
         Get a single item from GitHub.
@@ -162,7 +164,7 @@ experimental APIs without issue.
             on API endpoints like /orgs/{org}/members/{username} where the
             HTTP response code is the relevant answer.
 
-    .. py:method:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None, iterable_key="items")
+    .. py:method:: getiter(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None, iterable_key="items", extra_headers=None)
         :async:
 
         Get all items from a GitHub API endpoint.
@@ -203,7 +205,7 @@ experimental APIs without issue.
             :meth:`getitem`.
 
 
-    .. py:method:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None, content_type="application/json")
+    .. py:method:: post(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None, content_type="application/json", extra_headers=None)
         :async:
 
         Send a ``POST`` request to GitHub.
@@ -237,7 +239,7 @@ experimental APIs without issue.
             Added *jwt* and *oauth_token*.
 
 
-    .. py:method:: patch(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: patch(url, url_vars={}, *, data, accept=sansio.accept_format(), jwt=None, oauth_token=None, extra_headers=None)
         :async:
 
         Send a ``PATCH`` request to GitHub.
@@ -257,7 +259,7 @@ experimental APIs without issue.
             Added *jwt* and *oauth_token*.
 
 
-    .. py:method:: put(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: put(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None, extra_headers=None)
         :async:
 
         Send a ``PUT`` request to GitHub.
@@ -281,7 +283,7 @@ experimental APIs without issue.
             Added *jwt* and *oauth_token*.
 
 
-    .. py:method:: delete(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None)
+    .. py:method:: delete(url, url_vars={}, *, data=b"", accept=sansio.accept_format(), jwt=None, oauth_token=None, extra_headers=None)
         :async:
 
         Send a ``DELETE`` request to GitHub.
