@@ -5,22 +5,22 @@ Changelog
 -----
 
 - Add extra_headers option to HTTP methods in GitHubAPI
-  (`Issue #193 <https://github.com/brettcannon/gidgethub/pull/193>_`)
+  (`Issue #193 <https://github.com/brettcannon/gidgethub/pull/193>`_)
 
 - Add support passing ``extra_headers`` when making requests
-  (`PR #192 <https://github.com/brettcannon/gidgethub/pull/192>_`)
+  (`PR #192 <https://github.com/brettcannon/gidgethub/pull/192>`_)
 
 - Add a getstatus() method for APIs that do not return content.
-  (`PR #194 <https://github.com/brettcannon/gidgethub/pull/194>_`)
+  (`PR #194 <https://github.com/brettcannon/gidgethub/pull/194>`_)
 
 5.2.1
 -----
 
 - Fix cgi and importlib_resources deprecations.
-  (`PR #185 <https://github.com/brettcannon/gidgethub/pull/185>_`)
+  (`PR #185 <https://github.com/brettcannon/gidgethub/pull/185>`_)
 
 - Add support for Python 3.11 and drop EOL Python 3.6
-  (`PR #184 <https://github.com/brettcannon/gidgethub/pull/184>_`)
+  (`PR #184 <https://github.com/brettcannon/gidgethub/pull/184>`_)
 
 5.2.0
 -----
