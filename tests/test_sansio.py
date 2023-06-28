@@ -493,7 +493,6 @@ class TestDecipherResponse:
         assert rate_limit.remaining == 48
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/6395"
 
-    @pytest.mark.asyncio
     def test_next_with_search_api(self):
         status_code = 200
         headers, body = sample("search_issues_page_1", status_code)
