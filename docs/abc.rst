@@ -24,7 +24,7 @@ does not require an update to the library, allowing one to use
 experimental APIs without issue.
 
 
-.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None, base_url=sansio.DOMAIN)
+.. class:: GitHubAPI(requester, *, oauth_token=None, app_id=None, private_key=None, cache=None, base_url=sansio.DOMAIN)
 
     Provide an :py:term:`abstract base class` which abstracts out the
     HTTP library being used to send requests to GitHub. The class is
@@ -80,6 +80,21 @@ experimental APIs without issue.
     .. attribute:: oauth_token
 
         The provided OAuth token (if any).
+
+        An OAuth token cannot be set with the *app_id* and *private_key*.
+    
+    .. attribute:: app_id
+
+        The provided GitHub App ID (if any) to authenticate as a GitHub App.
+        Must be used with *private_key*.
+    
+    .. attribute:: private_key
+
+        The provided GitHub App private key (if any) to authenticate as a
+        GitHub App. Must be used with *app_id*.
+
+        To authenticate as an installation of a GitHub App, use the
+        *oauth_token* argument instead.
 
     .. attribute:: base_url
 
