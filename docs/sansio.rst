@@ -51,7 +51,7 @@ without requiring the use of the :class:`Event` class.
    .. attribute:: event
 
       The string representation of the
-      `triggering event <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/about-webhooks#events>`_.
+      `triggering event <https://docs.github.com/en/webhooks-and-events/webhooks/webhook-events-and-payloads>`_.
 
 
    .. attribute:: delivery_id
