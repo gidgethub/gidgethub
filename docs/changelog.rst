@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+- The `gidgethub.abc.GitHubApi` optionally accepts ``app_id`` and ``private_key`` arguments to automatically authenticate requests as a GitHub App.
+
 5.3.0
 -----
 
