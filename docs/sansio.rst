@@ -5,7 +5,7 @@
 
 Webhook events
 --------------
-`Webhook events <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/about-webhooks>`_ are represented by
+`Webhook events <https://docs.github.com/en/webhooks-and-events/webhooks/webhook-events-and-payloads>`_ are represented by
 :class:`Event` objects. The expectation is that a server will receive an HTTP
 request from GitHub and then use :meth:`Event.from_http` to create an
 :class:`Event` instance. For example::
@@ -44,14 +44,14 @@ without requiring the use of the :class:`Event` class.
 
    .. attribute:: data
 
-      The `payload <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/webhook-events-and-payloads>`_ of the
+      The `payload <https://docs.github.com/en/webhooks-and-events/webhooks/webhook-events-and-payloads>`_ of the
       event.
 
 
    .. attribute:: event
 
       The string representation of the
-      `triggering event <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/about-webhooks#events>`_.
+      `triggering event <https://docs.github.com/en/webhooks-and-events/webhooks/webhook-events-and-payloads>`_.
 
 
    .. attribute:: delivery_id
