@@ -7,7 +7,7 @@
 
 When a single web service is used to perform multiple actions based on
 a single
-`webhook event <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/about-webhooks#events>`_, it
+`webhook event <https://docs.github.com/en/webhooks-and-events/webhooks/webhook-events-and-payloads>`_, it
 is easier to do those multiple steps in some sort of routing mechanism
 to make sure the right objects are called is provided. This module is
 meant to provide such a router for :class:`gidgethub.sansio.Event`
