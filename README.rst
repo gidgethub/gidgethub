@@ -57,7 +57,7 @@ off of GitHub's `octocat <https://octodex.github.com/>`_ mascot and use my own
 cat's name, Gidget, in some way. Since "Gidget" somewhat sounds like
 "git", I decided to go with "gidgethub".
 
-blablabla
+blablablabla
 
 Changelog
 ---------
