@@ -70,6 +70,9 @@ experimental APIs without issue.
 
     .. versionchanged:: 4.0
         Introduced the *base_url* argument to the constructor.
+    
+    .. versionchanged:: 5.4.0
+        Introduced the *app_id* and *private_key* arguments to the constructor.
 
     .. attribute:: requester
 
