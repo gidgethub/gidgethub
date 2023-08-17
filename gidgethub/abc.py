@@ -47,11 +47,7 @@ class GitHubAPI(abc.ABC):
     ) -> None:
         if all(_ is not None for _ in (oauth_token, app_id, private_key)):
             raise ValueError(
-                "Cannot pass oauth_token at the same time as app_id and "
-                "private_key. Use oauth token if authenticating as an OAuth "
-                "App, with a personal access token, or as an installation of a "
-                "GitHub App. Othewise, use app_id and private_key to "
-                "authenticate as a GitHub App with a JWT."
+                "Cannot pass oauth_token if app_id and private_key are also passed."
             )
 
         self.requester = requester
