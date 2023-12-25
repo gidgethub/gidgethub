@@ -339,7 +339,7 @@ def decipher_response(
             exc_type = BadRequest
             if status_code == 403:
                 rate_limit = RateLimit.from_http(headers)
-                if rate_limit and not rate_limit.remaining:
+                if rate_limit != None and not rate_limit.remaining:
                     raise RateLimitExceeded(rate_limit, message)
             elif status_code == 422:
                 try:
