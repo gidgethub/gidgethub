@@ -28,7 +28,7 @@ without requiring the use of the :class:`Event` class.
 
 .. function:: validate_event(payload, *, signature, secret)
 
-   `Validate the signature <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github>`_
+   `Validate the signature <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks>`_
    of a webhook event.
 
    :exc:`~gidgethub.ValidationFailure` is raised if the signature is malformed
@@ -127,7 +127,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
    Create a dict representing GitHub-specific header fields.
 
    The user agent is set according to who the *requester* is.
-   `GitHub asks <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#user-agent-required>`_ it be
+   `GitHub asks <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api>`_ it be
    either a username or project name.
 
    The *accept* argument corresponds to the ``'accept'`` field and defaults to
@@ -137,7 +137,7 @@ by helping to automate the GitHub-specific aspects of a REST call.
    response, e.g. wanting the rendered HTML of a Markdown file.
 
    The *oauth_token* allows making an
-   `authenticated request <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#authentication>`_.
+   `authenticated request <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api>`_.
    This can be important if you need the expanded rate limit provided by an
    authenticated request.
 
@@ -179,7 +179,7 @@ that are provided to you. Continuing from the example in the Requests_ section::
 
 .. class:: RateLimit(*, limit, remaining, reset_epoch)
 
-    The `rate limit <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#rate-limiting>`_ imposed
+    The `rate limit <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api>`_ imposed
     upon the requester.
 
     The *reset_epoch* argument is expected to be UTC seconds from the epoch.
