@@ -15,7 +15,7 @@ Exceptions
 .. exception:: ValidationFailure
 
    An exception representing
-   `failed validation of a webhook event <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github>`_.
+   `failed validation of a webhook event <https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks>`_.
 
    Inherits from :exc:`GitHubException`.
 
