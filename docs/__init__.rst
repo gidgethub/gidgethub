@@ -73,7 +73,7 @@ Exceptions
 .. exception:: InvalidField(errors, *args)
 
    Raised when a
-   `field in a request is invalid <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#client-errors>`_.
+   `field in a request is invalid <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api>`_.
 
    Inherits from :exc:`BadRequest` and explicitly specifies a ``422`` status
    code. Details of what fields were invalid are stored in the :attr:`errors`
