@@ -32,7 +32,7 @@ experimental APIs without issue.
     OAuth token and a cache object.
 
     To allow for
-    `conditional requests <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#conditional-requests>`_,
+    `conditional requests <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api>`_,
     one can provide a :class:`collections.abc.MutableMapping` object
     for the *cache* argument to cache requests. It is up to the
     caching object to provide any caching scheme that is desired
@@ -61,7 +61,7 @@ experimental APIs without issue.
     .. versionchanged:: 2.0
         Methods no longer automatically sleep when there is a chance
         of exceeding the
-        `rate limit <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#rate-limiting>`_.
+        `rate limit <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api>`_.
         This leads to :exc:`~gidgethub.RateLimitExceeded` being raised
         when the rate limit has been execeeded.
 
@@ -113,8 +113,7 @@ experimental APIs without issue.
 
         An abstract :term:`coroutine` which causes the coroutine to
         sleep for the specified number of seconds. This is provided to
-        help prevent from going over one's
-        `rate limit <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#rate-limiting>`_.
+        help prevent from going over one's `rate limit`_.
 
         .. versionchanged:: 2.0
 
@@ -171,7 +170,7 @@ experimental APIs without issue.
 
         An asynchronous iterable is returned which will yield all items
         from the endpoint (i.e. use ``async for`` on the result). Any
-        `pagination <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#pagination>`_
+        `pagination <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api>`_
         will automatically be followed.
 
         *jwt* is the value of the JSON web token, for authenticating as a GitHub
