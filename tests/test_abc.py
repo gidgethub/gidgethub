@@ -1,8 +1,10 @@
 import http
 import json
 import re
+import time
 
 import importlib_resources
+import jwt
 import pytest
 
 from gidgethub import (
@@ -19,6 +21,12 @@ from gidgethub import abc as gh_abc
 from gidgethub.abc import JSON_UTF_8_CHARSET
 
 from .samples import GraphQL as graphql_samples
+from .samples import rsa_key as rsa_key_samples
+
+SAMPLE_APP_ID = "12345"
+SAMPLE_PRIVATE_KEY = (
+    importlib_resources.files(rsa_key_samples) / "test_rsa_key"
+).read_bytes()
 
 
 class MockGitHubAPI(gh_abc.GitHubAPI):
@@ -37,13 +45,20 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         *,
         cache=None,
         oauth_token=None,
+        app_id=None,
+        private_key=None,
         base_url=sansio.DOMAIN,
     ):
         self.response_code = status_code
         self.response_headers = headers
         self.response_body = body
         super().__init__(
-            "test_abc", oauth_token=oauth_token, cache=cache, base_url=base_url
+            "test_abc",
+            oauth_token=oauth_token,
+            cache=cache,
+            base_url=base_url,
+            app_id=app_id,
+            private_key=private_key,
         )
 
     async def _request(self, method, url, headers, body=b""):
@@ -66,6 +81,50 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
 
 
 class TestGeneralGitHubAPI:
+    def test_single_auth_constructor(self):
+        """Test that an error is raised if both oauth and JWT authentications
+        are set in the constructor.
+        """
+        with pytest.raises(ValueError):
+            MockGitHubAPI(
+                oauth_token="oauth token",
+                app_id=SAMPLE_APP_ID,
+                private_key=SAMPLE_PRIVATE_KEY,
+            )
+
+    def test_app_constructor(self):
+        """Test setting the app_id and private_key in the constructor to
+        cache GitHub App authentication.
+        """
+        gh = MockGitHubAPI(app_id=SAMPLE_APP_ID, private_key=SAMPLE_PRIVATE_KEY)
+        assert gh.jwt is not None
+        assert gh.app_id == SAMPLE_APP_ID
+        assert gh.private_key == SAMPLE_PRIVATE_KEY
+
+    def test_jwt_caching(self):
+        """Test that the JWT is cached and is regenerated if expired."""
+        start_time = time.time()
+        gh = MockGitHubAPI(app_id=SAMPLE_APP_ID, private_key=SAMPLE_PRIVATE_KEY)
+        initial_jwt = gh.jwt
+
+        # JWT should still be valid, so we get the cached token
+        assert gh.jwt == initial_jwt
+
+        # Create a JWT in the past and put it into the cache
+        past_jwt = jwt.encode(
+            {
+                "iat": int(start_time - 11 * 60),
+                "exp": int(start_time - 60),
+                "iss": SAMPLE_APP_ID,
+            },
+            SAMPLE_PRIVATE_KEY,
+            algorithm="RS256",
+        )
+        gh._jwt = past_jwt
+        # Access the jwt property to trigger regeneration.
+        new_jwt = gh.jwt
+        assert new_jwt != past_jwt
+
     @pytest.mark.asyncio
     async def test_url_formatted(self):
         """The URL is appropriately formatted."""
@@ -93,14 +152,27 @@ class TestGeneralGitHubAPI:
         assert gh.url == "https://my.host.com/users/octocat/following/brettcannon"
 
     @pytest.mark.asyncio
-    async def test_headers(self):
-        """Appropriate headers are created."""
+    async def test_headers_oauth_token(self):
+        """Appropriate headers are created with a cached oauth token."""
         accept = sansio.accept_format()
         gh = MockGitHubAPI(oauth_token="oauth token")
         await gh._make_request("GET", "/rate_limit", {}, "", accept)
         assert gh.headers["user-agent"] == "test_abc"
         assert gh.headers["accept"] == accept
         assert gh.headers["authorization"] == "token oauth token"
+
+    @pytest.mark.asyncio
+    async def test_headers_jwt(self):
+        """Test the authorization header with the cached app_id and private_key
+        for a GitHub App.
+        """
+        accept = sansio.accept_format()
+        gh = MockGitHubAPI(app_id=SAMPLE_APP_ID, private_key=SAMPLE_PRIVATE_KEY)
+        await gh._make_request("GET", "/rate_limit", {}, "", accept)
+        assert gh.headers["user-agent"] == "test_abc"
+        assert gh.headers["accept"] == accept
+        assert gh.headers["authorization"] == f"bearer {gh.jwt}"
+        assert gh.jwt is not None
 
     @pytest.mark.asyncio
     async def test_auth_headers_with_passed_token(self):
@@ -119,6 +191,20 @@ class TestGeneralGitHubAPI:
         """Test the authorization header with the passed jwt."""
         accept = sansio.accept_format()
         gh = MockGitHubAPI()
+        await gh._make_request(
+            "GET", "/rate_limit", {}, "", accept, jwt="json web token"
+        )
+        assert gh.headers["user-agent"] == "test_abc"
+        assert gh.headers["accept"] == accept
+        assert gh.headers["authorization"] == "bearer json web token"
+
+    @pytest.mark.asyncio
+    async def test_auth_headers_override_with_passed_jwt(self):
+        """Test the authorization header with the passed jwt, overriding the
+        cached JWT.
+        """
+        accept = sansio.accept_format()
+        gh = MockGitHubAPI(app_id=SAMPLE_APP_ID, private_key=SAMPLE_PRIVATE_KEY)
         await gh._make_request(
             "GET", "/rate_limit", {}, "", accept, jwt="json web token"
         )
