@@ -4,8 +4,11 @@ import http
 import json
 from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Optional, Tuple
 from typing import Optional as Opt
+import jwt
 
 from uritemplate import variable
+
+from gidgethub.apps import get_jwt
 
 from . import (
     BadGraphQLRequest,
@@ -37,11 +40,21 @@ class GitHubAPI(abc.ABC):
         requester: str,
         *,
         oauth_token: Opt[str] = None,
+        app_id: Opt[str] = None,
+        private_key: Opt[str] = None,
         cache: Opt[CACHE_TYPE] = None,
         base_url: str = sansio.DOMAIN,
     ) -> None:
+        if all(_ is not None for _ in (oauth_token, app_id, private_key)):
+            raise ValueError(
+                "Cannot pass oauth_token if app_id and private_key are also passed."
+            )
+
         self.requester = requester
         self.oauth_token = oauth_token
+        self.app_id = app_id
+        self.private_key = private_key
+        self._jwt: Opt[str] = None  # cached JWT from app_id and private_key
         self._cache = cache
         self.rate_limit: Opt[sansio.RateLimit] = None
         self.base_url = base_url
@@ -80,10 +93,17 @@ class GitHubAPI(abc.ABC):
             request_headers = sansio.create_headers(
                 self.requester, accept=accept, oauth_token=oauth_token
             )
-        else:
-            # fallback to using oauth_token
+        elif self.oauth_token is not None:
+            # fallback to using default oauth_token
             request_headers = sansio.create_headers(
                 self.requester, accept=accept, oauth_token=self.oauth_token
+            )
+        else:
+            # fallback to using GitHub App JWT (it may be None, in which case
+            # no authentication will be set.)
+            app_jwt = self.jwt
+            request_headers = sansio.create_headers(
+                self.requester, accept=accept, jwt=app_jwt
             )
         if extra_headers is not None:
             request_headers.update(extra_headers)
@@ -125,6 +145,28 @@ class GitHubAPI(abc.ABC):
                 last_modified = response[1].get("last-modified")
                 self._cache[filled_url] = etag, last_modified, data, more
         return data, more, response[0]
+
+    @property
+    def jwt(self) -> Opt[str]:
+        """A JWT for authenticating as a GitHub App (available if ``app_id``
+        and ``private_key`` are set).
+        """
+        if self.app_id is None or self.private_key is None:
+            return None
+
+        # Check if an existing JWT is still valid.
+        if self._jwt is not None:
+            try:
+                jwt.decode(
+                    self._jwt, options={"verify_signature": False, "verify_exp": True}
+                )
+                return self._jwt
+            except jwt.ExpiredSignatureError:
+                self._jwt = None
+
+        self._jwt = get_jwt(app_id=self.app_id, private_key=self.private_key)
+
+        return self._jwt
 
     async def getitem(
         self,

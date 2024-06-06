@@ -1,10 +1,14 @@
 """Support for GitHub Actions."""
-from typing import cast, Any, Dict
+
+from __future__ import annotations
+
+from typing import cast, Any, Dict, TYPE_CHECKING
 
 import time
 import jwt
 
-from gidgethub.abc import GitHubAPI
+if TYPE_CHECKING:
+    from gidgethub.abc import GitHubAPI
 
 
 def get_jwt(*, app_id: str, private_key: str) -> str:
