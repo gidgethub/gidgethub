@@ -7,7 +7,6 @@ AsyncCallback = Callable[..., Awaitable[None]]
 
 
 class Router:
-
     """Route webhook events to registered functions."""
 
     def __init__(self, *other_routers: "Router") -> None:

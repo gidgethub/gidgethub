@@ -1,4 +1,5 @@
 """Support for GitHub Actions."""
+
 import functools
 import json
 import os
