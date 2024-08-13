@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+- Add support for Python 3.12-3.13 and drop EOL Python 3.7
+  (`PR #209 <https://github.com/brettcannon/gidgethub/pull/209>`_)
+
 5.3.0
 -----
 
