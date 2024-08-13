@@ -1,4 +1,5 @@
 """Provide an abstract base class for easier requests."""
+
 import abc
 import http
 import json
@@ -29,7 +30,6 @@ ITERABLE_KEY = "items"
 
 
 class GitHubAPI(abc.ABC):
-
     """Provide an idiomatic API for making calls to GitHub's API."""
 
     def __init__(

@@ -5,6 +5,7 @@ use any HTTP library you prefer while not having to implement common details
 when working with GitHub's API (e.g. validating webhook events or specifying the
 API version you want your request to work against).
 """
+
 import datetime
 from email.message import Message
 import hmac
@@ -93,7 +94,6 @@ def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
 
 
 class Event:
-
     """Details of a GitHub webhook event."""
 
     def __init__(self, data: Any, *, event: str, delivery_id: str) -> None:
@@ -219,7 +219,6 @@ def create_headers(
 
 
 class RateLimit:
-
     """The rate limit imposed upon the requester.
 
     The 'limit' attribute specifies the rate of requests per hour the client is

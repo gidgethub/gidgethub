@@ -777,7 +777,6 @@ _SAMPLE_QUERY_WITH_VARIABLES = """query ($number_of_repos: Int!) {
 
 
 class TestGraphQL:
-
     """Test gidgethub.abc.GitHubAPI.graphql()."""
 
     def gh_and_response(self, payload_filename):
