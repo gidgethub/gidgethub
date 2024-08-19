@@ -32,7 +32,6 @@ def tmp_pathfile(tmpdir, tmp_path, monkeypatch):
 
 
 class TestWorkspace:
-
     """Tests for gidgethub.actions.workspace()."""
 
     def test_reading(self, tmp_path, monkeypatch):
@@ -49,7 +48,6 @@ class TestWorkspace:
 
 
 class TestEvent:
-
     """Tests for gidgethub.actions.event()."""
 
     def test_reading(self, tmp_webhook):
@@ -67,7 +65,6 @@ class TestEvent:
 
 
 class TestCommand:
-
     """Tests for gidgethub.actions.command()."""
 
     # https://help.github.com/en/actions/reference/development-tools-for-github-actions#logging-commands
@@ -123,7 +120,6 @@ class TestCommand:
 
 
 class TestSetenv:
-
     """Tests for gidgethub.actions.setenv()."""
 
     def test_creating(self, tmp_envfile):
@@ -168,7 +164,6 @@ class TestSetenv:
 
 
 class TestAddpath:
-
     """Tests for gidgethub.actions.addpath()."""
 
     def test_string_path(self, tmp_pathfile):

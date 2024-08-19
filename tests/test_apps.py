@@ -11,7 +11,6 @@ from .samples import rsa_key as rsa_key_samples
 
 
 class TestGitHubAppUtils:
-
     """Tests for GitHub App utilities."""
 
     @mock.patch("time.time")
