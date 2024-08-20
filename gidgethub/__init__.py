@@ -1,4 +1,5 @@
 """An async GitHub API library"""
+
 __version__ = "5.3.0"
 
 import http
@@ -6,19 +7,16 @@ from typing import Any, Optional
 
 
 class GitHubException(Exception):
-
     """Base exception for this library."""
 
 
 class ValidationFailure(GitHubException):
-
     """An exception representing failed validation of a webhook event."""
 
     # https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/securing-your-webhooks#validating-payloads-from-github
 
 
 class HTTPException(GitHubException):
-
     """A general exception to represent HTTP responses."""
 
     def __init__(self, status_code: http.HTTPStatus, *args: Any) -> None:
@@ -30,7 +28,6 @@ class HTTPException(GitHubException):
 
 
 class RedirectionException(HTTPException):
-
     """Exception for 3XX HTTP responses."""
 
 
@@ -44,7 +41,6 @@ class BadRequest(HTTPException):
 
 
 class BadRequestUnknownError(BadRequest):
-
     """A bad request whose response body is not JSON."""
 
     def __init__(self, response: str) -> None:
@@ -53,7 +49,6 @@ class BadRequestUnknownError(BadRequest):
 
 
 class RateLimitExceeded(BadRequest):
-
     """Request rejected due to the rate limit being exceeded."""
 
     # Technically rate_limit is of type gidgethub.sansio.RateLimit, but a
@@ -68,7 +63,6 @@ class RateLimitExceeded(BadRequest):
 
 
 class InvalidField(BadRequest):
-
     """A field in the request is invalid.
 
     Represented by a 422 HTTP Response. Details of what fields were
@@ -82,7 +76,6 @@ class InvalidField(BadRequest):
 
 
 class ValidationError(BadRequest):
-
     """A request was unable to be completed.
 
     Represented by a 422 HTTP response. Details of what went wrong
@@ -96,12 +89,10 @@ class ValidationError(BadRequest):
 
 
 class GitHubBroken(HTTPException):
-
     """Exception for 5XX HTTP responses."""
 
 
 class GraphQLException(GitHubException):
-
     """Base exception for the GraphQL v4 API."""
 
     def __init__(self, message: str, response: Any) -> None:
@@ -110,7 +101,6 @@ class GraphQLException(GitHubException):
 
 
 class BadGraphQLRequest(GraphQLException):
-
     """A 4XX HTTP response."""
 
     def __init__(self, status_code: http.HTTPStatus, response: Any) -> None:
@@ -120,7 +110,6 @@ class BadGraphQLRequest(GraphQLException):
 
 
 class GraphQLAuthorizationFailure(BadGraphQLRequest):
-
     """401 HTTP response to a bad oauth token."""
 
     def __init__(self, response: Any) -> None:
@@ -128,7 +117,6 @@ class GraphQLAuthorizationFailure(BadGraphQLRequest):
 
 
 class QueryError(GraphQLException):
-
     """An error occurred while attempting to handle a GraphQL v4 query."""
 
     def __init__(self, response: Any) -> None:
@@ -136,7 +124,6 @@ class QueryError(GraphQLException):
 
 
 class GraphQLResponseTypeError(GraphQLException):
-
     """The GraphQL response has an unexpected content type."""
 
     def __init__(self, content_type: Optional[str], response: Any) -> None:

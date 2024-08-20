@@ -1,4 +1,5 @@
 """Support for GitHub Actions."""
+
 from typing import cast, Any, Dict
 
 import time

@@ -21,7 +21,6 @@ from gidgethub import sansio
 
 
 class TestValidateEvent:
-
     """Tests for gidgethub.sansio.validate_event()."""
 
     secret = "123456"
@@ -50,7 +49,6 @@ class TestValidateEvent:
 
 
 class TestEvent:
-
     """Tests for gidgethub.sansio.Event."""
 
     data = {"action": "opened"}
@@ -143,7 +141,6 @@ class TestEvent:
 
 
 class TestAcceptFormat:
-
     """Tests for gidgethub.sansio.accept_format()."""
 
     def test_defaults(self):
@@ -163,7 +160,6 @@ class TestAcceptFormat:
 
 
 class TestCreateHeaders:
-
     """Tests for gidgethub.sansio.create_headers()."""
 
     def test_common_case(self):
@@ -283,7 +279,6 @@ def sample(directory, status_code):
 
 
 class TestDecipherResponse:
-
     """Tests for gidgethub.sansio.decipher_response()."""
 
     def test_5XX(self):
@@ -553,7 +548,6 @@ class TestDecipherResponse:
 
 
 class TestFormatUrl:
-
     """Tests for gidgethub.sansio.format_url()."""
 
     @pytest.mark.parametrize(
