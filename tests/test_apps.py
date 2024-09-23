@@ -33,6 +33,30 @@ class TestGitHubAppUtils:
 
         assert result == jwt.encode(expected_payload, private_key, algorithm="RS256")
 
+    @mock.patch("time.time")
+    def test_get_jwt_with_custom_expiry(self, time_mock):
+        app_id = 12345
+
+        time_mock.return_value = 1587069751.5588422
+
+        # test file copied from https://github.com/jpadilla/pyjwt/blob/master/tests/keys/testkey_rsa
+        private_key = (
+            importlib_resources.files(rsa_key_samples) / "test_rsa_key"
+        ).read_bytes()
+
+        # Custom expiration
+        expiration = 30 * 60
+        result = apps.get_jwt(
+            app_id=app_id, private_key=private_key, expiration=expiration
+        )
+        expected_payload = {
+            "iat": 1587069751,
+            "exp": 1587069751 + expiration,
+            "iss": app_id,
+        }
+
+        assert result == jwt.encode(expected_payload, private_key, algorithm="RS256")
+
     @pytest.mark.asyncio
     async def test_get_installation_access_token(self):
         gh = MockGitHubAPI()
