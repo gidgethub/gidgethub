@@ -4,6 +4,10 @@ Changelog
 Unreleased
 ----------
 
+- :meth:`gidgethub.apps.get_jwt` now accepts an ``expiration`` parameter to
+  configure JWT token expiration time
+  (`PR #215 <https://github.com/gidgethub/gidgethub/pull/215>`_)
+
 - Add support for Python 3.12-3.13 and drop EOL Python 3.7
   (`PR #209 <https://github.com/brettcannon/gidgethub/pull/209>`_)
 

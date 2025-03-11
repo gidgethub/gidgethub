@@ -43,10 +43,10 @@ Example on how you would obtain the access token for authenticating as a GitHub 
     `Authenticating as an installation <https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/about-authentication-with-a-github-app#authentication-as-an-app-installation>`_ API endpoint.
 
 
-.. function:: get_jwt(*, app_id, private_key)
+.. function:: get_jwt(*, app_id, private_key, expiration = 10 * 60)
 
    Construct the JWT (JSON Web Token), that can be used to access endpoints
-   that require it.
+   that require it. Default expiration period is 10 minutes.
 
    Example::
 
@@ -58,7 +58,10 @@ Example on how you would obtain the access token for authenticating as a GitHub 
        -----END RSA PRIVATE KEY-----
        """
 
-       token = get_jwt(app_id=123, private_key=private_key)
+       # Generate a token that expires 30 minutes from now
+       token = get_jwt(
+           app_id=123, private_key=private_key, expiration = 30 * 60
+       )
        data = gh.getitem(
            "/app/installations",
            jwt=token,
