@@ -30,7 +30,7 @@ dependencies = [
 
 [project.urls]
 Documentation = "https://gidgethub.readthedocs.io"
-Repository = "https://github.com/brettcannon/gidgethub"
+Repository = "https://github.com/gidgethub/gidgethub"
 
 [project.optional-dependencies]
 test = [
