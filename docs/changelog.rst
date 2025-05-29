@@ -4,30 +4,34 @@ Changelog
 Unreleased
 ----------
 
+- Make :meth:`gidgethub.abc.GitHubAPI.getiter` be iterative instead of
+  recursive
+  (`PR #219 <https://github.com/gidgethub/gidgethub/pull/219>`_)
+
 - :meth:`gidgethub.apps.get_jwt` now accepts an ``expiration`` parameter to
   configure JWT token expiration time
   (`PR #215 <https://github.com/gidgethub/gidgethub/pull/215>`_)
 
 - Add support for Python 3.12-3.13 and drop EOL Python 3.7
-  (`PR #209 <https://github.com/brettcannon/gidgethub/pull/209>`_)
+  (`PR #209 <https://github.com/gidgethub/gidgethub/pull/209>`_)
 
 5.3.0
 -----
 
 - Add support passing ``extra_headers`` when making requests
-  (`PR #192 <https://github.com/brettcannon/gidgethub/pull/192>`_)
+  (`PR #192 <https://github.com/gidgethub/gidgethub/pull/192>`_)
 
 - Add a getstatus() method for APIs that do not return content.
-  (`PR #194 <https://github.com/brettcannon/gidgethub/pull/194>`_)
+  (`PR #194 <https://github.com/gidgethub/gidgethub/pull/194>`_)
 
 5.2.1
 -----
 
 - Fix cgi and importlib_resources deprecations.
-  (`PR #185 <https://github.com/brettcannon/gidgethub/pull/185>`_)
+  (`PR #185 <https://github.com/gidgethub/gidgethub/pull/185>`_)
 
 - Add support for Python 3.11 and drop EOL Python 3.6
-  (`PR #184 <https://github.com/brettcannon/gidgethub/pull/184>`_)
+  (`PR #184 <https://github.com/gidgethub/gidgethub/pull/184>`_)
 
 5.2.0
 -----
@@ -38,17 +42,17 @@ Unreleased
 -----
 
 - Use ``X-Hub-Signature-256`` header for webhook validation when available.
-  (`PR #160 <https://github.com/brettcannon/gidgethub/pull/160>`_).
+  (`PR #160 <https://github.com/gidgethub/gidgethub/pull/160>`_).
 
 - The documentation is now built using Sphinx v>= 4.0.0.
-  (`Issue #143 <https://github.com/brettcannon/gidgethub/issues/143>`_)
+  (`Issue #143 <https://github.com/gidgethub/gidgethub/issues/143>`_)
 
 - :meth:`gidgethub.abc.GitHubAPI.getiter` now accepts ``iterable_key`` parameter
   in order to support the Checks API.
-  (`Issue #164 <https://github.com/brettcannon/gidgethub/issues/164>`_)
+  (`Issue #164 <https://github.com/gidgethub/gidgethub/issues/164>`_)
 
 - Accept HTTP 202 ACCEPTED as successful.
-  (`PR #174 <https://github.com/brettcannon/gidgethub/pull/174>`_)
+  (`PR #174 <https://github.com/gidgethub/gidgethub/pull/174>`_)
 
 5.0.1
 -----
@@ -64,15 +68,15 @@ Unreleased
 
 - Add :meth:`gidgethub.routing.Router.fetch` for obtaining a frozenset of functions
   registered to the router that the event would be called on.
-  (`Issue #74 <https://github.com/brettcannon/gidgethub/issues/74>`_).
+  (`Issue #74 <https://github.com/gidgethub/gidgethub/issues/74>`_).
 - Add support for GitHub Actions Environment Files with :meth:`gidgethub.actions.setenv`
   and :meth:`gidgethub.actions.addpath`.
-  (`Issue #137 <https://github.com/brettcannon/gidgethub/issues/132>`_).
+  (`Issue #137 <https://github.com/gidgethub/gidgethub/issues/132>`_).
 - Make router callback execution order non-deterministic to avoid relying on
   registration order.
-  (`Issue #74 <https://github.com/brettcannon/gidgethub/issues/74>`_).
+  (`Issue #74 <https://github.com/gidgethub/gidgethub/issues/74>`_).
 - Fix mypy errors in ``gidgethub.httpx.GitHubAPI._request``
-  (`Issue #133 <https://github.com/brettcannon/gidgethub/issues/133>`_).
+  (`Issue #133 <https://github.com/gidgethub/gidgethub/issues/133>`_).
 - Make the minimum version of PyJWT be v2.0.0.
 
 4.2.0
@@ -82,17 +86,17 @@ Unreleased
   If supplied, the ``content_type`` value will be used in the request headers,
   and the raw form of the data will be passed to the request. If not supplied,
   by default the data will be parsed as JSON, and the "application/json" content
-  type will be used. (`Issue #115 <https://github.com/brettcannon/gidgethub/issues/115>`_).
+  type will be used. (`Issue #115 <https://github.com/gidgethub/gidgethub/issues/115>`_).
 
 4.1.1
 -----
 
 - Fix :meth:`gidgethub.abc.GitHubAPI.graphql` to accept response content types lacking
   spaces; affects GitHub Enterprise
-  (`Issue #122 <https://github.com/brettcannon/gidgethub/pull/122>`_)
+  (`Issue #122 <https://github.com/gidgethub/gidgethub/pull/122>`_)
 
 - Specify PyJWT[crypto] as a dependency, and dropped the explicit dependency to
-  ``cryptography`` (`Issue #116 <https://github.com/brettcannon/gidgethub/issues/116>`_).
+  ``cryptography`` (`Issue #116 <https://github.com/gidgethub/gidgethub/issues/116>`_).
 
 4.1.0
 -----
@@ -101,7 +105,7 @@ Unreleased
 
 - Introduce :meth:`gidgethub.apps.get_installation_access_token`
   for obtaining an installation access token that can be used to authenticate as
-  a GitHub App installation. (`Issue #71 <https://github.com/brettcannon/gidgethub/issues/71>`_).
+  a GitHub App installation. (`Issue #71 <https://github.com/gidgethub/gidgethub/issues/71>`_).
 
 - Introduce :meth:`gidgethub.apps.get_jwt` for constructing the JSON Web Token
   that can be used to access endpoints that require it.
@@ -118,7 +122,7 @@ Unreleased
 - Remove `gidgethub.test` from the distribution.
 - Introduce :mod:`gidgethub.actions`.
 - Add :exc:`gidgethub.ValidationError` for when the HTTP response is a 422 but not
-  field-related. (`#83 <https://github.com/brettcannon/gidgethub/pull/83>`_;
+  field-related. (`#83 <https://github.com/gidgethub/gidgethub/pull/83>`_;
   thanks `John Hossler <https://github.com/jmhossler>`_)
 - Allow GitHub Enterprise users to specify a base URL, by passing in **base_url**
   to the :meth:`gidgethub.abc.GitHubAPI` constructor.
