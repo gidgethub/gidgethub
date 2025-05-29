@@ -182,10 +182,11 @@ class GitHubAPI(abc.ABC):
         iterable_key: Opt[str] = ITERABLE_KEY,
     ) -> AsyncGenerator[Any, None]:
         """Return an async iterable for all the items at a specified endpoint."""
-        while url:
-            data, url, _ = await self._make_request(
+        current_url = url
+        while current_url:
+            data, current_url, _ = await self._make_request(
                 "GET",
-                url,
+                current_url,
                 url_vars,
                 b"",
                 accept,
