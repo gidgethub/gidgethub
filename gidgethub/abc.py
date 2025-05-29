@@ -182,33 +182,22 @@ class GitHubAPI(abc.ABC):
         iterable_key: Opt[str] = ITERABLE_KEY,
     ) -> AsyncGenerator[Any, None]:
         """Return an async iterable for all the items at a specified endpoint."""
-        data, more, _ = await self._make_request(
-            "GET",
-            url,
-            url_vars,
-            b"",
-            accept,
-            jwt=jwt,
-            oauth_token=oauth_token,
-            extra_headers=extra_headers,
-        )
-
-        if isinstance(data, dict) and iterable_key in data:
-            data = data[iterable_key]
-        for item in data:
-            yield item
-        if more:
-            # `yield from` is not supported in coroutines.
-            async for item in self.getiter(
-                more,
+        while url:
+            data, url, _ = await self._make_request(
+                "GET",
+                url,
                 url_vars,
-                accept=accept,
+                b"",
+                accept,
                 jwt=jwt,
                 oauth_token=oauth_token,
-                iterable_key=iterable_key,
                 extra_headers=extra_headers,
-            ):
-                yield item  # pragma: nocover
+            )
+
+            if isinstance(data, dict) and iterable_key in data:
+                data = data[iterable_key]
+            for item in data:
+                yield item
 
     async def post(
         self,
