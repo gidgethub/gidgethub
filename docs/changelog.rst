@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Unreleased
-----------
+5.4.0
+-----
 
 - Make :meth:`gidgethub.abc.GitHubAPI.getiter` be iterative instead of
   recursive
