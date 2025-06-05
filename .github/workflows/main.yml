@@ -16,15 +16,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13-dev"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14-dev"]
         include:
           - { python-version: "3.8", nox-python-version: "3.8" }
           - { python-version: "3.9", nox-python-version: "3.9" }
           - { python-version: "3.10", nox-python-version: "3.10" }
           - { python-version: "3.11", nox-python-version: "3.11" }
           - { python-version: "3.12", nox-python-version: "3.12" }
-          - { python-version: "3.13-dev", nox-python-version: "3.13" }
-
+          - { python-version: "3.13", nox-python-version: "3.13" }
+          - { python-version: "3.14-dev", nox-python-version: "3.14" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
@@ -37,7 +37,7 @@ jobs:
         if: "!endsWith(matrix.python-version, '-dev')"
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: deadsnakes/action@v3.1.0
+      - uses: deadsnakes/action@v3.2.0
         if: endsWith(matrix.python-version, '-dev')
         with:
           python-version: ${{ matrix.python-version }}
@@ -45,7 +45,7 @@ jobs:
       - run: nox --session tests-${{ matrix.nox-python-version }}
         env:
           PYTHONDEVMODE: 1
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -64,6 +64,6 @@ jobs:
             ${{ runner.os }}-pip-
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.13"
       - run: pip install nox
       - run: nox --session lint
