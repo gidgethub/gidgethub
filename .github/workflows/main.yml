@@ -24,7 +24,7 @@ jobs:
           - { python-version: "3.11", nox-python-version: "3.11" }
           - { python-version: "3.12", nox-python-version: "3.12" }
           - { python-version: "3.13", nox-python-version: "3.13" }
-          - { python-version: "3.14-dev", nox-python-version: "3.14-dev" }
+          - { python-version: "3.14-dev", nox-python-version: "3.14" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
