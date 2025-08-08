@@ -349,7 +349,7 @@ def decipher_response(
                 exc_type = InvalidField
                 if errors:
                     if any(
-                        e["code"]
+                        e.get("code")
                         in ["missing", "missing_field", "invalid", "already_exists"]
                         for e in errors
                     ):

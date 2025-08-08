@@ -366,6 +366,54 @@ class TestDecipherResponse:
             == "it went bad: 'A pull request already exists for foo:1.'"
         )
 
+    def test_422_error_without_code_field(self):
+        """Test 422 response with error objects that don't have a 'code' field."""
+        status_code = 422
+        errors = [
+            {
+                "resource": "PullRequest",
+                "message": "Some error message without code field",
+            }
+        ]
+        body = json.dumps({"message": "it went bad", "errors": errors})
+        body = body.encode("utf-8")
+        headers = {"content-type": "application/json; charset=utf-8"}
+        # This should not raise a KeyError but should handle the missing 'code' field gracefully
+        with pytest.raises(ValidationError) as exc_info:
+            sansio.decipher_response(status_code, headers, body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert (
+            str(exc_info.value)
+            == "it went bad: 'Some error message without code field'"
+        )
+
+    def test_422_mixed_errors_with_and_without_code(self):
+        """Test 422 response with mix of errors with and without 'code' field."""
+        status_code = 422
+        errors = [
+            {
+                "resource": "PullRequest",
+                "code": "missing",
+                "field": "title",
+                "message": "Missing required field",
+            },
+            {
+                "resource": "PullRequest", 
+                "message": "Error without code field",
+            }
+        ]
+        body = json.dumps({"message": "it went bad", "errors": errors})
+        body = body.encode("utf-8")
+        headers = {"content-type": "application/json; charset=utf-8"}
+        # Should be treated as InvalidField since one error has a recognized code
+        with pytest.raises(InvalidField) as exc_info:
+            sansio.decipher_response(status_code, headers, body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert (
+            str(exc_info.value)
+            == "it went bad for 'title', None"
+        )
+
     def test_422_no_errors_object(self):
         status_code = 422
         body = json.dumps(
