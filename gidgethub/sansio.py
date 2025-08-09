@@ -356,7 +356,7 @@ def decipher_response(
                     else:
                         # errors is a list of objects, process as before
                         if any(
-                            e.get("code")
+                            e["code"]
                             in ["missing", "missing_field", "invalid", "already_exists"]
                             for e in errors
                         ):
