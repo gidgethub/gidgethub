@@ -348,7 +348,10 @@ def decipher_response(
                     raise BadRequestUnknownError(data)
                 exc_type = InvalidField
                 if errors:
-                    if any(
+                    if isinstance(errors, str):
+                        exc_type = ValidationError
+                        message = f"{message}: {errors}"
+                    elif any(
                         e["code"]
                         in ["missing", "missing_field", "invalid", "already_exists"]
                         for e in errors
