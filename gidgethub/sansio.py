@@ -348,26 +348,22 @@ def decipher_response(
                     raise BadRequestUnknownError(data)
                 exc_type = InvalidField
                 if errors:
-                    # Check if errors is a string rather than a list of objects
                     if isinstance(errors, str):
-                        # When errors is a string, treat it as a ValidationError
                         exc_type = ValidationError
                         message = f"{message}: {errors}"
+                    elif any(
+                        e["code"]
+                        in ["missing", "missing_field", "invalid", "already_exists"]
+                        for e in errors
+                    ):
+                        error_context = ", ".join(repr(e.get("field")) for e in errors)
+                        message = f"{message} for {error_context}"
                     else:
-                        # errors is a list of objects, process as before
-                        if any(
-                            e["code"]
-                            in ["missing", "missing_field", "invalid", "already_exists"]
-                            for e in errors
-                        ):
-                            error_context = ", ".join(repr(e.get("field")) for e in errors)
-                            message = f"{message} for {error_context}"
-                        else:
-                            exc_type = ValidationError
-                            error_context = ", ".join(
-                                repr(e.get("message")) for e in errors
-                            )
-                            message = f"{message}: {error_context}"
+                        exc_type = ValidationError
+                        error_context = ", ".join(
+                            repr(e.get("message")) for e in errors
+                        )
+                        message = f"{message}: {error_context}"
                 else:
                     message = data["message"]
                 raise exc_type(errors, message)
