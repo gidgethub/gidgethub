@@ -373,7 +373,6 @@ def decipher_response(
             exc_type = HTTPException
         status_code_enum = http.HTTPStatus(status_code)
         args: Union[Tuple[http.HTTPStatus, str], Tuple[http.HTTPStatus]]
-        headers = {"location": headers.get("location")}
         if message:
             args = status_code_enum, message
         else:

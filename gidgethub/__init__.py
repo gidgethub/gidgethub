@@ -23,7 +23,7 @@ class HTTPException(GitHubException):
         self,
         status_code: http.HTTPStatus,
         *args: Any,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Optional[Mapping[str, str | None]] = None,
     ) -> None:
         self.status_code = status_code
         self.headers = headers or {}
