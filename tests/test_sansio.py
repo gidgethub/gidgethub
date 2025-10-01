@@ -416,8 +416,10 @@ class TestDecipherResponse:
     def test_3XX(self):
         status_code = 301
         with pytest.raises(RedirectionException) as exc_info:
-            sansio.decipher_response(status_code, {}, b"")
+            headers = {"location": "https://api.github.com/test"}
+            sansio.decipher_response(status_code, headers, b"")
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert exc_info.value.headers == headers
 
     def test_2XX_error(self):
         status_code = 205

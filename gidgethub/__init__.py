@@ -3,7 +3,7 @@
 __version__ = "5.4.0.dev"
 
 import http
-from typing import Any, Optional
+from typing import Any, Mapping, Optional
 
 
 class GitHubException(Exception):
@@ -19,8 +19,14 @@ class ValidationFailure(GitHubException):
 class HTTPException(GitHubException):
     """A general exception to represent HTTP responses."""
 
-    def __init__(self, status_code: http.HTTPStatus, *args: Any) -> None:
+    def __init__(
+        self,
+        status_code: http.HTTPStatus,
+        *args: Any,
+        headers: Optional[Mapping[str, str]] = None,
+    ) -> None:
         self.status_code = status_code
+        self.headers = headers or {}
         if args:
             super().__init__(*args)
         else:
