@@ -7,13 +7,18 @@ API version you want your request to work against).
 """
 
 import datetime
+import time
 from email.message import Message
 import hmac
 import http
 import json
 import re
-from typing import Any, Dict, Mapping, Optional, Tuple, Type, Union
+from functools import wraps
+from typing import Any, Dict, Mapping, Optional, Tuple, Type, Union, Callable, ParamSpec, TypeVar
 import urllib.parse
+import logging
+
+logger = logging.getLogger(__name__)
 
 import uritemplate
 from uritemplate import variable
@@ -27,7 +32,7 @@ from . import (
     RateLimitExceeded,
     RedirectionException,
     ValidationError,
-    ValidationFailure,
+    ValidationFailure, SecondaryRateLimitExceeded,
 )
 
 
@@ -141,6 +146,7 @@ class Event:
                 "expected a content-type of "
                 "'application/json' or "
                 "'application/x-www-form-urlencoded'",
+                headers=headers
             ) from exc
         return cls(
             data,
@@ -282,6 +288,69 @@ class RateLimit:
             return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
 
 
+P = ParamSpec('P')
+T = TypeVar('T')
+
+
+def secondary_rate_limit_retry(max_retries: int, base_delay: int, wrapped: bool = True) -> Callable[[Callable[P, T]], Callable[P, T]]:
+    def decorator(func: Callable[P, T]) -> Callable[P, T]:
+        @wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+            retries = 0
+
+            while retries <= max_retries:
+                try:
+                    return func(*args, **kwargs)
+                except BadRequest as e:
+                    if e.status_code not in (403, 429):
+                        raise
+
+                    if retries >= max_retries:
+                        raise SecondaryRateLimitExceeded(
+                            http.HTTPStatus(e.status_code),
+                            headers=e.headers,
+                        ) from e
+
+                    retry_after = e.headers.get("retry-after") or e.headers.get("Retry-After")
+                    reset_time = e.headers.get("x-ratelimit-reset") or e.headers.get("X-RateLimit-Reset")
+
+                    if retry_after:
+                        delay = int(retry_after)
+                        logger.warning(
+                            f"Secondary rate limit hit. Retrying after {delay} seconds "
+                            f"(attempt {retries + 1}/{max_retries})"
+                        )
+                    elif reset_time:
+                        current_time = int(time.time())
+                        delay = max(int(reset_time) - current_time, 0)
+                        logger.warning(
+                            f"Primary rate limit hit. Retrying after {delay} seconds "
+                            f"(attempt {retries + 1}/{max_retries})"
+                        )
+                    else:
+                        delay = base_delay * (2 ** retries)
+                        logger.warning(
+                            f"Rate limit hit without retry information. "
+                            f"Using exponential backoff: {delay} seconds "
+                            f"(attempt {retries + 1}/{max_retries})"
+                        )
+
+                    logger.info(
+                        f"Rate limit error details - Status: {e.status_code}, "
+                        f"Headers: {dict(e.headers)}"
+                    )
+
+                    time.sleep(delay)
+                    retries += 1
+            return None
+
+        if wrapped:
+            return wrapper
+        else:
+            return func
+    return decorator
+
+
 _link_re = re.compile(
     r"\<(?P<uri>[^>]+)\>;\s*" r'(?P<param_type>\w+)="(?P<param_value>\w+)"(,\s*)?'
 )
@@ -339,13 +408,13 @@ def decipher_response(
             if status_code == 403:
                 rate_limit = RateLimit.from_http(headers)
                 if rate_limit and not rate_limit.remaining:
-                    raise RateLimitExceeded(rate_limit, message)
+                    raise RateLimitExceeded(rate_limit, message, headers=headers)
             elif status_code == 422:
                 try:
                     errors = data.get("errors", None)
                 except AttributeError:
                     # Not JSON so don't know why the request failed.
-                    raise BadRequestUnknownError(data)
+                    raise BadRequestUnknownError(data, headers=headers)
                 exc_type = InvalidField
                 if errors:
                     if isinstance(errors, str):
@@ -366,7 +435,7 @@ def decipher_response(
                         message = f"{message}: {error_context}"
                 else:
                     message = data["message"]
-                raise exc_type(errors, message)
+                raise exc_type(errors, message, headers=headers)
         elif status_code >= 300:
             exc_type = RedirectionException
         else:
@@ -377,7 +446,7 @@ def decipher_response(
             args = status_code_enum, message
         else:
             args = (status_code_enum,)
-        raise exc_type(*args)
+        raise exc_type(*args, headers=headers)
 
 
 DOMAIN = "https://api.github.com"

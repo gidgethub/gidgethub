@@ -286,12 +286,14 @@ class TestDecipherResponse:
         with pytest.raises(GitHubBroken) as exc_info:
             sansio.decipher_response(status_code, {}, b"")
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert exc_info.value.headers == {}
 
     def test_4XX_no_message(self):
         status_code = 400
         with pytest.raises(BadRequest) as exc_info:
             sansio.decipher_response(status_code, {}, b"")
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert exc_info.value.headers == {}
 
     def test_4XX_message(self):
         status_code = 400
@@ -301,6 +303,7 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, message)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "it went bad"
+        assert exc_info.value.headers == headers
 
     def test_404(self):
         status_code = 404
@@ -309,6 +312,7 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "Not Found"
+        assert exc_info.value.headers == headers
 
     def test_403_rate_limit_exceeded(self):
         status_code = 403
@@ -322,6 +326,7 @@ class TestDecipherResponse:
         with pytest.raises(RateLimitExceeded) as exc_info:
             sansio.decipher_response(status_code, headers, body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert exc_info.value.headers == headers
 
     def test_403_forbidden(self):
         status_code = 403
@@ -334,6 +339,7 @@ class TestDecipherResponse:
         with pytest.raises(BadRequest) as exc_info:
             sansio.decipher_response(status_code, headers, b"")
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert exc_info.value.headers == headers
 
     def test_422(self):
         status_code = 422
@@ -345,6 +351,7 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "it went bad for 'title'"
+        assert exc_info.value.headers == headers
 
     def test_422_custom_code(self):
         status_code = 422
@@ -365,6 +372,7 @@ class TestDecipherResponse:
             str(exc_info.value)
             == "it went bad: 'A pull request already exists for foo:1.'"
         )
+        assert exc_info.value.headers == headers
 
     def test_422_errors_as_string(self):
         """Test 422 response where 'errors' field is a string instead of list of objects."""
@@ -386,6 +394,7 @@ class TestDecipherResponse:
             str(exc_info.value)
             == "Validation Failed: Validation failed: This SHA and context has reached the maximum number of statuses."
         )
+        assert exc_info.value.headers == headers
 
     def test_422_no_errors_object(self):
         status_code = 422
@@ -401,6 +410,7 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert str(exc_info.value) == "Reference does not exist"
+        assert exc_info.value.headers == headers
 
     def test_422_html_response(self):
         # https://github.com/brettcannon/gidgethub/issues/81
@@ -412,6 +422,7 @@ class TestDecipherResponse:
             sansio.decipher_response(status_code, headers, encoded_body)
         assert exc_info.value.status_code == http.HTTPStatus(status_code)
         assert exc_info.value.response == body
+        assert exc_info.value.headers == headers
 
     def test_3XX(self):
         status_code = 301
