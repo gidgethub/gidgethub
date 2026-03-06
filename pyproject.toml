@@ -1,21 +1,22 @@
 [build-system]
-requires = ["flit_core <4"]
-build-backend = "flit_core.buildapi"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
-[tool.flit.metadata]
-module = "gidgethub"
-author = "Brett Cannon"
-author-email = "brett@python.org"
-requires = [
+[project]
+name = "gidgethub"
+authors = [{name = "Brett Cannon", email = "brett@python.org"}]
+maintainers = [{name = "Mariatta", email = "mariatta@mariatta.ca"}]
+dependencies = [
     "uritemplate>=3.0.1",
-    "PyJWT[crypto]>=2.4.0"
+    "PyJWT[crypto]>=2.4.0",
 ]
 requires-python = ">=3.8"
-license = "Apache"
-keywords = "github sans-io async"
-description-file = "README.rst"
-classifiers = ["Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
+license = "Apache-2.0 AND MIT"
+license-files = ["LICENSE", "Third-Party Notices.md"]
+keywords = ["github", "sans-io", "async"]
+readme = "README.rst"
+classifiers = [
+    "Intended Audience :: Developers",
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.8",
@@ -25,22 +26,33 @@ classifiers = ["Intended Audience :: Developers",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
 ]
+description = "An async GitHub API library"
+dynamic = ["version"]
 
-[tool.flit.metadata.requires-extra]
-test = ["importlib-resources", "pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync"]
-doc = ["sphinx>=4.0.0", "sphinx-rtd-theme>=0.5.2"]
-# The 'dev' target should contain all dependencies listed in any extras coming
-# after it to make sure that the test suite will run successfully.
-dev = ["aiohttp", "black", "coverage[toml]>=5.0.3", "httpx", "mypy", "pytest-cov",
-       "pytest-xdist", "tornado"]
+[project.urls]
+Documentation = "https://gidgethub.readthedocs.io"
+Repository = "https://github.com/brettcannon/gidgethub"
+
+[project.optional-dependencies]
 aiohttp = ["aiohttp"]
 tornado = ["tornado"]
 httpx = ["httpx>=0.16.1"]
 
-[tool.flit.metadata.urls]
-Documentation = "https://gidgethub.readthedocs.io"
-Repository = "https://github.com/brettcannon/gidgethub"
+[dependency-groups]
+test = ["importlib-resources", "pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync",
+        "pytest-cov", "pytest-xdist", "coverage[toml]>=5.0.3"]
+lint = ["black", "mypy"]
+doc = ["sphinx>=4.0.0", "sphinx-rtd-theme>=0.5.2"]
+dev = [{include-group = "test"}, {include-group = "lint"}, {include-group = "doc"}]
+
+[tool.pdm.version]
+source = "file"
+path = "gidgethub/__init__.py"
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.run]
 branch = true
