@@ -366,6 +366,27 @@ class TestDecipherResponse:
             == "it went bad: 'A pull request already exists for foo:1.'"
         )
 
+    def test_422_errors_as_string(self):
+        """Test 422 response where 'errors' field is a string instead of list of objects."""
+        status_code = 422
+        body = json.dumps(
+            {
+                "message": "Validation Failed",
+                "errors": "Validation failed: This SHA and context has reached the maximum number of statuses.",
+                "documentation_url": "https://docs.github.com/rest/commits/statuses#create-a-commit-status",
+                "status": "422",
+            }
+        )
+        body = body.encode("utf-8")
+        headers = {"content-type": "application/json; charset=utf-8"}
+        with pytest.raises(ValidationError) as exc_info:
+            sansio.decipher_response(status_code, headers, body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert (
+            str(exc_info.value)
+            == "Validation Failed: Validation failed: This SHA and context has reached the maximum number of statuses."
+        )
+
     def test_422_no_errors_object(self):
         status_code = 422
         body = json.dumps(
