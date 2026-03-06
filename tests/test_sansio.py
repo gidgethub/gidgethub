@@ -3,7 +3,6 @@ import http
 import json
 import pathlib
 
-
 import pytest
 
 from gidgethub import (
@@ -16,8 +15,8 @@ from gidgethub import (
     RedirectionException,
     ValidationError,
     ValidationFailure,
+    sansio,
 )
-from gidgethub import sansio
 
 
 class TestValidateEvent:
@@ -247,6 +246,7 @@ class TestRateLimit:
             "x-ratelimit-reset": str(reset.timestamp()),
         }
         rate_limit = sansio.RateLimit.from_http(headers)
+        assert rate_limit is not None
         assert rate_limit.limit == rate
         assert rate_limit.remaining == left
         assert rate_limit.reset_datetime == reset
@@ -441,6 +441,7 @@ class TestDecipherResponse:
         headers, body = sample("pr_single", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers, body)
         assert more is None
+        assert rate_limit is not None
         assert rate_limit.remaining == 53
         assert data["url"] == "https://api.github.com/repos/python/cpython/pulls/1"
 
@@ -466,6 +467,7 @@ class TestDecipherResponse:
             status_code, headers, body
         )
         assert more is None
+        assert rate_limit is not None
         assert rate_limit.limit == 60
         assert returned_data == data
 
@@ -497,6 +499,7 @@ class TestDecipherResponse:
         headers, body = sample("pr_merged", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers, body)
         assert more is None
+        assert rate_limit is not None
         assert rate_limit.remaining == 41
         assert data is None
 
@@ -505,22 +508,24 @@ class TestDecipherResponse:
         headers, body = sample("pr_page_1", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers, body)
         assert more == "https://api.github.com/repositories/4164482/pulls?page=2"
+        assert rate_limit is not None
         assert rate_limit.remaining == 53
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/8053"
 
         headers, body = sample("pr_page_2", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers, body)
         assert more == "https://api.github.com/repositories/4164482/pulls?page=3"
+        assert rate_limit is not None
         assert rate_limit.remaining == 50
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/7805"
 
         headers, body = sample("pr_page_last", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers, body)
         assert more is None
+        assert rate_limit is not None
         assert rate_limit.remaining == 48
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/6395"
 
-    @pytest.mark.asyncio
     def test_next_with_search_api(self):
         status_code = 200
         headers, body = sample("search_issues_page_1", status_code)
@@ -530,6 +535,7 @@ class TestDecipherResponse:
             "?q=repo%3Abrettcannon%2Fgidgethub+state%3Aclosed"
             "+rate+&per_page=3&page=2"
         )
+        assert rate_limit is not None
         assert rate_limit.remaining == 9
         assert {"items", "incomplete_results", "total_count"} == data.keys()
         expected_first_url = (
@@ -540,6 +546,7 @@ class TestDecipherResponse:
         headers, body = sample("search_issues_page_last", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers, body)
         assert more is None
+        assert rate_limit is not None
         assert rate_limit.remaining == 9
         assert {"items", "incomplete_results", "total_count"} == data.keys()
         expected_first_url = (
@@ -553,6 +560,7 @@ class TestDecipherResponse:
         headers, body = sample("pr_diff", status_code)
         data, rate_limit, more = sansio.decipher_response(status_code, headers, body)
         assert more is None
+        assert rate_limit is not None
         assert rate_limit.remaining == 43
         assert data.startswith("diff --git")
 

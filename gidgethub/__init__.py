@@ -1,9 +1,9 @@
 """An async GitHub API library"""
 
-__version__ = "5.4.0.dev"
+__version__ = "5.5.0.dev"
 
 import http
-from typing import Any, Optional, Mapping
+from typing import Any, Mapping, Optional
 
 
 class GitHubException(Exception):
@@ -23,7 +23,7 @@ class HTTPException(GitHubException):
         self,
         status_code: http.HTTPStatus,
         *args: Any,
-        headers: Mapping[str, str] = None,
+        headers: Optional[Mapping[str, str]] = None,
     ) -> None:
         self.status_code = status_code
         self.headers = headers or {}
@@ -49,7 +49,7 @@ class BadRequest(HTTPException):
 class BadRequestUnknownError(BadRequest):
     """A bad request whose response body is not JSON."""
 
-    def __init__(self, response: str, **kwargs) -> None:
+    def __init__(self, response: str, **kwargs: Any) -> None:
         self.response = response
         super().__init__(http.HTTPStatus.UNPROCESSABLE_ENTITY, **kwargs)
 
@@ -59,7 +59,7 @@ class RateLimitExceeded(BadRequest):
 
     # Technically rate_limit is of type gidgethub.sansio.RateLimit, but a
     # circular import comes about if you try to properly declare it.
-    def __init__(self, rate_limit: Any, *args: Any, **kwargs) -> None:
+    def __init__(self, rate_limit: Any, *args: Any, **kwargs: Any) -> None:
         self.rate_limit = rate_limit
 
         if not args:
@@ -75,7 +75,7 @@ class InvalidField(BadRequest):
     invalid are stored in the errors attribute.
     """
 
-    def __init__(self, errors: Any, *args: Any, **kwargs) -> None:
+    def __init__(self, errors: Any, *args: Any, **kwargs: Any) -> None:
         """Store the error details."""
         self.errors = errors
         super().__init__(http.HTTPStatus.UNPROCESSABLE_ENTITY, *args, **kwargs)
@@ -88,7 +88,7 @@ class ValidationError(BadRequest):
     are stored in the *errors* attribute.
     """
 
-    def __init__(self, errors: Any, *args: Any, **kwargs) -> None:
+    def __init__(self, errors: Any, *args: Any, **kwargs: Any) -> None:
         """Store the error details."""
         self.errors = errors
         super().__init__(http.HTTPStatus.UNPROCESSABLE_ENTITY, *args, **kwargs)
