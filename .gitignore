@@ -108,3 +108,6 @@ ENV/
 
 # Claude Code
 .claude/
+
+# uv
+uv.lock
