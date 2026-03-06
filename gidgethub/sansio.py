@@ -141,6 +141,7 @@ class Event:
                 "expected a content-type of "
                 "'application/json' or "
                 "'application/x-www-form-urlencoded'",
+                headers=headers,
             ) from exc
         return cls(
             data,
@@ -339,13 +340,13 @@ def decipher_response(
             if status_code == 403:
                 rate_limit = RateLimit.from_http(headers)
                 if rate_limit and not rate_limit.remaining:
-                    raise RateLimitExceeded(rate_limit, message)
+                    raise RateLimitExceeded(rate_limit, message, headers=headers)
             elif status_code == 422:
                 try:
                     errors = data.get("errors", None)
                 except AttributeError:
                     # Not JSON so don't know why the request failed.
-                    raise BadRequestUnknownError(data)
+                    raise BadRequestUnknownError(data, headers=headers)
                 exc_type = InvalidField
                 if errors:
                     if isinstance(errors, str):
@@ -366,7 +367,7 @@ def decipher_response(
                         message = f"{message}: {error_context}"
                 else:
                     message = data["message"]
-                raise exc_type(errors, message)
+                raise exc_type(errors, message, headers=headers)
         elif status_code >= 300:
             exc_type = RedirectionException
         else:
@@ -377,7 +378,7 @@ def decipher_response(
             args = status_code_enum, message
         else:
             args = (status_code_enum,)
-        raise exc_type(*args)
+        raise exc_type(*args, headers=headers)
 
 
 DOMAIN = "https://api.github.com"
