@@ -105,3 +105,6 @@ ENV/
 .idea
 
 .DS_Store
+
+# Claude Code
+.claude/
