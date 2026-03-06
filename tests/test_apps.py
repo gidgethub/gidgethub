@@ -15,7 +15,7 @@ class TestGitHubAppUtils:
 
     @mock.patch("time.time")
     def test_get_jwt(self, time_mock):
-        app_id = 12345
+        app_id = "12345"
 
         time_mock.return_value = 1587069751.5588422
 
@@ -35,7 +35,7 @@ class TestGitHubAppUtils:
 
     @mock.patch("time.time")
     def test_get_jwt_with_custom_expiry(self, time_mock):
-        app_id = 12345
+        app_id = "12345"
 
         time_mock.return_value = 1587069751.5588422
 
@@ -60,8 +60,8 @@ class TestGitHubAppUtils:
     @pytest.mark.asyncio
     async def test_get_installation_access_token(self):
         gh = MockGitHubAPI()
-        installation_id = 6789
-        app_id = 12345
+        installation_id = "6789"
+        app_id = "12345"
 
         private_key = (
             importlib_resources.files(rsa_key_samples) / "test_rsa_key"
