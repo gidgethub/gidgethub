@@ -19,7 +19,6 @@ from . import (
 )
 from . import sansio
 
-
 # Value represents etag, last-modified, data, and next page.
 CACHE_TYPE = MutableMapping[str, Tuple[Opt[str], Opt[str], Any, Opt[str]]]
 
