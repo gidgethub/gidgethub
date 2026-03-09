@@ -3,6 +3,7 @@
 import abc
 import http
 import json
+import os
 from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Optional, Tuple
 from typing import Optional as Opt
 
@@ -18,7 +19,7 @@ from . import (
     GraphQLResponseTypeError,
 )
 from . import sansio
-
+from .sansio import secondary_rate_limit_retry
 
 # Value represents etag, last-modified, data, and next page.
 CACHE_TYPE = MutableMapping[str, Tuple[Opt[str], Opt[str], Any, Opt[str]]]
@@ -27,6 +28,11 @@ JSON_CONTENT_TYPE = "application/json"
 UTF_8_CHARSET = "utf-8"
 JSON_UTF_8_CHARSET = f"{JSON_CONTENT_TYPE}; charset={UTF_8_CHARSET}"
 ITERABLE_KEY = "items"
+
+
+MANAGE_SECONDARY_RATE_LIMIT = "GIDGETHUB_MANAGE_SECONDARY_RATE_LIMIT" in os.environ
+SECONDARY_RATE_LIMIT_RETRIES = os.environ.get("GIDGETHUB_SECONDARY_RATE_LIMIT_RETRY", 3)
+SECONDARY_RATE_LIMIT_BASE_DELAYS = os.environ.get("GIDGETHUB_SECONDARY_RATE_LIMIT_BASE_DELAY", 60)
 
 
 class GitHubAPI(abc.ABC):
@@ -56,6 +62,11 @@ class GitHubAPI(abc.ABC):
     async def sleep(self, seconds: float) -> None:
         """Sleep for the specified number of seconds."""
 
+    @secondary_rate_limit_retry(
+        max_retries=SECONDARY_RATE_LIMIT_RETRIES,
+        base_delay=SECONDARY_RATE_LIMIT_BASE_DELAYS,
+        wrapped=MANAGE_SECONDARY_RATE_LIMIT,
+    )
     async def _make_request(
         self,
         method: str,
