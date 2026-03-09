@@ -19,7 +19,12 @@ class ValidationFailure(GitHubException):
 class HTTPException(GitHubException):
     """A general exception to represent HTTP responses."""
 
-    def __init__(self, status_code: http.HTTPStatus, *args: Any, headers: Mapping[str, str] =None) -> None:
+    def __init__(
+        self,
+        status_code: http.HTTPStatus,
+        *args: Any,
+        headers: Mapping[str, str] = None,
+    ) -> None:
         self.status_code = status_code
         self.headers = headers or {}
         if args:

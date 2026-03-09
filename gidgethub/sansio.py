@@ -146,7 +146,7 @@ class Event:
                 "expected a content-type of "
                 "'application/json' or "
                 "'application/x-www-form-urlencoded'",
-                headers=headers
+                headers=headers,
             ) from exc
         return cls(
             data,

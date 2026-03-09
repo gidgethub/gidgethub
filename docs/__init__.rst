@@ -30,6 +30,10 @@ Exceptions
 
       The :class:`http.HTTPStatus` status code that the exception represents.
 
+   .. attribute:: header
+
+      The HTTP headers from the response (if any).
+
 
 .. exception:: RedirectionException
 

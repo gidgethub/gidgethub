@@ -4,6 +4,9 @@ Changelog
 Unreleased
 ----------
 
+- Add :attr:`gidgethub.HTTPException.headers` attribute
+  (`PR #227 <https://github.com/gidgethub/gidgethub/pull/227>`_)
+
 5.4.0
 -----
 
