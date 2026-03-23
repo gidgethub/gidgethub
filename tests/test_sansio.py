@@ -3,7 +3,6 @@ import http
 import json
 import pathlib
 
-
 import pytest
 
 from gidgethub import (
@@ -16,8 +15,8 @@ from gidgethub import (
     RedirectionException,
     ValidationError,
     ValidationFailure,
+    sansio,
 )
-from gidgethub import sansio
 
 
 class TestValidateEvent:
@@ -520,7 +519,6 @@ class TestDecipherResponse:
         assert rate_limit.remaining == 48
         assert data[0]["url"] == "https://api.github.com/repos/django/django/pulls/6395"
 
-    @pytest.mark.asyncio
     def test_next_with_search_api(self):
         status_code = 200
         headers, body = sample("search_issues_page_1", status_code)
@@ -645,3 +643,13 @@ class TestFormatUrl:
         label = {"name": "CLA signed"}
         url = sansio.format_url(template_url, label, base_url=base_url)
         assert url == "https://api.github.com/repos/python/cpython/labels/CLA%20signed"
+
+    def test_base_url_with_path(self):
+        base_url = "https://ghes.example.com/api/v3"
+        url = "/app/installations/123/access_tokens"
+        result = sansio.format_url(url, url_vars=None, base_url=base_url)
+
+        assert (
+            result
+            == "https://ghes.example.com/api/v3/app/installations/123/access_tokens"
+        )
