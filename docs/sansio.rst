@@ -261,7 +261,7 @@ Utilities
 
        Added ``base_url`` argument.
 
-    .. versionchanged:: 5.5.0
+    .. versionchanged:: 6.0.0
 
        Strip any leading ``/`` from *url* so that URL joining with **base_url**
        when there's a path part doesn't cause it to be dropped. As well,
