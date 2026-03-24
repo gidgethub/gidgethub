@@ -2,7 +2,6 @@ from typing import Any, Awaitable, Callable, Dict, List, FrozenSet
 
 from . import sansio
 
-
 AsyncCallback = Callable[..., Awaitable[None]]
 
 

@@ -260,3 +260,9 @@ Utilities
     .. versionchanged:: 4.0
 
        Added ``base_url`` argument.
+
+    .. versionchanged:: 6.0.0
+
+       Strip any leading ``/`` from *url* so that URL joining with **base_url**
+       when there's a path part doesn't cause it to be dropped. As well,
+       guarantee a trailing ``/`` for *base_url*.
