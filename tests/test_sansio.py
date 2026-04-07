@@ -653,3 +653,23 @@ class TestFormatUrl:
         label = {"name": "CLA signed"}
         url = sansio.format_url(template_url, label, base_url=base_url)
         assert url == "https://api.github.com/repos/python/cpython/labels/CLA%20signed"
+
+    @pytest.mark.parametrize(
+        ["base_url", "url"],
+        [
+            (
+                "https://ghes.example.com/api/v3/",
+                "/app/installations/123/access_tokens",
+            ),
+            ("https://ghes.example.com/api/v3", "/app/installations/123/access_tokens"),
+            ("https://ghes.example.com/api/v3/", "app/installations/123/access_tokens"),
+            ("https://ghes.example.com/api/v3", "app/installations/123/access_tokens"),
+        ],
+    )
+    def test_base_url_with_path(self, base_url, url):
+        result = sansio.format_url(url, url_vars=None, base_url=base_url)
+
+        assert (
+            result
+            == "https://ghes.example.com/api/v3/app/installations/123/access_tokens"
+        )

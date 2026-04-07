@@ -10,7 +10,7 @@ dependencies = [
     "uritemplate>=3.0.1",
     "PyJWT[crypto]>=2.4.0",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = "Apache-2.0 AND MIT"
 license-files = ["LICENSE", "Third-Party Notices.md"]
 keywords = ["github", "sans-io", "async"]
@@ -19,7 +19,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",

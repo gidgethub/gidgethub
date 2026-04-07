@@ -7,6 +7,10 @@ Unreleased
 - Add :attr:`gidgethub.HTTPException.headers` attribute
   (`PR #227 <https://github.com/gidgethub/gidgethub/pull/227>`_)
 
+- Add a trailing ``/`` to *url* and remove any leading ``/`` in *base_url* for
+  :func:`gidgethub.sansio.format_url`
+  (`PR #234 <https://github.com/gidgethub/gidgethub/pull/234>`_)
+
 5.4.0
 -----
 

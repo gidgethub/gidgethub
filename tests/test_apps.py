@@ -5,9 +5,9 @@ import jwt
 import pytest
 
 from gidgethub import apps
-from .test_abc import MockGitHubAPI
 
 from .samples import rsa_key as rsa_key_samples
+from .test_abc import MockGitHubAPI
 
 
 class TestGitHubAppUtils:
