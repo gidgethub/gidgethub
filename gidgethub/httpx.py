@@ -1,7 +1,10 @@
 import asyncio
 from typing import Mapping, Tuple, Any
 
-import httpxyz as httpx
+try:
+    import httpxyz as httpx
+except ImportError:  # pragma: no cover
+    import httpx
 
 from . import abc as gh_abc
 
