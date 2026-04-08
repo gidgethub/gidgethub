@@ -37,7 +37,7 @@ Repository = "https://github.com/gidgethub/gidgethub"
 [project.optional-dependencies]
 aiohttp = ["aiohttp"]
 tornado = ["tornado"]
-httpxyz = ["httpxyz>=0.30.0"]
+httpx = ["httpxyz>=0.30.0"]
 
 [dependency-groups]
 test = ["importlib-resources", "pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync",
