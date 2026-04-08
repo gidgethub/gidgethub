@@ -91,7 +91,7 @@ This module provides functions to help in the construction of a URL request
 by helping to automate the GitHub-specific aspects of a REST call.
 ::
 
-  import httpx
+  import httpxyz as httpx
 
   request_headers = create_headers("brettcannon", oauth_token=auth)
   url = "https://api.github.com/repos/brettcannon/gidgethub/issues/1"

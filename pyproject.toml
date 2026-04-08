@@ -12,7 +12,7 @@ dependencies = [
 ]
 requires-python = ">=3.9"
 license = "Apache-2.0 AND MIT"
-license-files = ["LICENSE", "Third-Party Notices.md"]
+license-files = ["LICENSE", "Third-Party-Notices.md"]
 keywords = ["github", "sans-io", "async"]
 readme = "README.rst"
 classifiers = [
@@ -37,7 +37,7 @@ Repository = "https://github.com/gidgethub/gidgethub"
 [project.optional-dependencies]
 aiohttp = ["aiohttp"]
 tornado = ["tornado"]
-httpx = ["httpx>=0.16.1"]
+httpxyz = ["httpxyz>=0.30.0"]
 
 [dependency-groups]
 test = ["importlib-resources", "pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync",

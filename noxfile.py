@@ -6,7 +6,7 @@ PYPROJECT = nox.project.load_toml("pyproject.toml")
 @nox.session(python=["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"])
 def tests(session):
     session.install(
-        ".[aiohttp,tornado,httpx]",
+        ".[aiohttp,tornado,httpxyz]",
         *nox.project.dependency_groups(PYPROJECT, "test"),
     )
     session.run("pytest", "--cov=gidgethub", "--cov-report=xml", "-n=auto", "tests")

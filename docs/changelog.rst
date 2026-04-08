@@ -11,6 +11,8 @@ Unreleased
   :func:`gidgethub.sansio.format_url`
   (`PR #234 <https://github.com/gidgethub/gidgethub/pull/234>`_)
 
+- Use ``httpxyz`` as a drop-in replacement for httpx backend.
+
 5.4.0
 -----
 

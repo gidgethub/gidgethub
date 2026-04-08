@@ -1,6 +1,6 @@
 import datetime
 
-import httpx
+import httpxyz as httpx
 
 import pytest
 

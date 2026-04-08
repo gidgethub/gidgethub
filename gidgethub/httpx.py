@@ -1,7 +1,7 @@
 import asyncio
 from typing import Mapping, Tuple, Any
 
-import httpx
+import httpxyz as httpx
 
 from . import abc as gh_abc
 
