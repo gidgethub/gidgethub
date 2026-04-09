@@ -3,7 +3,7 @@ from typing import Mapping, Tuple, Any
 
 try:
     import httpxyz as httpx
-except ImportError:  # pragma: no cover
+except ModuleNotFoundError:  # pragma: no cover
     import httpx
 
 from . import abc as gh_abc
