@@ -7,7 +7,6 @@ All keys will be lowercase and the status code will be used for the file name.
 import json
 import sys
 
-
 raw_headers = sys.stdin.read()
 print(raw_headers)
 header_lines = raw_headers.splitlines()

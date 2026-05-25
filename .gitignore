@@ -105,3 +105,9 @@ ENV/
 .idea
 
 .DS_Store
+
+# Claude Code
+.claude/
+
+# uv
+uv.lock

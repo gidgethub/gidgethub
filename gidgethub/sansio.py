@@ -13,12 +13,21 @@ import hmac
 import http
 import json
 import re
-from functools import wraps
-from typing import Any, Dict, Mapping, Optional, Tuple, Type, Union, Callable, ParamSpec, TypeVar
 import urllib.parse
+from functools import wraps
+from typing import (
+    Any, 
+    Dict, 
+    Mapping, 
+    Optional, 
+    Tuple, 
+    Type, 
+    Union, 
+    Callable, 
+    ParamSpec, 
+    TypeVar
+)
 import logging
-
-logger = logging.getLogger(__name__)
 
 import uritemplate
 from uritemplate import variable
@@ -35,6 +44,7 @@ from . import (
     ValidationFailure, SecondaryRateLimitExceeded,
 )
 
+logger = logging.getLogger(__name__)
 
 def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str]:
     """Tease out the content-type and character encoding.
@@ -459,11 +469,15 @@ def format_url(
 
     The URL may be absolute or relative. In the latter case the appropriate
     domain will be added. This is to help when copying the relative URL directly
-    from the GitHub developer documentation.
+    from the GitHub developer documentation. Any leading ``/`` in *url* is
+    stripped to allow for URL joining with *base_url* when it is more than just
+    a domain. As well, a trailing ``/`` in *base_url* is added if necessary.
 
     The dict provided in url_vars is used in URI template formatting.
     """
 
-    url = urllib.parse.urljoin(base_url, url)  # Works even if 'url' is fully-qualified.
+    url = urllib.parse.urljoin(
+        base_url.removesuffix("/") + "/", url.removeprefix("/")
+    )  # Works even if 'url' is fully-qualified.
     expanded_url: str = uritemplate.expand(url, var_dict=url_vars)
     return expanded_url
