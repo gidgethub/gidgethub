@@ -1,7 +1,10 @@
 import asyncio
 from typing import Mapping, Tuple, Any
 
-import httpx
+try:
+    import httpxyz as httpx
+except ModuleNotFoundError:  # pragma: no cover
+    import httpx
 
 from . import abc as gh_abc
 

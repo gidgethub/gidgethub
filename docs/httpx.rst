@@ -6,9 +6,9 @@
 .. class:: GitHubAPI(client, requester, *, oauth_token=None, cache=None)
 
     An implementation of :class:`gidgethub.abc.GitHubAPI` using
-    `httpx <https://www.encode.io/httpx>`_. Typical usage will be::
+    `httpxyz <https://httpxyz.org/>`_. Typical usage will be::
 
-        import httpx
+        import httpxyz as httpx
         import gidgethub.httpx
 
 
