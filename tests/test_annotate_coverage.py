@@ -3,11 +3,11 @@ import io
 import json
 import pathlib
 
-SCRIPT = pathlib.Path(__file__).parents[1] / "scripts" / "annotate_coverage.py"
-SPEC = importlib.util.spec_from_file_location("annotate_coverage", SCRIPT)
-annotate_coverage = importlib.util.module_from_spec(SPEC)
-assert SPEC.loader is not None
-SPEC.loader.exec_module(annotate_coverage)
+script_path = pathlib.Path(__file__).parents[1] / "scripts" / "annotate_coverage.py"
+spec = importlib.util.spec_from_file_location("annotate_coverage", script_path)
+annotate_coverage = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(annotate_coverage)
 
 
 def test_missing_coverage_report() -> None:
