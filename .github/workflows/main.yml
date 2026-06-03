@@ -57,7 +57,7 @@ jobs:
 
           coverage_json = pathlib.Path("coverage.json")
           if not coverage_json.is_file():
-              print("::notice::coverage.json not found; skipping coverage annotations")
+              print("::warning::coverage.json not found; skipping coverage annotations")
               raise SystemExit(0)
 
           coverage = json.loads(coverage_json.read_text())
