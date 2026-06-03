@@ -9,7 +9,14 @@ def tests(session):
         ".[aiohttp,tornado,httpx]",
         *nox.project.dependency_groups(PYPROJECT, "test"),
     )
-    session.run("pytest", "--cov=gidgethub", "--cov-report=xml", "-n=auto", "tests")
+    session.run(
+        "pytest",
+        "--cov=gidgethub",
+        "--cov-report=term-missing:skip-covered",
+        "--cov-report=json",
+        "-n=auto",
+        "tests",
+    )
 
 
 @nox.session

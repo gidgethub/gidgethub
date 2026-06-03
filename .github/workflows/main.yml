@@ -48,11 +48,9 @@ jobs:
       - run: nox --session tests-${{ matrix.nox-python-version }}
         env:
           PYTHONDEVMODE: 1
-      - uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
+      - name: Annotate uncovered lines
         if: always()
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
+        run: python scripts/annotate_coverage.py coverage.json
 
   lint:
     runs-on: ubuntu-latest

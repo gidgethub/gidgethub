@@ -9,9 +9,6 @@ Development status
 .. image:: https://github.com/brettcannon/gidgethub/workflows/CI/badge.svg?event=push
     :target: https://github.com/brettcannon/gidgethub/actions
 
-.. image:: https://codecov.io/gh/brettcannon/gidgethub/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/brettcannon/gidgethub
-
 .. image:: https://readthedocs.org/projects/gidgethub/badge/?version=latest
     :target: http://gidgethub.readthedocs.io/en/latest/
     :alt: Documentation Status
