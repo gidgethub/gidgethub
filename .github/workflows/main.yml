@@ -57,6 +57,7 @@ jobs:
 
           coverage_json = pathlib.Path("coverage.json")
           if not coverage_json.is_file():
+              print("::notice::coverage.json not found; skipping coverage annotations")
               raise SystemExit(0)
 
           coverage = json.loads(coverage_json.read_text())
@@ -64,7 +65,7 @@ jobs:
               for line in report.get("missing_lines", ()):
                   print(f"::error file={filename},line={line}::Line is not covered by tests")
               for branch in report.get("missing_branches", ()):
-                  message = "Branch is not fully covered by tests"
+                  message = f"Branch from line {branch[0]} to line {branch[1]} is not covered by tests"
                   print(f"::error file={filename},line={branch[0]}::{message}")
           PY
 
