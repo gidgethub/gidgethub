@@ -64,7 +64,12 @@ jobs:
               raise SystemExit(0)
 
           coverage = json.loads(coverage_json.read_text())
-          for filename, report in coverage["files"].items():
+          files = coverage.get("files")
+          if not isinstance(files, dict):
+              print("::warning::coverage.json has no file coverage data")
+              raise SystemExit(0)
+
+          for filename, report in files.items():
               for line in report.get("missing_lines", ()):
                   print(f"::warning file={filename},line={line}::Line {line} is not covered by tests")
               for branch in report.get("missing_branches", ()):
