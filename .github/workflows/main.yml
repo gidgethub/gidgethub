@@ -54,20 +54,22 @@ jobs:
           python - <<'PY'
           import json
           import pathlib
+          import sys
 
-          coverage_json = pathlib.Path("coverage.json")
+          coverage_report = "coverage.json"
+          coverage_json = pathlib.Path(coverage_report)
           if not coverage_json.is_file():
               print(
-                  "::warning::coverage.json not found; "
+                  f"::warning::{coverage_report} not found; "
                   "this is expected if tests did not complete successfully"
               )
-              raise SystemExit(0)
+              sys.exit(0)
 
           coverage = json.loads(coverage_json.read_text())
           files = coverage.get("files")
           if not isinstance(files, dict):
-              print("::warning::coverage.json has no file coverage data")
-              raise SystemExit(0)
+              print(f"::warning::{coverage_report} has no file coverage data")
+              sys.exit(0)
 
           for filename, report in files.items():
               for line in report.get("missing_lines", ()):
