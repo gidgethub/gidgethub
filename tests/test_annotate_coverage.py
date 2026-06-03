@@ -54,8 +54,14 @@ def test_missing_lines_and_branches(tmp_path: pathlib.Path) -> None:
     result = annotate_coverage.annotate_coverage(coverage_report, output=output)
 
     assert result == 0
-    assert output.getvalue().splitlines() == [
-        "::warning file=gidgethub/example.py,line=3::" "Line 3 is not covered by tests",
+    line_warning = (
+        "::warning file=gidgethub/example.py,line=3::Line 3 is not covered by tests"
+    )
+    branch_warning = (
         "::warning file=gidgethub/example.py,line=4::"
-        "Branch from line 4 to line 5 is not covered by tests",
+        "Branch from line 4 to line 5 is not covered by tests"
+    )
+    assert output.getvalue().splitlines() == [
+        line_warning,
+        branch_warning,
     ]
