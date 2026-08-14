@@ -20,11 +20,11 @@ Unreleased
   and the base backoff delay can be set with the
   ``GIDGETHUB_SECONDARY_RATE_LIMIT_RETRY`` and
   ``GIDGETHUB_SECONDARY_RATE_LIMIT_BASE_DELAY`` environment variables
-  (`PR #XXX <https://github.com/gidgethub/gidgethub/pull/XXX>`_)
+  (`PR #228 <https://github.com/gidgethub/gidgethub/pull/228>`_)
 
 - Depend on ``typing-extensions`` on Python 3.9, where ``typing.ParamSpec`` is
   not available
-  (`PR #XXX <https://github.com/gidgethub/gidgethub/pull/XXX>`_)
+  (`PR #228 <https://github.com/gidgethub/gidgethub/pull/228>`_)
 
 5.4.0
 -----
