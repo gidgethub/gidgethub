@@ -7,6 +7,7 @@ API version you want your request to work against).
 """
 
 import datetime
+import sys
 import time
 from email.message import Message
 import hmac
@@ -24,9 +25,13 @@ from typing import (
     Type,
     Union,
     Callable,
-    ParamSpec,
     TypeVar,
 )
+
+if sys.version_info >= (3, 10):
+    from typing import ParamSpec
+else:
+    from typing_extensions import ParamSpec
 import logging
 
 import uritemplate

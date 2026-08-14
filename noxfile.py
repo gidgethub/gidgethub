@@ -14,7 +14,10 @@ def tests(session):
 
 @nox.session
 def lint(session):
-    session.install(".", *nox.project.dependency_groups(PYPROJECT, "lint", "doc"))
+    session.install(
+        ".[aiohttp,tornado,httpx]",
+        *nox.project.dependency_groups(PYPROJECT, "lint", "doc"),
+    )
     session.run("black", "--check", ".")
     session.run("mypy", "--ignore-missing-imports", "--strict", "gidgethub")
     session.run(

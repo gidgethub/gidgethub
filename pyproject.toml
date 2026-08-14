@@ -9,6 +9,7 @@ maintainers = [{name = "Mariatta", email = "mariatta@mariatta.ca"}]
 dependencies = [
     "uritemplate>=3.0.1",
     "PyJWT[crypto]>=2.4.0",
+    "typing-extensions>=4.0; python_version < '3.10'",
 ]
 requires-python = ">=3.9"
 license = "Apache-2.0 AND MIT"
