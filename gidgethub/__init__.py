@@ -70,10 +70,18 @@ class RateLimitExceeded(BadRequest):
 
 class SecondaryRateLimitExceeded(BadRequest):
     """Request rejected due to the secondary rate limit being exceeded."""
-    def __init__(self, status_code: http.HTTPStatus, *args: Any, headers: Mapping[str, str] =None) -> None:
+
+    def __init__(
+        self,
+        status_code: http.HTTPStatus,
+        *args: Any,
+        headers: Mapping[str, str] = None,
+    ) -> None:
 
         if not args:
-            super().__init__(status_code, "secondary rate limit exceeded", headers=headers)
+            super().__init__(
+                status_code, "secondary rate limit exceeded", headers=headers
+            )
         else:
             super().__init__(status_code, *args, headers=headers)
 

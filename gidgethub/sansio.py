@@ -16,16 +16,16 @@ import re
 import urllib.parse
 from functools import wraps
 from typing import (
-    Any, 
-    Dict, 
-    Mapping, 
-    Optional, 
-    Tuple, 
-    Type, 
-    Union, 
-    Callable, 
-    ParamSpec, 
-    TypeVar
+    Any,
+    Dict,
+    Mapping,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+    Callable,
+    ParamSpec,
+    TypeVar,
 )
 import logging
 
@@ -41,10 +41,12 @@ from . import (
     RateLimitExceeded,
     RedirectionException,
     ValidationError,
-    ValidationFailure, SecondaryRateLimitExceeded,
+    ValidationFailure,
+    SecondaryRateLimitExceeded,
 )
 
 logger = logging.getLogger(__name__)
+
 
 def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str]:
     """Tease out the content-type and character encoding.
@@ -298,11 +300,13 @@ class RateLimit:
             return cls(limit=limit, remaining=remaining, reset_epoch=reset_epoch)
 
 
-P = ParamSpec('P')
-T = TypeVar('T')
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
-def secondary_rate_limit_retry(max_retries: int, base_delay: int, wrapped: bool = True) -> Callable[[Callable[P, T]], Callable[P, T]]:
+def secondary_rate_limit_retry(
+    max_retries: int, base_delay: int, wrapped: bool = True
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
@@ -321,8 +325,12 @@ def secondary_rate_limit_retry(max_retries: int, base_delay: int, wrapped: bool 
                             headers=e.headers,
                         ) from e
 
-                    retry_after = e.headers.get("retry-after") or e.headers.get("Retry-After")
-                    reset_time = e.headers.get("x-ratelimit-reset") or e.headers.get("X-RateLimit-Reset")
+                    retry_after = e.headers.get("retry-after") or e.headers.get(
+                        "Retry-After"
+                    )
+                    reset_time = e.headers.get("x-ratelimit-reset") or e.headers.get(
+                        "X-RateLimit-Reset"
+                    )
 
                     if retry_after:
                         delay = int(retry_after)
@@ -338,7 +346,7 @@ def secondary_rate_limit_retry(max_retries: int, base_delay: int, wrapped: bool 
                             f"(attempt {retries + 1}/{max_retries})"
                         )
                     else:
-                        delay = base_delay * (2 ** retries)
+                        delay = base_delay * (2**retries)
                         logger.warning(
                             f"Rate limit hit without retry information. "
                             f"Using exponential backoff: {delay} seconds "
@@ -358,6 +366,7 @@ def secondary_rate_limit_retry(max_retries: int, base_delay: int, wrapped: bool 
             return wrapper
         else:
             return func
+
     return decorator
 
 
