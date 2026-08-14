@@ -6,7 +6,9 @@ when working with GitHub's API (e.g. validating webhook events or specifying the
 API version you want your request to work against).
 """
 
+import asyncio
 import datetime
+import inspect
 import sys
 import time
 from email.message import Message
@@ -18,6 +20,7 @@ import urllib.parse
 from functools import wraps
 from typing import (
     Any,
+    Awaitable,
     Dict,
     Mapping,
     Optional,
@@ -26,11 +29,12 @@ from typing import (
     Union,
     Callable,
     TypeVar,
+    cast,
 )
 
-if sys.version_info >= (3, 10):
+if sys.version_info >= (3, 10):  # pragma: no cover
     from typing import ParamSpec
-else:
+else:  # pragma: no cover
     from typing_extensions import ParamSpec
 import logging
 
@@ -309,10 +313,84 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
+def _retry_delay(
+    exc: BadRequest, retries: int, max_retries: int, base_delay: int
+) -> int:
+    """Determine how long to wait before retrying a rate-limited request.
+
+    Re-raises *exc* if it does not represent a rate limit, and raises
+    :exc:`~gidgethub.SecondaryRateLimitExceeded` once *max_retries* retries
+    have already been attempted.
+    """
+    if exc.status_code not in (403, 429):
+        raise exc
+
+    if retries >= max_retries:
+        raise SecondaryRateLimitExceeded(
+            http.HTTPStatus(exc.status_code),
+            headers=exc.headers,
+        ) from exc
+
+    retry_after = exc.headers.get("retry-after") or exc.headers.get("Retry-After")
+    reset_time = exc.headers.get("x-ratelimit-reset") or exc.headers.get(
+        "X-RateLimit-Reset"
+    )
+
+    if retry_after:
+        delay = int(retry_after)
+        logger.warning(
+            f"Secondary rate limit hit. Retrying after {delay} seconds "
+            f"(attempt {retries + 1}/{max_retries})"
+        )
+    elif reset_time:
+        current_time = int(time.time())
+        delay = max(int(reset_time) - current_time, 0)
+        logger.warning(
+            f"Primary rate limit hit. Retrying after {delay} seconds "
+            f"(attempt {retries + 1}/{max_retries})"
+        )
+    else:
+        delay = base_delay * (2**retries)
+        logger.warning(
+            f"Rate limit hit without retry information. "
+            f"Using exponential backoff: {delay} seconds "
+            f"(attempt {retries + 1}/{max_retries})"
+        )
+
+    logger.info(
+        f"Rate limit error details - Status: {exc.status_code}, "
+        f"Headers: {dict(exc.headers)}"
+    )
+
+    return delay
+
+
 def secondary_rate_limit_retry(
     max_retries: int, base_delay: int, wrapped: bool = True
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
+        if not wrapped:
+            return func
+
+        # Coroutine functions must be awaited inside the ``try`` block,
+        # otherwise the call merely returns a coroutine and the exception is
+        # raised at await time, out of the retry loop's reach.
+        if inspect.iscoroutinefunction(func):
+
+            @wraps(func)
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
+                retries = 0
+
+                while True:
+                    try:
+                        return await cast(Awaitable[Any], func(*args, **kwargs))
+                    except BadRequest as e:
+                        delay = _retry_delay(e, retries, max_retries, base_delay)
+                        await asyncio.sleep(delay)
+                        retries += 1
+
+            return cast(Callable[P, T], async_wrapper)
+
         @wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             retries = 0
@@ -321,55 +399,11 @@ def secondary_rate_limit_retry(
                 try:
                     return func(*args, **kwargs)
                 except BadRequest as e:
-                    if e.status_code not in (403, 429):
-                        raise
-
-                    if retries >= max_retries:
-                        raise SecondaryRateLimitExceeded(
-                            http.HTTPStatus(e.status_code),
-                            headers=e.headers,
-                        ) from e
-
-                    retry_after = e.headers.get("retry-after") or e.headers.get(
-                        "Retry-After"
-                    )
-                    reset_time = e.headers.get("x-ratelimit-reset") or e.headers.get(
-                        "X-RateLimit-Reset"
-                    )
-
-                    if retry_after:
-                        delay = int(retry_after)
-                        logger.warning(
-                            f"Secondary rate limit hit. Retrying after {delay} seconds "
-                            f"(attempt {retries + 1}/{max_retries})"
-                        )
-                    elif reset_time:
-                        current_time = int(time.time())
-                        delay = max(int(reset_time) - current_time, 0)
-                        logger.warning(
-                            f"Primary rate limit hit. Retrying after {delay} seconds "
-                            f"(attempt {retries + 1}/{max_retries})"
-                        )
-                    else:
-                        delay = base_delay * (2**retries)
-                        logger.warning(
-                            f"Rate limit hit without retry information. "
-                            f"Using exponential backoff: {delay} seconds "
-                            f"(attempt {retries + 1}/{max_retries})"
-                        )
-
-                    logger.info(
-                        f"Rate limit error details - Status: {e.status_code}, "
-                        f"Headers: {dict(e.headers)}"
-                    )
-
+                    delay = _retry_delay(e, retries, max_retries, base_delay)
                     time.sleep(delay)
                     retries += 1
 
-        if wrapped:
-            return wrapper
-        else:
-            return func
+        return wrapper
 
     return decorator
 

@@ -11,6 +11,21 @@ Unreleased
   :func:`gidgethub.sansio.format_url`
   (`PR #234 <https://github.com/gidgethub/gidgethub/pull/234>`_)
 
+- Add opt-in handling of GitHub's secondary rate limit. Setting the
+  ``GIDGETHUB_MANAGE_SECONDARY_RATE_LIMIT`` environment variable makes requests
+  rejected with a 403 or 429 be retried, honoring the ``retry-after`` and
+  ``x-ratelimit-reset`` response headers and falling back to exponential
+  backoff when neither is present. Once the retries are exhausted, the new
+  ``gidgethub.SecondaryRateLimitExceeded`` exception is raised. The retry count
+  and the base backoff delay can be set with the
+  ``GIDGETHUB_SECONDARY_RATE_LIMIT_RETRY`` and
+  ``GIDGETHUB_SECONDARY_RATE_LIMIT_BASE_DELAY`` environment variables
+  (`PR #XXX <https://github.com/gidgethub/gidgethub/pull/XXX>`_)
+
+- Depend on ``typing-extensions`` on Python 3.9, where ``typing.ParamSpec`` is
+  not available
+  (`PR #XXX <https://github.com/gidgethub/gidgethub/pull/XXX>`_)
+
 5.4.0
 -----
 

@@ -13,6 +13,7 @@ from gidgethub import (
     InvalidField,
     RateLimitExceeded,
     RedirectionException,
+    SecondaryRateLimitExceeded,
     ValidationError,
     ValidationFailure,
     sansio,
@@ -673,3 +674,174 @@ class TestFormatUrl:
             result
             == "https://ghes.example.com/api/v3/app/installations/123/access_tokens"
         )
+
+
+class TestSecondaryRateLimitRetry:
+    """Tests for gidgethub.sansio.secondary_rate_limit_retry()."""
+
+    @pytest.fixture
+    def delays(self, monkeypatch):
+        """Record requested sleep durations instead of actually waiting."""
+        recorded = []
+
+        async def fake_async_sleep(seconds):
+            recorded.append(seconds)
+
+        def fake_sleep(seconds):
+            recorded.append(seconds)
+
+        monkeypatch.setattr(sansio.asyncio, "sleep", fake_async_sleep)
+        monkeypatch.setattr(sansio.time, "sleep", fake_sleep)
+        return recorded
+
+    @staticmethod
+    def rate_limited(status_code=403, **headers):
+        return BadRequest(http.HTTPStatus(status_code), headers=headers)
+
+    @staticmethod
+    def failing_coroutine(*exceptions):
+        """An async callable raising *exceptions* in turn before succeeding."""
+        remaining = list(exceptions)
+
+        async def func():
+            func.calls += 1
+            if remaining:
+                raise remaining.pop(0)
+            return "success"
+
+        func.calls = 0
+        return func
+
+    @pytest.mark.asyncio
+    async def test_successful_call_is_not_retried(self, delays):
+        func = self.failing_coroutine()
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=3, base_delay=1)(func)
+
+        assert await wrapped() == "success"
+        assert func.calls == 1
+        assert delays == []
+
+    @pytest.mark.asyncio
+    async def test_retry_after_header_sets_the_delay(self, delays):
+        func = self.failing_coroutine(self.rate_limited(**{"retry-after": "7"}))
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=3, base_delay=1)(func)
+
+        assert await wrapped() == "success"
+        assert func.calls == 2
+        assert delays == [7]
+
+    @pytest.mark.asyncio
+    async def test_capitalized_retry_after_header_sets_the_delay(self, delays):
+        func = self.failing_coroutine(self.rate_limited(**{"Retry-After": "7"}))
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=3, base_delay=1)(func)
+
+        assert await wrapped() == "success"
+        assert delays == [7]
+
+    @pytest.mark.asyncio
+    async def test_ratelimit_reset_header_sets_the_delay(self, delays, monkeypatch):
+        monkeypatch.setattr(sansio.time, "time", lambda: 1000.0)
+        func = self.failing_coroutine(
+            self.rate_limited(**{"x-ratelimit-reset": "1060"})
+        )
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=3, base_delay=1)(func)
+
+        assert await wrapped() == "success"
+        assert delays == [60]
+
+    @pytest.mark.asyncio
+    async def test_capitalized_ratelimit_reset_header_sets_the_delay(
+        self, delays, monkeypatch
+    ):
+        monkeypatch.setattr(sansio.time, "time", lambda: 1000.0)
+        func = self.failing_coroutine(
+            self.rate_limited(**{"X-RateLimit-Reset": "1060"})
+        )
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=3, base_delay=1)(func)
+
+        assert await wrapped() == "success"
+        assert delays == [60]
+
+    @pytest.mark.asyncio
+    async def test_ratelimit_reset_in_the_past_does_not_delay(
+        self, delays, monkeypatch
+    ):
+        """A reset time that has already passed must not produce a negative delay."""
+        monkeypatch.setattr(sansio.time, "time", lambda: 1000.0)
+        func = self.failing_coroutine(self.rate_limited(**{"x-ratelimit-reset": "940"}))
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=3, base_delay=1)(func)
+
+        assert await wrapped() == "success"
+        assert delays == [0]
+
+    @pytest.mark.asyncio
+    async def test_headerless_response_backs_off_exponentially(self, delays):
+        func = self.failing_coroutine(self.rate_limited(), self.rate_limited())
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=3, base_delay=2)(func)
+
+        assert await wrapped() == "success"
+        assert func.calls == 3
+        assert delays == [2, 4]
+
+    @pytest.mark.asyncio
+    async def test_too_many_requests_is_retried(self, delays):
+        func = self.failing_coroutine(self.rate_limited(429, **{"retry-after": "3"}))
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=3, base_delay=1)(func)
+
+        assert await wrapped() == "success"
+        assert delays == [3]
+
+    @pytest.mark.asyncio
+    async def test_other_errors_are_not_retried(self, delays):
+        error = BadRequest(http.HTTPStatus.UNPROCESSABLE_ENTITY)
+        func = self.failing_coroutine(error)
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=3, base_delay=1)(func)
+
+        with pytest.raises(BadRequest) as exc_info:
+            await wrapped()
+        assert exc_info.value is error
+        assert func.calls == 1
+        assert delays == []
+
+    @pytest.mark.asyncio
+    async def test_exhausting_retries_raises_secondary_rate_limit_exceeded(
+        self, delays
+    ):
+        headers = {"retry-after": "1"}
+        errors = [self.rate_limited(**headers) for _ in range(3)]
+        func = self.failing_coroutine(*errors)
+        wrapped = sansio.secondary_rate_limit_retry(max_retries=2, base_delay=1)(func)
+
+        with pytest.raises(SecondaryRateLimitExceeded) as exc_info:
+            await wrapped()
+        assert exc_info.value.status_code == http.HTTPStatus.FORBIDDEN
+        assert exc_info.value.headers == headers
+        assert exc_info.value.__cause__ is errors[2]
+        # The original call plus one retry per allowed attempt.
+        assert func.calls == 3
+        assert delays == [1, 1]
+
+    def test_synchronous_functions_are_retried(self, delays):
+        remaining = [self.rate_limited(**{"retry-after": "5"})]
+        calls = []
+
+        @sansio.secondary_rate_limit_retry(max_retries=3, base_delay=1)
+        def func():
+            calls.append(None)
+            if remaining:
+                raise remaining.pop()
+            return "success"
+
+        assert func() == "success"
+        assert len(calls) == 2
+        assert delays == [5]
+
+    def test_not_wrapped_returns_the_original_function(self):
+        async def func():
+            """Undecorated."""
+
+        decorated = sansio.secondary_rate_limit_retry(
+            max_retries=3, base_delay=1, wrapped=False
+        )(func)
+
+        assert decorated is func

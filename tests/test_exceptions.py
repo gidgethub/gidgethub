@@ -12,6 +12,7 @@ from gidgethub import (
     RateLimitExceeded,
     RedirectionException,
     QueryError,
+    SecondaryRateLimitExceeded,
 )
 from gidgethub import sansio
 
@@ -53,6 +54,21 @@ def test_RateLimitExceeded():
     assert exc.status_code == http.HTTPStatus.FORBIDDEN
     exc = RateLimitExceeded(rate, "stuff happened")
     assert str(exc) == "stuff happened"
+
+
+def test_SecondaryRateLimitExceeded():
+    exc = SecondaryRateLimitExceeded(http.HTTPStatus.FORBIDDEN)
+    assert exc.status_code == http.HTTPStatus.FORBIDDEN
+    assert str(exc) == "secondary rate limit exceeded"
+    assert exc.headers == {}
+
+    headers = {"retry-after": "60"}
+    exc = SecondaryRateLimitExceeded(
+        http.HTTPStatus.TOO_MANY_REQUESTS, "stuff happened", headers=headers
+    )
+    assert exc.status_code == http.HTTPStatus.TOO_MANY_REQUESTS
+    assert str(exc) == "stuff happened"
+    assert exc.headers == headers
 
 
 def test_InvalidField():
