@@ -312,7 +312,7 @@ def secondary_rate_limit_retry(
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             retries = 0
 
-            while retries <= max_retries:
+            while True:
                 try:
                     return func(*args, **kwargs)
                 except BadRequest as e:
@@ -360,7 +360,6 @@ def secondary_rate_limit_retry(
 
                     time.sleep(delay)
                     retries += 1
-            return None
 
         if wrapped:
             return wrapper

@@ -75,7 +75,7 @@ class SecondaryRateLimitExceeded(BadRequest):
         self,
         status_code: http.HTTPStatus,
         *args: Any,
-        headers: Mapping[str, str] = None,
+        headers: Optional[Mapping[str, str]] = None,
     ) -> None:
 
         if not args:

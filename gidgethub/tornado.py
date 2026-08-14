@@ -17,7 +17,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
         # The below line is skipped from mypy because Tornado's HTTPRequest signature
         # requires many types of arguments some of which are internal to it
         # adding all of them to the `args` would be impractical.
-        request = httpclient.HTTPRequest(*args)
+        request = httpclient.HTTPRequest(*args)  # type: ignore
         # Since Tornado has designed AsyncHTTPClient to be a singleton, there's
         # no reason not to simply instantiate it every time.
         client = httpclient.AsyncHTTPClient()
