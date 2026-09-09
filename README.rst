@@ -6,11 +6,11 @@ An asynchronous `GitHub API <https://docs.github.com/>`_ library.
 Development status
 ------------------
 
-.. image:: https://github.com/brettcannon/gidgethub/workflows/CI/badge.svg?event=push
-    :target: https://github.com/brettcannon/gidgethub/actions
+.. image:: https://github.com/gidgethub/gidgethub/actions/workflows/main.yml/badge.svg
+    :target: https://github.com/gidgethub/gidgethub/actions/workflows/main.yml
 
-.. image:: https://codecov.io/gh/brettcannon/gidgethub/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/brettcannon/gidgethub
+.. image:: https://codecov.io/gh/gidgethub/gidgethub/branch/main/graph/badge.svg
+    :target: https://codecov.io/gh/gidgethub/gidgethub
 
 .. image:: https://readthedocs.org/projects/gidgethub/badge/?version=latest
     :target: http://gidgethub.readthedocs.io/en/latest/
@@ -37,8 +37,8 @@ The key goal is to provide a base library for the
 choose whatever HTTP library they prefer while parceling out GitHub-specific
 details to this library. This base library is then built upon to provide an
 abstract base class to a cleaner API to work with. Finally, implementations of
-the abstract base class are provided for asynchronous HTTP libraries for
-immediate usage.
+the abstract base class are provided for asynchronous HTTP libraries to work
+with.
 
 
 Alternative libraries
@@ -46,6 +46,14 @@ Alternative libraries
 
 If you think you want a different approach to the GitHub API,
 `GitHub maintains a list of libraries <https://docs.github.com/en/free-pro-team@latest/rest/overview/libraries>`_.
+
+
+Project status
+--------------
+
+This project is in maintenance mode. We welcome bug reports and will make a
+best-effort at fixing them. We do **not** accept features requests or pull requests
+from external contributors.
 
 
 *Aside*: what's with the name?
