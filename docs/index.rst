@@ -26,10 +26,9 @@ Quickstart
 
 Here is a complete example of a production server that responds to
 webhooks which will add a ``needs review`` label to all new pull
-requests (this is taken from the
-`Bedevere bot <https://github.com/python/bedevere>`_ used by the
-Python project; the only change is inlining some code and showing code
-responding to only a single type of webhook event)::
+requests (this is taken from the Bedevere bot once used by the Python project;
+the only change is inlining some code and showing code responding to only a
+single type of webhook event)::
 
   import asyncio
   import importlib
