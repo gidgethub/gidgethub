@@ -6,7 +6,7 @@
 .. class:: GitHubAPI(client, requester, *, oauth_token=None, cache=None)
 
     An implementation of :class:`gidgethub.abc.GitHubAPI` using
-    `http2 <https://pydantic.dev/docs/httpx2/get-started//>`_.
+    `http2 <https://pydantic.dev/docs/httpx2/>`_.
     Typical usage will be::
 
         import httpx2 as httpx
