@@ -6,9 +6,10 @@
 .. class:: GitHubAPI(client, requester, *, oauth_token=None, cache=None)
 
     An implementation of :class:`gidgethub.abc.GitHubAPI` using
-    `httpxyz <https://httpxyz.org/>`_. Typical usage will be::
+    `http2 <https://pydantic.dev/docs/httpx2/get-started//>`_.
+    Typical usage will be::
 
-        import httpxyz as httpx
+        import httpx2 as httpx
         import gidgethub.httpx
 
 
