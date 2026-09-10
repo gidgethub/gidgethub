@@ -11,7 +11,7 @@ Unreleased
   :func:`gidgethub.sansio.format_url`
   (`PR #234 <https://github.com/gidgethub/gidgethub/pull/234>`_)
 
-- Use ``httpx2` as a drop-in replacement for httpx backend.
+- Use httpx2 as a drop-in replacement for httpx backend.
   The "httpx" extra was updated to use httpx2 and a new httpx2 extra
   was also added.
 
