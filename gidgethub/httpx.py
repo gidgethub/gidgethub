@@ -2,7 +2,7 @@ import asyncio
 from typing import Mapping, Tuple, Any
 
 try:
-    import httpxyz as httpx
+    import httpx2 as httpx
 except ModuleNotFoundError:  # pragma: no cover
     import httpx
 
