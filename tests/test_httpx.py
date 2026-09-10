@@ -1,6 +1,9 @@
 import datetime
 
-import httpx
+try:
+    import httpx2 as httpx
+except ModuleNotFoundError:  # pragma: no cover
+    import httpx
 
 import pytest
 

@@ -6,9 +6,10 @@
 .. class:: GitHubAPI(client, requester, *, oauth_token=None, cache=None)
 
     An implementation of :class:`gidgethub.abc.GitHubAPI` using
-    `httpx <https://www.encode.io/httpx>`_. Typical usage will be::
+    `http2 <https://pydantic.dev/docs/httpx2/>`_.
+    Typical usage will be::
 
-        import httpx
+        import httpx2 as httpx
         import gidgethub.httpx
 
 
