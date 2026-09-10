@@ -37,8 +37,8 @@ Repository = "https://github.com/gidgethub/gidgethub"
 [project.optional-dependencies]
 aiohttp = ["aiohttp"]
 tornado = ["tornado"]
-httpx = ["httpxyz>=0.30.0"]
-httpxyz = ["httpxyz>=0.30.0"]
+httpx = ["httpx2"]  # For backwards-compatibility.
+httpx2 = ["httpx2"]
 
 
 [dependency-groups]
