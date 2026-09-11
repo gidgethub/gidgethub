@@ -19,8 +19,10 @@ jobs:
     timeout-minutes: 5
     outputs:
       python-versions: ${{ env.PYTHON_VERSIONS }}
+      lint-python-version: ${{ steps.lint-python-version.outputs.version }}
     steps:
-      - run: "true"
+      - id: lint-python-version
+        run: echo "version=$(jq -r '.[-2]' <<< "$PYTHON_VERSIONS")" >> "$GITHUB_OUTPUT"
 
   test:
     needs: vars
@@ -65,7 +67,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
-          python-version: ${{ fromJSON(needs.vars.outputs.python-versions)[fromJSON(needs.vars.outputs.python-versions).length - 2] }}
+          python-version: ${{ needs.vars.outputs.lint-python-version }}
           cache: pip
           cache-dependency-path: pyproject.toml
       - run: pip install nox
