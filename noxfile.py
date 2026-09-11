@@ -14,8 +14,11 @@ def tests(session):
 
 @nox.session
 def lint(session):
-    session.install(".", *nox.project.dependency_groups(PYPROJECT, "lint", "doc"))
-    session.run("black", "--check", ".")
+    session.install(
+        ".[aiohttp,tornado,httpx2]",
+        *nox.project.dependency_groups(PYPROJECT, "lint", "doc"),
+    )
+    session.run("black", "--target-version", "py39", "--check", ".")
     session.run("pyrefly", "coverage", "check")
     session.run("pyrefly", "check")
     session.run(
@@ -31,3 +34,9 @@ def lint(session):
         "docs",
         "docs/_build/html",
     )
+
+
+@nox.session
+def format(session):
+    session.install(".", *nox.project.dependency_groups(PYPROJECT, "format"))
+    session.run("black", "--target-version", "py39", ".")

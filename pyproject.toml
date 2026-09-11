@@ -44,7 +44,8 @@ httpx2 = ["httpx2"]
 [dependency-groups]
 test = ["importlib-resources", "pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync",
         "pytest-cov", "pytest-xdist", "coverage[toml]>=5.0.3"]
-lint = ["black", "pyrefly>=1.2.0"]
+format = ["black"]
+lint = ["pyrefly>=1.2.0", {include-group = "format"}]
 doc = ["sphinx>=4.0.0", "sphinx-rtd-theme>=0.5.2"]
 dev = ["nox", {include-group = "test"}, {include-group = "lint"}, {include-group = "doc"}]
 
@@ -58,7 +59,7 @@ testpaths = ["tests"]
 
 [tool.pyrefly]
 project-excludes = ["noxfile.py"]
-coverage = {excludes = ["tests/**"]}
+coverage = {excludes = ["noxfile.py", "tests/**"]}
 
 [tool.coverage.run]
 branch = true
