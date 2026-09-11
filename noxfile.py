@@ -36,7 +36,7 @@ def lint(session):
     )
 
 
-@nox.session
+@nox.session(default=False)
 def format(session):
     session.install(".", *nox.project.dependency_groups(PYPROJECT, "format"))
     session.run("black", "--target-version", "py39", ".")
