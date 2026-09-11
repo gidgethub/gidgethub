@@ -11,20 +11,10 @@ concurrency:
 
 env:
   FORCE_COLOR: 1
-  PYTHON_VERSIONS: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]'
   WORKER_PYTHON_VERSION: "3.14"
 
 jobs:
-  vars:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      python-versions: ${{ env.PYTHON_VERSIONS }}
-    steps:
-      - run: "true"
-
   test:
-    needs: vars
     name: test w/ Python ${{ matrix.python-version }}
 
     runs-on: ubuntu-latest
@@ -33,7 +23,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ${{ fromJSON(needs.vars.outputs.python-versions) }}
+        python-version:
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+          - "3.15"
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
