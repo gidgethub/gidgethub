@@ -16,7 +16,8 @@ def tests(session):
 def lint(session):
     session.install(".", *nox.project.dependency_groups(PYPROJECT, "lint", "doc"))
     session.run("black", "--check", ".")
-    session.run("mypy", "--ignore-missing-imports", "--strict", "gidgethub")
+    session.run("pyrefly", "coverage", "check")
+    session.run("pyrefly", "check")
     session.run(
         "sphinx-build",
         "-nW",
