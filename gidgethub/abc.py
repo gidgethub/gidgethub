@@ -3,8 +3,8 @@
 import abc
 import http
 import json
-from typing import Any, AsyncGenerator, Dict, Mapping, MutableMapping, Optional, Tuple
-from typing import Optional as Opt
+from collections.abc import AsyncGenerator, Mapping, MutableMapping
+from typing import Any, Optional
 
 from uritemplate import variable
 
@@ -20,7 +20,9 @@ from . import (
 )
 
 # Value represents etag, last-modified, data, and next page.
-CACHE_TYPE = MutableMapping[str, Tuple[Opt[str], Opt[str], Any, Opt[str]]]
+CACHE_TYPE = MutableMapping[
+    str, tuple[Optional[str], Optional[str], Any, Optional[str]]
+]
 
 JSON_CONTENT_TYPE = "application/json"
 UTF_8_CHARSET = "utf-8"
@@ -32,29 +34,29 @@ class GitHubAPI(abc.ABC):
     """Provide an idiomatic API for making calls to GitHub's API."""
 
     requester: str
-    oauth_token: Opt[str]
-    _cache: Opt[CACHE_TYPE]
+    oauth_token: Optional[str]
+    _cache: Optional[CACHE_TYPE]
     base_url: str
-    rate_limit: Opt[sansio.RateLimit]
+    rate_limit: Optional[sansio.RateLimit]
 
     def __init__(
         self,
         requester: str,
         *,
-        oauth_token: Opt[str] = None,
-        cache: Opt[CACHE_TYPE] = None,
+        oauth_token: Optional[str] = None,
+        cache: Optional[CACHE_TYPE] = None,
         base_url: str = sansio.DOMAIN,
     ) -> None:
         self.requester = requester
         self.oauth_token = oauth_token
         self._cache = cache
-        self.rate_limit: Opt[sansio.RateLimit] = None
+        self.rate_limit: Optional[sansio.RateLimit] = None
         self.base_url = base_url
 
     @abc.abstractmethod
     async def _request(
         self, method: str, url: str, headers: Mapping[str, str], body: bytes = b""
-    ) -> Tuple[int, Mapping[str, str], bytes]:
+    ) -> tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
 
     @abc.abstractmethod
@@ -68,11 +70,11 @@ class GitHubAPI(abc.ABC):
         url_vars: Optional[variable.VariableValueDict],
         data: Any,
         accept: str,
-        jwt: Opt[str] = None,
-        oauth_token: Opt[str] = None,
+        jwt: Optional[str] = None,
+        oauth_token: Optional[str] = None,
         content_type: str = JSON_CONTENT_TYPE,
-        extra_headers: Optional[Dict[str, str]] = None,
-    ) -> Tuple[bytes, Opt[str], int]:
+        extra_headers: Optional[dict[str, str]] = None,
+    ) -> tuple[bytes, Optional[str], int]:
         """Construct and make an HTTP request."""
         if oauth_token is not None and jwt is not None:
             raise ValueError("Cannot pass both oauth_token and jwt.")
@@ -137,9 +139,9 @@ class GitHubAPI(abc.ABC):
         url_vars: Optional[variable.VariableValueDict] = {},
         *,
         accept: str = sansio.accept_format(),
-        jwt: Opt[str] = None,
-        oauth_token: Opt[str] = None,
-        extra_headers: Optional[Dict[str, str]] = None,
+        jwt: Optional[str] = None,
+        oauth_token: Optional[str] = None,
+        extra_headers: Optional[dict[str, str]] = None,
     ) -> Any:
         """Send a GET request for a single item to the specified endpoint."""
 
@@ -161,8 +163,8 @@ class GitHubAPI(abc.ABC):
         url_vars: Optional[variable.VariableValueDict] = {},
         *,
         accept: str = sansio.accept_format(),
-        jwt: Opt[str] = None,
-        oauth_token: Opt[str] = None,
+        jwt: Optional[str] = None,
+        oauth_token: Optional[str] = None,
     ) -> int:
         """Send a GET request for a single item to the specifie endpoint and return its status code."""
 
@@ -181,13 +183,13 @@ class GitHubAPI(abc.ABC):
         url_vars: Optional[variable.VariableValueDict] = {},
         *,
         accept: str = sansio.accept_format(),
-        jwt: Opt[str] = None,
-        oauth_token: Opt[str] = None,
-        extra_headers: Optional[Dict[str, str]] = None,
-        iterable_key: Opt[str] = ITERABLE_KEY,
+        jwt: Optional[str] = None,
+        oauth_token: Optional[str] = None,
+        extra_headers: Optional[dict[str, str]] = None,
+        iterable_key: Optional[str] = ITERABLE_KEY,
     ) -> AsyncGenerator[Any, None]:
         """Return an async iterable for all the items at a specified endpoint."""
-        current_url: Opt[str] = url
+        current_url: Optional[str] = url
         while current_url:
             data, current_url, _ = await self._make_request(
                 "GET",
@@ -212,9 +214,9 @@ class GitHubAPI(abc.ABC):
         *,
         data: Any,
         accept: str = sansio.accept_format(),
-        jwt: Opt[str] = None,
-        oauth_token: Opt[str] = None,
-        extra_headers: Optional[Dict[str, str]] = None,
+        jwt: Optional[str] = None,
+        oauth_token: Optional[str] = None,
+        extra_headers: Optional[dict[str, str]] = None,
         content_type: str = JSON_CONTENT_TYPE,
     ) -> Any:
         data, _, _ = await self._make_request(
@@ -237,9 +239,9 @@ class GitHubAPI(abc.ABC):
         *,
         data: Any,
         accept: str = sansio.accept_format(),
-        jwt: Opt[str] = None,
-        oauth_token: Opt[str] = None,
-        extra_headers: Optional[Dict[str, str]] = None,
+        jwt: Optional[str] = None,
+        oauth_token: Optional[str] = None,
+        extra_headers: Optional[dict[str, str]] = None,
     ) -> Any:
         data, _, _ = await self._make_request(
             "PATCH",
@@ -260,9 +262,9 @@ class GitHubAPI(abc.ABC):
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
-        jwt: Opt[str] = None,
-        oauth_token: Opt[str] = None,
-        extra_headers: Optional[Dict[str, str]] = None,
+        jwt: Optional[str] = None,
+        oauth_token: Optional[str] = None,
+        extra_headers: Optional[dict[str, str]] = None,
     ) -> Any:
         data, _, _ = await self._make_request(
             "PUT",
@@ -283,9 +285,9 @@ class GitHubAPI(abc.ABC):
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
-        jwt: Opt[str] = None,
-        oauth_token: Opt[str] = None,
-        extra_headers: Optional[Dict[str, str]] = None,
+        jwt: Optional[str] = None,
+        oauth_token: Optional[str] = None,
+        extra_headers: Optional[dict[str, str]] = None,
     ) -> None:
         await self._make_request(
             "DELETE",
@@ -310,7 +312,7 @@ class GitHubAPI(abc.ABC):
         The *endpoint* argument specifies the endpoint URL to use. The
         *variables* kwargs-style argument collects all variables for the query.
         """
-        payload: Dict[str, Any] = {"query": query}
+        payload: dict[str, Any] = {"query": query}
         if variables:
             payload["variables"] = variables
         request_data = json.dumps(payload).encode("utf-8")
@@ -335,7 +337,7 @@ class GitHubAPI(abc.ABC):
         type_, encoding = sansio._parse_content_type(resp_content_type)
         response_str = response_data.decode(encoding)
         if type_ == "application/json":
-            response: Dict[str, Any] = json.loads(response_str)
+            response: dict[str, Any] = json.loads(response_str)
         else:
             raise GraphQLResponseTypeError(resp_content_type, response_str)
 
