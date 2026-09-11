@@ -29,7 +29,7 @@ def code_check(session):
 
 @nox.session(default=False)
 def type_check(session):
-    """Type-check all the code."""
+    """Type check all the code."""
     session.install(
         ".[aiohttp,tornado,httpx2]",
         *nox.project.dependency_groups(PYPROJECT, "type-check"),
@@ -40,7 +40,7 @@ def type_check(session):
 
 @nox.session(default=False)
 def compatiblity_type_check(session):
-    """Type-check for compatibility via the test suite with other type checkers."""
+    """Type check for compatibility via the test suite with other type checkers."""
     session.install(
         ".[aiohttp,tornado,httpx2]",
         *nox.project.dependency_groups(PYPROJECT, "type-check"),
