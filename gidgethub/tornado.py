@@ -1,5 +1,4 @@
-from typing import Any, Dict, List, Mapping, Tuple, Union
-
+from collections.abc import Mapping
 from tornado import gen, httpclient
 
 from . import abc as gh_abc
@@ -8,7 +7,7 @@ from . import abc as gh_abc
 class GitHubAPI(gh_abc.GitHubAPI):
     async def _request(
         self, method: str, url: str, headers: Mapping[str, str], body: bytes = b""
-    ) -> Tuple[int, Mapping[str, str], bytes]:
+    ) -> tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
         # Setting 'body' to None fails type checking, so only add a 'body' argument if necessary.
         args: List[Union[str, Dict[Any, Any], bytes]] = [url, method, dict(headers)]
