@@ -12,15 +12,22 @@ def tests(session):
     session.run("pytest", "--cov=gidgethub", "--cov-report=xml", "-n=auto", "tests")
 
 
-@nox.session
-def lint(session):
+@nox.session(default=False)
+def type_check(session):
     session.install(
         ".[aiohttp,tornado,httpx2]",
-        *nox.project.dependency_groups(PYPROJECT, "test", "lint", "doc"),
+        *nox.project.dependency_groups(PYPROJECT, "type-check"),
     )
-    session.run("black", "--target-version", "py39", "--check", ".")
     session.run("pyrefly", "coverage", "check")
     session.run("pyrefly", "check")
+
+
+@nox.session(default=False)
+def docs(session):
+    session.install(
+        ".",
+        *nox.project.dependency_groups(PYPROJECT, "doc"),
+    )
     session.run(
         "sphinx-build",
         "-nW",
@@ -34,6 +41,17 @@ def lint(session):
         "docs",
         "docs/_build/html",
     )
+
+
+@nox.session
+def lint(session):
+    session.install(
+        ".",
+        *nox.project.dependency_groups(PYPROJECT, "format"),
+    )
+    session.run("black", "--target-version", "py39", "--check", ".")
+    type_check(session)
+    docs(session)
 
 
 @nox.session(default=False)

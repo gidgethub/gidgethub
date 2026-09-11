@@ -45,7 +45,8 @@ httpx2 = ["httpx2"]
 test = ["importlib-resources", "pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync",
         "pytest-cov", "pytest-xdist", "coverage[toml]>=5.0.3"]
 format = ["black"]
-lint = ["pyrefly>=1.2.0", {include-group = "format"}]
+type-check = ["pyrefly>=1.2.0", {include-group = "test"}]
+lint = [{include-group = "format"}, {include-group = "type-check"}]
 doc = ["sphinx>=4.0.0", "sphinx-rtd-theme>=0.5.2"]
 dev = ["nox", {include-group = "test"}, {include-group = "lint"}, {include-group = "doc"}]
 
