@@ -194,6 +194,111 @@ class TestGeneralGitHubAPI:
         assert status_code == 200
 
 
+class TestGitHubAPIManageRateLimit:
+    @pytest.mark.asyncio
+    async def test_default_is_no_op(self):
+        """The default manage_rate_limit() is a no-op and doesn't affect
+        normal request behaviour."""
+        original_data = {"hello": "world"}
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["content-type"] = "application/json; charset=UTF-8"
+        gh = MockGitHubAPI(
+            headers=headers, body=json.dumps(original_data).encode("utf8")
+        )
+        data = await gh.getitem("/fake")
+        assert data == original_data
+
+    @pytest.mark.asyncio
+    async def test_called_with_correct_arguments(self):
+        """manage_rate_limit() is called with the expected arguments."""
+        calls = []
+
+        class RecordingGitHubAPI(MockGitHubAPI):
+            async def manage_rate_limit(
+                self, *, method, url, rate_limit, requests_in_flight
+            ):
+                calls.append((method, url, rate_limit, requests_in_flight))
+
+        original_data = {"hello": "world"}
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["content-type"] = "application/json; charset=UTF-8"
+        gh = RecordingGitHubAPI(
+            headers=headers, body=json.dumps(original_data).encode("utf8")
+        )
+        assert gh.rate_limit is None
+        await gh.getitem("/fake")
+
+        assert len(calls) == 1
+        method, url, rate_limit, requests_in_flight = calls[0]
+        assert method == "GET"
+        assert url == sansio.format_url("/fake", {})
+        assert rate_limit is None
+        assert requests_in_flight == 1
+
+    @pytest.mark.asyncio
+    async def test_subclass_can_observe_multiple_calls(self):
+        """A subclass overriding manage_rate_limit() can observe request
+        timing across multiple requests made via getiter()."""
+
+        class RecordingGitHubAPI(MockGitHubAPI):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.manage_rate_limit_calls = []
+
+            async def manage_rate_limit(
+                self, *, method, url, rate_limit, requests_in_flight
+            ):
+                self.manage_rate_limit_calls.append(
+                    (method, url, rate_limit, requests_in_flight)
+                )
+
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        headers["link"] = '<https://api.github.com/fake?page=2>; rel="next"'
+        headers["content-type"] = JSON_UTF_8_CHARSET
+        gh = RecordingGitHubAPI(
+            headers=headers, body=b'[{"hello": "world"}, {"hello": "world 2"}]'
+        )
+
+        results = [item async for item in gh.getiter("/fake")]
+
+        assert len(results) == 4
+        assert len(gh.manage_rate_limit_calls) == 2
+        assert gh.manage_rate_limit_calls[0][1] == sansio.format_url("/fake", {})
+        assert gh.manage_rate_limit_calls[1][1] == "https://api.github.com/fake?page=2"
+
+    @pytest.mark.asyncio
+    async def test_requests_in_flight_tracked_on_success(self):
+        """requests_in_flight increments before the request and decrements
+        after it completes successfully."""
+
+        class TrackingGitHubAPI(MockGitHubAPI):
+            async def manage_rate_limit(
+                self, *, method, url, rate_limit, requests_in_flight
+            ):
+                self.in_flight_during_call = requests_in_flight
+
+        gh = TrackingGitHubAPI()
+        assert gh.requests_in_flight == 0
+        await gh.getitem("/fake")
+        assert gh.in_flight_during_call == 1
+        assert gh.requests_in_flight == 0
+
+    @pytest.mark.asyncio
+    async def test_requests_in_flight_decrements_on_exception(self):
+        """requests_in_flight decrements even when the underlying request
+        raises an exception."""
+
+        class FailingGitHubAPI(MockGitHubAPI):
+            async def _request(self, method, url, headers, body=b""):
+                raise RuntimeError("boom")
+
+        gh = FailingGitHubAPI()
+        assert gh.requests_in_flight == 0
+        with pytest.raises(RuntimeError):
+            await gh.getitem("/fake")
+        assert gh.requests_in_flight == 0
+
+
 class TestGitHubAPIGetitem:
     @pytest.mark.asyncio
     async def test_getitem(self):

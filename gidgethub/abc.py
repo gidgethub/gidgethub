@@ -40,6 +40,7 @@ class GitHubAPI(abc.ABC):
     _cache: CACHE_TYPE | None
     base_url: str
     rate_limit: sansio.RateLimit | None
+    requests_in_flight: int
 
     def __init__(
         self,
@@ -54,6 +55,7 @@ class GitHubAPI(abc.ABC):
         self._cache = cache
         self.rate_limit: sansio.RateLimit | None = None
         self.base_url = base_url
+        self.requests_in_flight = 0
 
     @abc.abstractmethod
     async def _request(
@@ -64,6 +66,24 @@ class GitHubAPI(abc.ABC):
     @abc.abstractmethod
     async def sleep(self, seconds: float) -> None:
         """Sleep for the specified number of seconds."""
+
+    async def manage_rate_limit(
+        self,
+        *,
+        method: str,
+        url: str,
+        rate_limit: sansio.RateLimit | None,
+        requests_in_flight: int,
+    ) -> None:
+        """Hook called before each HTTP request to allow custom rate-limit
+        or backpressure handling (e.g. sleeping until quota resets).
+
+        The default implementation is a no-op. Subclasses can override this
+        to implement custom strategies such as sleeping until
+        ``rate_limit.reset_datetime``, throttling based on
+        *requests_in_flight*, or anything else appropriate for their use
+        case.
+        """
 
     async def _make_request(
         self,
@@ -126,7 +146,17 @@ class GitHubAPI(abc.ABC):
             request_headers["content-length"] = str(len(body))
         if self.rate_limit is not None:
             self.rate_limit.remaining -= 1
-        response = await self._request(method, filled_url, request_headers, body)
+        self.requests_in_flight += 1
+        try:
+            await self.manage_rate_limit(
+                method=method,
+                url=filled_url,
+                rate_limit=self.rate_limit,
+                requests_in_flight=self.requests_in_flight,
+            )
+            response = await self._request(method, filled_url, request_headers, body)
+        finally:
+            self.requests_in_flight -= 1
         if not (response[0] == 304 and cached):
             data, self.rate_limit, more = sansio.decipher_response(*response)
             has_cache_details = "etag" in response[1] or "last-modified" in response[1]

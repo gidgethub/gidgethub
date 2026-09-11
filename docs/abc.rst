@@ -93,6 +93,15 @@ experimental APIs without issue.
         This attribute is automatically updated after every successful
         HTTP request.
 
+    .. attribute:: requests_in_flight
+
+        The number of requests currently in flight for this
+        :class:`GitHubAPI` instance. It is incremented before a request is
+        made and decremented once the request has completed (whether it
+        succeeded or raised an exception).
+
+        .. versionadded:: 6.0
+
     .. py:method:: _request(method, url, headers, body=b'')
         :async:
         :abstractmethod:
@@ -118,6 +127,40 @@ experimental APIs without issue.
         .. versionchanged:: 2.0
 
             Renamed from ``_sleep()``.
+
+
+    .. py:method:: manage_rate_limit(*, method, url, rate_limit, requests_in_flight)
+        :async:
+
+        A :term:`coroutine` which is called before each HTTP request is
+        made, allowing custom rate-limit or backpressure handling (e.g.
+        sleeping until quota resets). The default implementation is a
+        no-op, so overriding it is entirely optional and existing
+        subclasses are unaffected.
+
+        *method* is the HTTP method being used and *url* is the fully
+        formatted URL for the upcoming request. *rate_limit* is the
+        current value of :attr:`rate_limit` (or ``None`` if it isn't yet
+        known). *requests_in_flight* is the current value of
+        :attr:`requests_in_flight`, including the request about to be
+        made.
+
+        For example, to sleep until the rate limit resets whenever the
+        remaining quota has been exhausted::
+
+            class GitHubAPI(gidgethub.abc.GitHubAPI):
+                ...
+
+                async def manage_rate_limit(
+                    self, *, method, url, rate_limit, requests_in_flight
+                ):
+                    if rate_limit is not None and rate_limit.remaining <= 0:
+                        delta = rate_limit.reset_datetime - datetime.datetime.now(
+                            datetime.timezone.utc
+                        )
+                        await self.sleep(max(delta.total_seconds(), 0))
+
+        .. versionadded:: 6.0
 
 
     .. py:method:: getitem(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None, extra_headers=None)
