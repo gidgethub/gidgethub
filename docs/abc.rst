@@ -99,9 +99,11 @@ experimental APIs without issue.
         :class:`GitHubAPI` instance. It is incremented before
         :meth:`manage_rate_limit` is called and decremented once the
         request has completed (whether it succeeded or raised an
-        exception). This means it counts the request as "in flight" for
-        the entire duration of :meth:`manage_rate_limit`, including any
-        time spent waiting there.
+        exception, including an exception raised by
+        :meth:`manage_rate_limit` itself before the underlying HTTP
+        request is even made). This means it counts the request as
+        "in flight" for the entire duration of :meth:`manage_rate_limit`,
+        including any time spent waiting there.
 
         .. versionadded:: 6.0
 

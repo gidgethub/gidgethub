@@ -90,7 +90,10 @@ class GitHubAPI(abc.ABC):
         request has completed (or raised an exception). As such, it counts
         the request as "in flight" for the entire duration of this call,
         including any time spent waiting inside ``manage_rate_limit()``
-        itself.
+        itself. If ``manage_rate_limit()`` itself raises an exception, the
+        request is considered to have failed and :attr:`requests_in_flight`
+        is decremented the same way, even though ``_request()`` is never
+        called in that case.
         """
 
     async def _make_request(
