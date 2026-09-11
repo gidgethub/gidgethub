@@ -12,6 +12,7 @@ concurrency:
 env:
   FORCE_COLOR: 1
   PYTHON_VERSIONS: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]'
+  LINT_PYTHON_VERSION: "3.14"
 
 jobs:
   vars:
@@ -19,10 +20,8 @@ jobs:
     timeout-minutes: 5
     outputs:
       python-versions: ${{ env.PYTHON_VERSIONS }}
-      lint-python-version: ${{ steps.lint-python-version.outputs.version }}
     steps:
-      - id: lint-python-version
-        run: echo "version=$(jq -r '.[-2]' <<< "$PYTHON_VERSIONS")" >> "$GITHUB_OUTPUT"
+      - run: "true"
 
   test:
     needs: vars
@@ -57,7 +56,6 @@ jobs:
           file: ./coverage.xml
 
   lint:
-    needs: vars
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -67,7 +65,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
-          python-version: ${{ needs.vars.outputs.lint-python-version }}
+          python-version: ${{ env.LINT_PYTHON_VERSION }}
           cache: pip
           cache-dependency-path: pyproject.toml
       - run: pip install nox
