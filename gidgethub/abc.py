@@ -67,7 +67,7 @@ class GitHubAPI(abc.ABC):
         self,
         method: str,
         url: str,
-        url_vars: Optional[variable.VariableValueDict],
+        url_vars: Optional[Mapping[str, variable.VariableValue]],
         data: Any,
         accept: str,
         jwt: Optional[str] = None,
@@ -95,6 +95,7 @@ class GitHubAPI(abc.ABC):
         if extra_headers is not None:
             request_headers.update(extra_headers)
         cached = cacheable = False
+        more: Optional[str] = None
         # Can't use None as a "no body" sentinel as it's a legitimate JSON type.
         if data == b"":
             body = b""
@@ -136,7 +137,7 @@ class GitHubAPI(abc.ABC):
     async def getitem(
         self,
         url: str,
-        url_vars: Optional[variable.VariableValueDict] = {},
+        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
         *,
         accept: str = sansio.accept_format(),
         jwt: Optional[str] = None,
@@ -160,7 +161,7 @@ class GitHubAPI(abc.ABC):
     async def getstatus(
         self,
         url: str,
-        url_vars: Optional[variable.VariableValueDict] = {},
+        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
         *,
         accept: str = sansio.accept_format(),
         jwt: Optional[str] = None,
@@ -180,7 +181,7 @@ class GitHubAPI(abc.ABC):
     async def getiter(
         self,
         url: str,
-        url_vars: Optional[variable.VariableValueDict] = {},
+        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
         *,
         accept: str = sansio.accept_format(),
         jwt: Optional[str] = None,
@@ -210,7 +211,7 @@ class GitHubAPI(abc.ABC):
     async def post(
         self,
         url: str,
-        url_vars: Optional[variable.VariableValueDict] = {},
+        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
         *,
         data: Any,
         accept: str = sansio.accept_format(),
@@ -235,7 +236,7 @@ class GitHubAPI(abc.ABC):
     async def patch(
         self,
         url: str,
-        url_vars: Optional[variable.VariableValueDict] = {},
+        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
         *,
         data: Any,
         accept: str = sansio.accept_format(),
@@ -258,7 +259,7 @@ class GitHubAPI(abc.ABC):
     async def put(
         self,
         url: str,
-        url_vars: Optional[variable.VariableValueDict] = {},
+        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
@@ -281,7 +282,7 @@ class GitHubAPI(abc.ABC):
     async def delete(
         self,
         url: str,
-        url_vars: Optional[variable.VariableValueDict] = {},
+        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),

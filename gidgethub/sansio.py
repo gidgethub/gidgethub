@@ -393,7 +393,10 @@ DOMAIN = "https://api.github.com"
 
 
 def format_url(
-    url: str, url_vars: Optional[variable.VariableValueDict], *, base_url: str = DOMAIN
+    url: str,
+    url_vars: Optional[Mapping[str, variable.VariableValue]],
+    *,
+    base_url: str = DOMAIN,
 ) -> str:
     """Construct a URL for the GitHub API.
 
@@ -409,5 +412,8 @@ def format_url(
     url = urllib.parse.urljoin(
         base_url.removesuffix("/") + "/", url.removeprefix("/")
     )  # Works even if 'url' is fully-qualified.
-    expanded_url: str = uritemplate.expand(url, var_dict=url_vars)
+    if url_vars is None:
+        expanded_url = uritemplate.expand(url)
+    else:
+        expanded_url = uritemplate.expand(url, var_dict=dict(url_vars))
     return expanded_url
