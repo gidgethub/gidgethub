@@ -316,11 +316,14 @@ class TestDecipherResponse:
 
     def test_403_rate_limit_exceeded(self):
         status_code = 403
+        # A future reset keeps this exhausted RateLimit falsey;
+        # https://github.com/gidgethub/gidgethub/issues/231
+        reset = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
         headers = {
             "content-type": "application/json; charset=utf-8",
             "x-ratelimit-limit": "2",
             "x-ratelimit-remaining": "0",
-            "x-ratelimit-reset": "1",
+            "x-ratelimit-reset": str(reset.timestamp()),
         }
         body = json.dumps({"message": "oops"}).encode("UTF-8")
         with pytest.raises(RateLimitExceeded) as exc_info:
