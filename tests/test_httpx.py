@@ -3,7 +3,7 @@ import datetime
 try:
     import httpx2 as httpx
 except ModuleNotFoundError:  # pragma: no cover
-    import httpx
+    import httpx  # pyrefly: ignore [missing-import]
 
 import pytest
 
