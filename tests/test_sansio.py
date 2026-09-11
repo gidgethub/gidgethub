@@ -318,7 +318,9 @@ class TestDecipherResponse:
         status_code = 403
         # A future reset keeps this exhausted RateLimit falsey;
         # https://github.com/gidgethub/gidgethub/issues/231
-        reset = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
+        reset = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+            days=1
+        )
         headers = {
             "content-type": "application/json; charset=utf-8",
             "x-ratelimit-limit": "2",
