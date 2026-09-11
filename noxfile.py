@@ -25,6 +25,16 @@ def type_check(session):
 
 
 @nox.session(default=False)
+def mypy_type_check(session):
+    """Type-check for mypy compatibility via the test suite."""
+    session.install(
+        ".[aiohttp,tornado,httpx2]",
+        *nox.project.dependency_groups(PYPROJECT, "type-check"),
+    )
+    session.run("mypy", "--check", "tests")
+
+
+@nox.session(default=False)
 def docs(session):
     """Build the docs."""
     session.install(
@@ -55,6 +65,7 @@ def lint(session):
     )
     session.run("black", "--target-version", "py39", "--check", ".")
     type_check(session)
+    mypy_type_check(session)
     docs(session)
 
 

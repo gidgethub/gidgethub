@@ -1,10 +1,13 @@
 import asyncio
-from typing import Mapping, Tuple, Any
+from typing import TYPE_CHECKING, Any, Mapping, Tuple
 
-try:
+if TYPE_CHECKING:
     import httpx2 as httpx
-except ModuleNotFoundError:  # pragma: no cover
-    import httpx  # pyrefly: ignore [missing-import]
+else:
+    try:
+        import httpx2 as httpx
+    except ModuleNotFoundError:  # pragma: no cover
+            import httpx
 
 from . import abc as gh_abc
 

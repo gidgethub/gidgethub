@@ -672,7 +672,7 @@ class TestGitHubAPICache:
 
     @pytest.mark.asyncio
     async def test_etag_received(self):
-        cache = {}
+        cache: gh_abc.CACHE_TYPE = {}
         etag = "12345"
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
         headers["etag"] = etag
@@ -694,7 +694,7 @@ class TestGitHubAPICache:
 
     @pytest.mark.asyncio
     async def test_last_modified_received(self):
-        cache = {}
+        cache: gh_abc.CACHE_TYPE = {}
         last_modified = "12345"
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
         headers["last-modified"] = last_modified
@@ -727,7 +727,7 @@ class TestGitHubAPICache:
 
     @pytest.mark.asyncio
     async def test_ineligible(self):
-        cache = {}
+        cache: gh_abc.CACHE_TYPE = {}
         gh = MockGitHubAPI(cache=cache)
         url = "https://api.github.com/fake"
         # Only way to force a GET request with a body.
@@ -738,7 +738,7 @@ class TestGitHubAPICache:
 
     @pytest.mark.asyncio
     async def test_redirect_without_cache(self):
-        cache = {}
+        cache: gh_abc.CACHE_TYPE = {}
         gh = MockGitHubAPI(304, cache=cache)
         with pytest.raises(RedirectionException):
             await gh.getitem("/fake")

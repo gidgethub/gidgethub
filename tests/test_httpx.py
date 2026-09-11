@@ -1,9 +1,13 @@
 import datetime
+from typing import TYPE_CHECKING
 
-try:
+if TYPE_CHECKING:
     import httpx2 as httpx
-except ModuleNotFoundError:  # pragma: no cover
-    import httpx  # pyrefly: ignore [missing-import]
+else:
+    try:
+        import httpx2 as httpx
+    except ModuleNotFoundError:  # pragma: no cover
+            import httpx
 
 import pytest
 

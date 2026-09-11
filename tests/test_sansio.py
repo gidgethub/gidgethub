@@ -263,7 +263,7 @@ class TestRateLimit:
         assert str(reset) in message
 
     def test_from_http_no_ratelimit(self):
-        headers = {}
+        headers: dict[str, str] = {}
         rate_limit = sansio.RateLimit.from_http(headers)
         assert rate_limit is None
 
@@ -344,8 +344,7 @@ class TestDecipherResponse:
     def test_422(self):
         status_code = 422
         errors = [{"resource": "Issue", "field": "title", "code": "missing_field"}]
-        body = json.dumps({"message": "it went bad", "errors": errors})
-        body = body.encode("utf-8")
+        body = json.dumps({"message": "it went bad", "errors": errors}).encode("utf-8")
         headers = {"content-type": "application/json; charset=utf-8"}
         with pytest.raises(InvalidField) as exc_info:
             sansio.decipher_response(status_code, headers, body)
@@ -362,8 +361,7 @@ class TestDecipherResponse:
                 "message": "A pull request already exists for foo:1.",
             }
         ]
-        body = json.dumps({"message": "it went bad", "errors": errors})
-        body = body.encode("utf-8")
+        body = json.dumps({"message": "it went bad", "errors": errors}).encode("utf-8")
         headers = {"content-type": "application/json; charset=utf-8"}
         with pytest.raises(ValidationError) as exc_info:
             sansio.decipher_response(status_code, headers, body)
@@ -384,8 +382,7 @@ class TestDecipherResponse:
                 "documentation_url": "https://docs.github.com/rest/commits/statuses#create-a-commit-status",
                 "status": "422",
             }
-        )
-        body = body.encode("utf-8")
+        ).encode("utf-8")
         headers = {"content-type": "application/json; charset=utf-8"}
         with pytest.raises(ValidationError) as exc_info:
             sansio.decipher_response(status_code, headers, body)
@@ -403,8 +400,7 @@ class TestDecipherResponse:
                 "message": "Reference does not exist",
                 "documentation_url": "https://docs.github.com/en/free-pro-team@latest/rest/reference/git#delete-a-reference",
             }
-        )
-        body = body.encode("utf-8")
+        ).encode("utf-8")
         headers = {"content-type": "application/json; charset=utf-8"}
         with pytest.raises(InvalidField) as exc_info:
             sansio.decipher_response(status_code, headers, body)
