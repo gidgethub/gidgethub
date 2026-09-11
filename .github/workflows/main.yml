@@ -14,7 +14,16 @@ env:
   PYTHON_VERSIONS: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]'
 
 jobs:
+  vars:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      python-versions: ${{ env.PYTHON_VERSIONS }}
+    steps:
+      - run: "true"
+
   test:
+    needs: vars
     name: test w/ Python ${{ matrix.python-version }}
 
     runs-on: ubuntu-latest
@@ -23,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ${{ fromJSON(env.PYTHON_VERSIONS) }}
+        python-version: ${{ fromJSON(needs.vars.outputs.python-versions) }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -46,6 +55,7 @@ jobs:
           file: ./coverage.xml
 
   lint:
+    needs: vars
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -55,7 +65,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
-          python-version: ${{ fromJSON(env.PYTHON_VERSIONS)[fromJSON(env.PYTHON_VERSIONS).length - 2] }}
+          python-version: ${{ fromJSON(needs.vars.outputs.python-versions)[fromJSON(needs.vars.outputs.python-versions).length - 2] }}
           cache: pip
           cache-dependency-path: pyproject.toml
       - run: pip install nox
