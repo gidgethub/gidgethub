@@ -96,6 +96,10 @@ def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
 class Event:
     """Details of a GitHub webhook event."""
 
+    data: Any
+    event: str
+    delivery_id: str
+
     def __init__(self, data: Any, *, event: str, delivery_id: str) -> None:
         # https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/webhook-events-and-payloads
         # https://docs.github.com/en/free-pro-team@latest/developers/webhooks-and-events/webhook-events-and-payloads#delivery-headers
@@ -236,6 +240,10 @@ class RateLimit:
     is determined based on whether there are any remaining requests or if the
     reset datetime has passed.
     """
+
+    limit: int
+    remaining: int
+    reset_datetime: datetime.datetime
 
     # https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#rate-limiting
 

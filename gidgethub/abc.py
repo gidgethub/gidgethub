@@ -13,11 +13,11 @@ from . import (
     GitHubBroken,
     GraphQLAuthorizationFailure,
     GraphQLException,
+    GraphQLResponseTypeError,
     HTTPException,
     QueryError,
-    GraphQLResponseTypeError,
+    sansio,
 )
-from . import sansio
 
 # Value represents etag, last-modified, data, and next page.
 CACHE_TYPE = MutableMapping[str, Tuple[Opt[str], Opt[str], Any, Opt[str]]]
@@ -30,6 +30,12 @@ ITERABLE_KEY = "items"
 
 class GitHubAPI(abc.ABC):
     """Provide an idiomatic API for making calls to GitHub's API."""
+
+    requester: str
+    oauth_token: Opt[str]
+    _cache: Opt[CACHE_TYPE]
+    base_url: str
+    rate_limit: Opt[sansio.RateLimit]
 
     def __init__(
         self,
