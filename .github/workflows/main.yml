@@ -12,7 +12,7 @@ concurrency:
 env:
   FORCE_COLOR: 1
   PYTHON_VERSIONS: '["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]'
-  LINT_PYTHON_VERSION: "3.14"
+  WORKER_PYTHON_VERSION: "3.14"
 
 jobs:
   vars:
@@ -65,7 +65,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
-          python-version: ${{ env.LINT_PYTHON_VERSION }}
+          python-version: ${{ env.WORKER_PYTHON_VERSION }}
           cache: pip
           cache-dependency-path: pyproject.toml
       - run: pip install nox
