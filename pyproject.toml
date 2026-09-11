@@ -56,6 +56,9 @@ path = "gidgethub/__init__.py"
 asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
 
+[tool.pyrefly]
+project-excludes = ["tests/**", "noxfile.py"]
+
 [tool.coverage.run]
 branch = true
 
