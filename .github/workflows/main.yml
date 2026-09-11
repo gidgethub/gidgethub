@@ -24,14 +24,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ${{ fromJSON(env.PYTHON_VERSIONS) }}
-        include:
-          - { python-version: "3.9", nox-python-version: "3.9" }
-          - { python-version: "3.10", nox-python-version: "3.10" }
-          - { python-version: "3.11", nox-python-version: "3.11" }
-          - { python-version: "3.12", nox-python-version: "3.12" }
-          - { python-version: "3.13", nox-python-version: "3.13" }
-          - { python-version: "3.14", nox-python-version: "3.14" }
-          - { python-version: "3.15", nox-python-version: "3.15" }
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -43,7 +35,7 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - run: pip install nox
-      - run: nox --session tests-${{ matrix.nox-python-version }}
+      - run: nox --session tests-${{ matrix.python-version }}
         env:
           PYTHONDEVMODE: 1
       - uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
