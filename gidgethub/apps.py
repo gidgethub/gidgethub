@@ -1,6 +1,6 @@
 """Support for GitHub Actions."""
 
-from typing import cast, Any, Dict
+from typing import cast, Any, Dict, Union
 
 import time
 import jwt
@@ -8,7 +8,9 @@ import jwt
 from gidgethub.abc import GitHubAPI
 
 
-def get_jwt(*, app_id: str, private_key: str, expiration: int = 10 * 60) -> str:
+def get_jwt(
+    *, app_id: str, private_key: Union[str, bytes], expiration: int = 10 * 60
+) -> str:
     """Construct the JWT (JSON Web Token), used for GitHub App authentication."""
     time_int = int(time.time())
     payload = {"iat": time_int, "exp": time_int + expiration, "iss": app_id}
@@ -18,7 +20,11 @@ def get_jwt(*, app_id: str, private_key: str, expiration: int = 10 * 60) -> str:
 
 
 async def get_installation_access_token(
-    gh: GitHubAPI, *, installation_id: str, app_id: str, private_key: str
+    gh: GitHubAPI,
+    *,
+    installation_id: str,
+    app_id: str,
+    private_key: Union[str, bytes],
 ) -> Dict[str, Any]:
     """Obtain a GitHub App's installation access token.
 
