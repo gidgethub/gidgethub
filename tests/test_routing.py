@@ -1,8 +1,24 @@
-from typing import cast
+from collections.abc import Awaitable
+from typing import TYPE_CHECKING, Protocol, cast
 
 import pytest
+from typing_extensions import assert_type
 
 from gidgethub import routing, sansio
+
+if TYPE_CHECKING:
+    router = routing.Router()
+
+    class SyncInstalledRepos(Protocol):
+        def __call__(
+            self, event: sansio.Event, *, different_data: str
+        ) -> Awaitable[None]: ...
+
+    @router.register("installation")
+    async def sync_installed_repos(event: sansio.Event, *, different_data: str) -> None:
+        pass
+
+    assert_type(sync_installed_repos, SyncInstalledRepos)
 
 
 class Callback:
