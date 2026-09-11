@@ -1,7 +1,8 @@
+from typing import cast
+
 import pytest
 
-from gidgethub import routing
-from gidgethub import sansio
+from gidgethub import routing, sansio
 
 
 class Callback:
@@ -47,7 +48,9 @@ async def test_deep_callback():
 def test_too_much_detail():
     router = routing.Router()
     with pytest.raises(TypeError):
-        router.add(None, "pull_request", data=42, too_much=6)
+        router.add(
+            cast(routing.AsyncCallback, None), "pull_request", data=42, too_much=6
+        )
 
 
 @pytest.mark.asyncio

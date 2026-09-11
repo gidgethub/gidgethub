@@ -2,6 +2,7 @@ import datetime
 import http
 import json
 import pathlib
+from typing import ClassVar
 
 import pytest
 
@@ -50,10 +51,10 @@ class TestValidateEvent:
 class TestEvent:
     """Tests for gidgethub.sansio.Event."""
 
-    data = {"action": "opened"}
+    data: ClassVar = {"action": "opened"}
     data_bytes = b'{"action": "opened"}'
     secret = "123456"
-    headers = {
+    headers: ClassVar = {
         "content-type": "application/json",
         "x-github-event": "pull_request",
         "x-github-delivery": "72d3162e-cc78-11e3-81ab-4c9367dc0958",
@@ -97,14 +98,13 @@ class TestEvent:
             )
 
     def test_from_http_unknown_content_type(self):
-        headers = headers = {
+        headers = {
             "content-type": "image/png",
             "x-github-event": "pull_request",
             "x-github-delivery": "72d3162e-cc78-11e3-81ab-4c9367dc0958",
         }
         with pytest.raises(BadRequest):
             sansio.Event.from_http(headers, self.data_bytes)
-        pass
 
     def test_from_http_missing_secret(self):
         """Signature but no secret raises ValidationFailure."""
@@ -184,8 +184,8 @@ class TestCreateHeaders:
             user_agent, accept=test_api, oauth_token=oauth_token
         )
         assert len(headers) == 3
-        for key in headers.keys():
-            assert key == key.lower()
+        for key in headers:
+            assert key.islower()
         assert headers["user-agent"] == user_agent
         assert headers["accept"] == test_api
         assert headers["authorization"] == f"token {oauth_token}"
@@ -263,7 +263,7 @@ class TestRateLimit:
         assert str(reset) in message
 
     def test_from_http_no_ratelimit(self):
-        headers = {}
+        headers: dict[str, str] = {}
         rate_limit = sansio.RateLimit.from_http(headers)
         assert rate_limit is None
 
@@ -344,8 +344,7 @@ class TestDecipherResponse:
     def test_422(self):
         status_code = 422
         errors = [{"resource": "Issue", "field": "title", "code": "missing_field"}]
-        body = json.dumps({"message": "it went bad", "errors": errors})
-        body = body.encode("utf-8")
+        body = json.dumps({"message": "it went bad", "errors": errors}).encode("utf-8")
         headers = {"content-type": "application/json; charset=utf-8"}
         with pytest.raises(InvalidField) as exc_info:
             sansio.decipher_response(status_code, headers, body)
@@ -362,8 +361,7 @@ class TestDecipherResponse:
                 "message": "A pull request already exists for foo:1.",
             }
         ]
-        body = json.dumps({"message": "it went bad", "errors": errors})
-        body = body.encode("utf-8")
+        body = json.dumps({"message": "it went bad", "errors": errors}).encode("utf-8")
         headers = {"content-type": "application/json; charset=utf-8"}
         with pytest.raises(ValidationError) as exc_info:
             sansio.decipher_response(status_code, headers, body)
@@ -384,8 +382,7 @@ class TestDecipherResponse:
                 "documentation_url": "https://docs.github.com/rest/commits/statuses#create-a-commit-status",
                 "status": "422",
             }
-        )
-        body = body.encode("utf-8")
+        ).encode("utf-8")
         headers = {"content-type": "application/json; charset=utf-8"}
         with pytest.raises(ValidationError) as exc_info:
             sansio.decipher_response(status_code, headers, body)
@@ -403,8 +400,7 @@ class TestDecipherResponse:
                 "message": "Reference does not exist",
                 "documentation_url": "https://docs.github.com/en/free-pro-team@latest/rest/reference/git#delete-a-reference",
             }
-        )
-        body = body.encode("utf-8")
+        ).encode("utf-8")
         headers = {"content-type": "application/json; charset=utf-8"}
         with pytest.raises(InvalidField) as exc_info:
             sansio.decipher_response(status_code, headers, body)
@@ -487,7 +483,7 @@ class TestDecipherResponse:
             "forks": 0,
         }
         body = json.dumps(data).encode("UTF-8")
-        returned_data, rate_limit, more = sansio.decipher_response(
+        returned_data, _rate_limit, more = sansio.decipher_response(
             status_code, headers, body
         )
         assert more is None

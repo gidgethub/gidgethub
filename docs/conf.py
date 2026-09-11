@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # gidgethub documentation build configuration file, created by
 # sphinx-quickstart on Mon Jan 23 19:03:20 2017.
@@ -18,8 +17,7 @@
 #
 import os
 import sys
-
-from datetime import datetime
+from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.abspath("."))
 
@@ -54,7 +52,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "gidgethub"
-copyright = f"2017 - {datetime.now():%Y}, Brett Cannon"
+copyright = f"2017 - {datetime.now(timezone.utc):%Y}, Brett Cannon"
 author = "Brett Cannon"
 
 # The version info for the project you're documenting, acts as replacement for

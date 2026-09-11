@@ -1,6 +1,7 @@
 import http
 import json
 import re
+from typing import ClassVar
 
 import importlib_resources
 import pytest
@@ -22,7 +23,7 @@ from .samples import GraphQL as graphql_samples
 
 
 class MockGitHubAPI(gh_abc.GitHubAPI):
-    DEFAULT_HEADERS = {
+    DEFAULT_HEADERS: ClassVar = {
         "x-ratelimit-limit": "2",
         "x-ratelimit-remaining": "1",
         "x-ratelimit-reset": "0",
@@ -153,6 +154,7 @@ class TestGeneralGitHubAPI:
         }
         gh = MockGitHubAPI(headers=rate_headers)
         await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
+        assert gh.rate_limit is not None
         assert gh.rate_limit.limit == 42
 
     @pytest.mark.asyncio
@@ -671,7 +673,7 @@ class TestGitHubAPICache:
 
     @pytest.mark.asyncio
     async def test_etag_received(self):
-        cache = {}
+        cache: gh_abc.CACHE_TYPE = {}
         etag = "12345"
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
         headers["etag"] = etag
@@ -693,7 +695,7 @@ class TestGitHubAPICache:
 
     @pytest.mark.asyncio
     async def test_last_modified_received(self):
-        cache = {}
+        cache: gh_abc.CACHE_TYPE = {}
         last_modified = "12345"
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
         headers["last-modified"] = last_modified
@@ -726,7 +728,7 @@ class TestGitHubAPICache:
 
     @pytest.mark.asyncio
     async def test_ineligible(self):
-        cache = {}
+        cache: gh_abc.CACHE_TYPE = {}
         gh = MockGitHubAPI(cache=cache)
         url = "https://api.github.com/fake"
         # Only way to force a GET request with a body.
@@ -737,7 +739,7 @@ class TestGitHubAPICache:
 
     @pytest.mark.asyncio
     async def test_redirect_without_cache(self):
-        cache = {}
+        cache: gh_abc.CACHE_TYPE = {}
         gh = MockGitHubAPI(304, cache=cache)
         with pytest.raises(RedirectionException):
             await gh.getitem("/fake")
@@ -784,6 +786,7 @@ class TestGraphQL:
             importlib_resources.files(graphql_samples) / payload_filename
         ).read_bytes()
         status_code_match = re.match(r"^.+-(\d+)\.json$", payload_filename)
+        assert status_code_match is not None
         status_code = int(status_code_match.group(1))
         return (
             MockGitHubAPI(status_code, body=payload, oauth_token="oauth-token"),
@@ -924,7 +927,7 @@ class TestGraphQL:
 
     @pytest.mark.asyncio
     async def test_response_content_type_parsing_gh121(self):
-        gh, response_data = self.gh_and_response("success-200.json")
+        gh, _response_data = self.gh_and_response("success-200.json")
         # Test that a JSON content type still works if formatted without spaces.
         gh.response_headers["content-type"] = "application/json;charset=utf-8"
         # Should not fail.
@@ -938,7 +941,7 @@ class TestGraphQL:
 
     @pytest.mark.asyncio
     async def test_unknown_response_content_type_gh121(self):
-        gh, response_data = self.gh_and_response("success-200.json")
+        gh, _response_data = self.gh_and_response("success-200.json")
         # A non-JSON response should raise an exception.
         gh.response_headers["content-type"] = "application/gidget;charset=utf-8"
         with pytest.raises(GraphQLResponseTypeError):
@@ -946,7 +949,7 @@ class TestGraphQL:
 
     @pytest.mark.asyncio
     async def test_no_response_content_type_gh121(self):
-        gh, response_data = self.gh_and_response("success-200.json")
+        gh, _response_data = self.gh_and_response("success-200.json")
         # An empty content type should raise an exception.
         gh.response_headers["content-type"] = ""
         with pytest.raises(GraphQLException):

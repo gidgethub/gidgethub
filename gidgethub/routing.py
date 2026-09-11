@@ -1,4 +1,7 @@
-from typing import Any, Awaitable, Callable, Dict, List, FrozenSet
+from __future__ import annotations
+
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from . import sansio
 
@@ -8,11 +11,11 @@ AsyncCallback = Callable[..., Awaitable[None]]
 class Router:
     """Route webhook events to registered functions."""
 
-    def __init__(self, *other_routers: "Router") -> None:
+    def __init__(self, *other_routers: Router) -> None:
         """Instantiate a new router (possibly from other routers)."""
-        self._shallow_routes: Dict[str, List[AsyncCallback]] = {}
+        self._shallow_routes: dict[str, list[AsyncCallback]] = {}
         # event type -> data key -> data value -> callbacks
-        self._deep_routes: Dict[str, Dict[str, Dict[Any, List[AsyncCallback]]]] = {}
+        self._deep_routes: dict[str, dict[str, dict[Any, list[AsyncCallback]]]] = {}
         for other_router in other_routers:
             for event_type, callbacks in other_router._shallow_routes.items():
                 for callback in callbacks:
@@ -59,7 +62,7 @@ class Router:
 
         return decorator
 
-    def fetch(self, event: sansio.Event) -> FrozenSet[AsyncCallback]:
+    def fetch(self, event: sansio.Event) -> frozenset[AsyncCallback]:
         """Return a set of function(s) registered to the router that the event would
         be called on."""
         found_callbacks = set()

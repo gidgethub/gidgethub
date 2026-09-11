@@ -44,9 +44,12 @@ httpx2 = ["httpx2"]
 [dependency-groups]
 test = ["importlib-resources", "pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync",
         "pytest-cov", "pytest-xdist", "coverage[toml]>=5.0.3"]
-lint = ["black", "mypy"]
+format = ["black>=26.5.1"]
+type-check = ["pyrefly>=1.2.0", "mypy>=2.3.1", {include-group = "test"}]
+code-check = ["ruff>=0.16.6"]
+lint = [{include-group = "code-check"}, {include-group = "format"}, {include-group = "type-check"}]
 doc = ["sphinx>=4.0.0", "sphinx-rtd-theme>=0.5.2"]
-dev = [{include-group = "test"}, {include-group = "lint"}, {include-group = "doc"}]
+dev = ["nox", {include-group = "test"}, {include-group = "lint"}, {include-group = "doc"}]
 
 [tool.pdm.version]
 source = "file"
@@ -55,6 +58,10 @@ path = "gidgethub/__init__.py"
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
+
+[tool.pyrefly]
+project-excludes = ["noxfile.py"]
+coverage = {excludes = ["noxfile.py", "tests/**"]}
 
 [tool.coverage.run]
 branch = true

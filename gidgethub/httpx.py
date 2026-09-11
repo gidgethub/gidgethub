@@ -1,10 +1,14 @@
 import asyncio
-from typing import Mapping, Tuple, Any
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any
 
-try:
+if TYPE_CHECKING:
     import httpx2 as httpx
-except ModuleNotFoundError:  # pragma: no cover
-    import httpx
+else:
+    try:
+        import httpx2 as httpx
+    except ModuleNotFoundError:  # pragma: no cover
+        import httpx
 
 from . import abc as gh_abc
 
@@ -16,7 +20,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
 
     async def _request(
         self, method: str, url: str, headers: Mapping[str, str], body: bytes = b""
-    ) -> Tuple[int, Mapping[str, str], bytes]:
+    ) -> tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
         response = await self._client.request(
             method, url, headers=dict(headers), content=body
