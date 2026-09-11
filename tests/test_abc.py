@@ -153,6 +153,7 @@ class TestGeneralGitHubAPI:
         }
         gh = MockGitHubAPI(headers=rate_headers)
         await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
+        assert gh.rate_limit is not None
         assert gh.rate_limit.limit == 42
 
     @pytest.mark.asyncio
@@ -784,6 +785,7 @@ class TestGraphQL:
             importlib_resources.files(graphql_samples) / payload_filename
         ).read_bytes()
         status_code_match = re.match(r"^.+-(\d+)\.json$", payload_filename)
+        assert status_code_match is not None
         status_code = int(status_code_match.group(1))
         return (
             MockGitHubAPI(status_code, body=payload, oauth_token="oauth-token"),
