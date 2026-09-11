@@ -16,7 +16,7 @@ def tests(session):
 def lint(session):
     session.install(
         ".[aiohttp,tornado,httpx2]",
-        *nox.project.dependency_groups(PYPROJECT, "lint", "doc"),
+        *nox.project.dependency_groups(PYPROJECT, "test", "lint", "doc"),
     )
     session.run("black", "--target-version", "py39", "--check", ".")
     session.run("pyrefly", "coverage", "check")
