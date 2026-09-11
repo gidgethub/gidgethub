@@ -35,9 +35,10 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - run: pip install nox
-      - run: nox --session tests-${{ matrix.python-version }}
+      - run: nox --session tests-"$PYTHON_VERSION"
         env:
           PYTHONDEVMODE: 1
+          PYTHON_VERSION: ${{ matrix.python-version }}
       - uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
         if: always()
         with:
