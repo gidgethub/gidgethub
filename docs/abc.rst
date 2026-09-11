@@ -132,7 +132,7 @@ experimental APIs without issue.
             Renamed from ``_sleep()``.
 
 
-    .. py:method:: manage_rate_limit(*, method, url, rate_limit, requests_in_flight)
+    .. py:method:: manage_rate_limit(*, method, url)
         :async:
 
         A :term:`coroutine` which is called before each HTTP request is
@@ -142,13 +142,14 @@ experimental APIs without issue.
         subclasses are unaffected.
 
         *method* is the HTTP method being used and *url* is the fully
-        formatted URL for the upcoming request. *rate_limit* is the
-        current value of :attr:`rate_limit` (or ``None`` if it isn't yet
-        known). *requests_in_flight* is the current value of
-        :attr:`requests_in_flight`, including the request about to be
-        made; note this counts the request as "in flight" for the
-        entire duration of this hook as well, not just the underlying
-        HTTP request.
+        formatted URL for the upcoming request. Since this hook is a
+        :term:`coroutine` and requests are not made in parallel, an
+        override can simply read :attr:`rate_limit` and
+        :attr:`requests_in_flight` directly off ``self`` to get the
+        most up-to-date values at the time the hook runs, rather than
+        having them passed in; note that :attr:`requests_in_flight`
+        counts the request as "in flight" for the entire duration of
+        this hook as well, not just the underlying HTTP request.
 
         For example, to sleep until the rate limit resets whenever the
         remaining quota has been exhausted::
@@ -156,9 +157,8 @@ experimental APIs without issue.
             class GitHubAPI(gidgethub.abc.GitHubAPI):
                 ...
 
-                async def manage_rate_limit(
-                    self, *, method, url, rate_limit, requests_in_flight
-                ):
+                async def manage_rate_limit(self, *, method, url):
+                    rate_limit = self.rate_limit
                     if rate_limit is not None and rate_limit.remaining <= 0:
                         delta = rate_limit.reset_datetime - datetime.datetime.now(
                             datetime.timezone.utc

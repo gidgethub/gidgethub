@@ -210,14 +210,14 @@ class TestGitHubAPIManageRateLimit:
 
     @pytest.mark.asyncio
     async def test_called_with_correct_arguments(self):
-        """manage_rate_limit() is called with the expected arguments."""
+        """manage_rate_limit() is called with the expected arguments, and
+        self.rate_limit / self.requests_in_flight reflect the current
+        state at call time."""
         calls = []
 
         class RecordingGitHubAPI(MockGitHubAPI):
-            async def manage_rate_limit(
-                self, *, method, url, rate_limit, requests_in_flight
-            ):
-                calls.append((method, url, rate_limit, requests_in_flight))
+            async def manage_rate_limit(self, *, method, url):
+                calls.append((method, url, self.rate_limit, self.requests_in_flight))
 
         original_data = {"hello": "world"}
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
@@ -245,11 +245,9 @@ class TestGitHubAPIManageRateLimit:
                 super().__init__(*args, **kwargs)
                 self.manage_rate_limit_calls = []
 
-            async def manage_rate_limit(
-                self, *, method, url, rate_limit, requests_in_flight
-            ):
+            async def manage_rate_limit(self, *, method, url):
                 self.manage_rate_limit_calls.append(
-                    (method, url, rate_limit, requests_in_flight)
+                    (method, url, self.rate_limit, self.requests_in_flight)
                 )
 
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
@@ -272,10 +270,8 @@ class TestGitHubAPIManageRateLimit:
         after it completes successfully."""
 
         class TrackingGitHubAPI(MockGitHubAPI):
-            async def manage_rate_limit(
-                self, *, method, url, rate_limit, requests_in_flight
-            ):
-                self.in_flight_during_call = requests_in_flight
+            async def manage_rate_limit(self, *, method, url):
+                self.in_flight_during_call = self.requests_in_flight
 
         gh = TrackingGitHubAPI()
         assert gh.requests_in_flight == 0

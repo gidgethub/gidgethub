@@ -72,24 +72,25 @@ class GitHubAPI(abc.ABC):
         *,
         method: str,
         url: str,
-        rate_limit: sansio.RateLimit | None,
-        requests_in_flight: int,
     ) -> None:
         """Hook called before each HTTP request to allow custom rate-limit
         or backpressure handling (e.g. sleeping until quota resets).
 
         The default implementation is a no-op. Subclasses can override this
         to implement custom strategies such as sleeping until
-        ``rate_limit.reset_datetime``, throttling based on
-        *requests_in_flight*, or anything else appropriate for their use
-        case.
+        ``self.rate_limit.reset_datetime``, throttling based on
+        :attr:`requests_in_flight`, or anything else appropriate for their
+        use case. Since this is a :term:`coroutine` and not run in
+        parallel with other requests, :attr:`rate_limit` and
+        :attr:`requests_in_flight` can simply be read from ``self`` to get
+        the most up-to-date values at the time this hook runs.
 
-        Note that *requests_in_flight* (and :attr:`requests_in_flight`) is
-        incremented before this hook is called and decremented only once
-        the underlying HTTP request has completed (or raised an exception).
-        As such, it counts the request as "in flight" for the entire
-        duration of this call, including any time spent waiting inside
-        ``manage_rate_limit()`` itself.
+        Note that :attr:`requests_in_flight` is incremented before this
+        hook is called and decremented only once the underlying HTTP
+        request has completed (or raised an exception). As such, it counts
+        the request as "in flight" for the entire duration of this call,
+        including any time spent waiting inside ``manage_rate_limit()``
+        itself.
         """
 
     async def _make_request(
@@ -158,8 +159,6 @@ class GitHubAPI(abc.ABC):
             await self.manage_rate_limit(
                 method=method,
                 url=filled_url,
-                rate_limit=self.rate_limit,
-                requests_in_flight=self.requests_in_flight,
             )
             response = await self._request(method, filled_url, request_headers, body)
         finally:
