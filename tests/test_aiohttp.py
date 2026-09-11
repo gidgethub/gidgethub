@@ -10,11 +10,11 @@ from gidgethub import sansio
 @pytest.mark.asyncio
 async def test_sleep():
     delay = 1
-    start = datetime.datetime.now()
+    start = datetime.datetime.now(datetime.timezone.utc)
     async with aiohttp.ClientSession() as session:
         gh = gh_aiohttp.GitHubAPI(session, "gidgethub")
         await gh.sleep(delay)
-    stop = datetime.datetime.now()
+    stop = datetime.datetime.now(datetime.timezone.utc)
     assert (stop - start) > datetime.timedelta(seconds=delay)
 
 
@@ -27,7 +27,7 @@ async def test__request():
         aio_call = await gh._request(
             "GET", "https://api.github.com/rate_limit", request_headers
         )
-    data, rate_limit, _ = sansio.decipher_response(*aio_call)
+    data, _rate_limit, _ = sansio.decipher_response(*aio_call)
     assert "rate" in data
 
 

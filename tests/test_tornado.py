@@ -2,11 +2,9 @@ import datetime
 
 import pytest
 import tornado
-
 from tornado.testing import AsyncTestCase
 
-from gidgethub import BadRequest
-from gidgethub import sansio
+from gidgethub import BadRequest, sansio
 from gidgethub import tornado as gh_tornado
 
 
@@ -14,10 +12,10 @@ class TornadoTestCase(AsyncTestCase):
     @tornado.testing.gen_test
     async def test_sleep(self):
         delay = 1
-        start = datetime.datetime.now()
+        start = datetime.datetime.now(datetime.timezone.utc)
         gh = gh_tornado.GitHubAPI("gidgethub")
         await gh.sleep(delay)
-        stop = datetime.datetime.now()
+        stop = datetime.datetime.now(datetime.timezone.utc)
         assert (stop - start) >= datetime.timedelta(seconds=delay)
 
     @tornado.testing.gen_test
@@ -28,7 +26,7 @@ class TornadoTestCase(AsyncTestCase):
         tornado_call = await gh._request(
             "GET", "https://api.github.com/rate_limit", request_headers
         )
-        data, rate_limit, _ = sansio.decipher_response(*tornado_call)
+        data, _rate_limit, _ = sansio.decipher_response(*tornado_call)
         assert "rate" in data
 
     @tornado.testing.gen_test

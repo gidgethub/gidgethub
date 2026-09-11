@@ -2,8 +2,12 @@ import nox
 
 PYPROJECT = nox.project.load_toml("pyproject.toml")
 
+# Keep sorted from oldest to newest!
+TEST_PYTHON_VERSIONS = ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+MSPV = f"py{TEST_PYTHON_VERSIONS[0].replace('.', '')}"
 
-@nox.session(python=["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"])
+
+@nox.session(python=TEST_PYTHON_VERSIONS)
 def tests(session):
     """Run the test suite."""
     session.install(
@@ -11,6 +15,16 @@ def tests(session):
         *nox.project.dependency_groups(PYPROJECT, "test"),
     )
     session.run("pytest", "--cov=gidgethub", "--cov-report=xml", "-n=auto", "tests")
+
+
+@nox.session(default=False)
+def code_check(session):
+    """Check code."""
+    session.install(
+        ".",
+        *nox.project.dependency_groups(PYPROJECT, "code-check"),
+    )
+    session.run("ruff", "check", "--target-version", MSPV)
 
 
 @nox.session(default=False)
@@ -25,8 +39,8 @@ def type_check(session):
 
 
 @nox.session(default=False)
-def mypy_type_check(session):
-    """Type-check for mypy compatibility via the test suite."""
+def compatiblity_type_check(session):
+    """Type-check for compatibility via the test suite with other type checkers."""
     session.install(
         ".[aiohttp,tornado,httpx2]",
         *nox.project.dependency_groups(PYPROJECT, "type-check"),
@@ -63,9 +77,9 @@ def lint(session):
         ".",
         *nox.project.dependency_groups(PYPROJECT, "format"),
     )
-    session.run("black", "--target-version", "py39", "--check", ".")
+    session.run("black", "--target-version", MSPV, "--check", ".")
     type_check(session)
-    mypy_type_check(session)
+    compatiblity_type_check(session)
     docs(session)
 
 
@@ -73,4 +87,4 @@ def lint(session):
 def format(session):
     """Format the code."""
     session.install(".", *nox.project.dependency_groups(PYPROJECT, "format"))
-    session.run("black", "--target-version", "py39", ".")
+    session.run("black", "--target-version", MSPV, ".")

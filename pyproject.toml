@@ -44,9 +44,10 @@ httpx2 = ["httpx2"]
 [dependency-groups]
 test = ["importlib-resources", "pytest>=5.4.1", "pytest-asyncio", "pytest-tornasync",
         "pytest-cov", "pytest-xdist", "coverage[toml]>=5.0.3"]
-format = ["black"]
-type-check = ["mypy", "pyrefly>=1.2.0", {include-group = "test"}]
-lint = [{include-group = "format"}, {include-group = "type-check"}]
+format = ["black>=26.5.1"]
+type-check = ["pyrefly>=1.2.0", "mypy>=2.3.1", {include-group = "test"}]
+code-check = ["ruff>=0.16.6"]
+lint = [{include-group = "code-check"}, {include-group = "format"}, {include-group = "type-check"}]
 doc = ["sphinx>=4.0.0", "sphinx-rtd-theme>=0.5.2"]
 dev = ["nox", {include-group = "test"}, {include-group = "lint"}, {include-group = "doc"}]
 

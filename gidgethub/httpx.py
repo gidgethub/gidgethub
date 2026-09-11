@@ -1,5 +1,6 @@
 import asyncio
-from typing import TYPE_CHECKING, Any, Mapping, Tuple
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     import httpx2 as httpx
@@ -19,7 +20,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
 
     async def _request(
         self, method: str, url: str, headers: Mapping[str, str], body: bytes = b""
-    ) -> Tuple[int, Mapping[str, str], bytes]:
+    ) -> tuple[int, Mapping[str, str], bytes]:
         """Make an HTTP request."""
         response = await self._client.request(
             method, url, headers=dict(headers), content=body

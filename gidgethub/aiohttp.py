@@ -1,5 +1,6 @@
 import asyncio
-from typing import Any, Mapping, Tuple
+from collections.abc import Mapping
+from typing import Any
 
 import aiohttp
 
@@ -15,7 +16,7 @@ class GitHubAPI(gh_abc.GitHubAPI):
 
     async def _request(
         self, method: str, url: str, headers: Mapping[str, str], body: bytes = b""
-    ) -> Tuple[int, Mapping[str, str], bytes]:
+    ) -> tuple[int, Mapping[str, str], bytes]:
         async with self._session.request(
             method, url, headers=headers, data=body
         ) as response:

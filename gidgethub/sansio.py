@@ -6,14 +6,17 @@ when working with GitHub's API (e.g. validating webhook events or specifying the
 API version you want your request to work against).
 """
 
+from __future__ import annotations
+
 import datetime
 import hmac
 import http
 import json
 import re
 import urllib.parse
+from collections.abc import Mapping
 from email.message import Message
-from typing import Any, Dict, Mapping, Optional, Tuple, Type, Union
+from typing import Any
 
 import uritemplate
 from uritemplate import variable
@@ -31,7 +34,7 @@ from . import (
 )
 
 
-def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str]:
+def _parse_content_type(content_type: str | None) -> tuple[str | None, str]:
     """Tease out the content-type and character encoding.
 
     A default character encoding of UTF-8 is used, so the content-type
@@ -48,9 +51,7 @@ def _parse_content_type(content_type: Optional[str]) -> Tuple[Optional[str], str
         return type_, str(encoding)
 
 
-def _decode_body(
-    content_type: Optional[str], body: bytes, *, strict: bool = False
-) -> Any:
+def _decode_body(content_type: str | None, body: bytes, *, strict: bool = False) -> Any:
     """Decode an HTTP body based on the specified content type.
 
     If 'strict' is true, then raise ValueError if the content type
@@ -87,7 +88,7 @@ def validate_event(payload: bytes, *, signature: str, secret: str) -> None:
         calculated_sig = sha1_signature_prefix + hmac_sig
     else:
         raise ValidationFailure(
-            f"signature does not start with {repr(sha256_signature_prefix)} or {repr(sha1_signature_prefix)}"
+            f"signature does not start with {sha256_signature_prefix!r} or {sha1_signature_prefix!r}"
         )
     if not hmac.compare_digest(signature, calculated_sig):
         raise ValidationFailure("payload's signature does not align with the secret")
@@ -113,8 +114,8 @@ class Event:
 
     @classmethod
     def from_http(
-        cls, headers: Mapping[str, str], body: bytes, *, secret: Optional[str] = None
-    ) -> "Event":
+        cls, headers: Mapping[str, str], body: bytes, *, secret: str | None = None
+    ) -> Event:
         """Construct an event from HTTP headers and JSON body data.
 
         The mapping providing the headers is expected to support lowercase keys.
@@ -155,7 +156,7 @@ class Event:
 
 
 def accept_format(
-    *, version: str = "v3", media: Optional[str] = None, json: bool = True
+    *, version: str = "v3", media: str | None = None, json: bool = True
 ) -> str:
     """Construct the specification of the format that a request should return.
 
@@ -182,9 +183,9 @@ def create_headers(
     requester: str,
     *,
     accept: str = accept_format(),
-    oauth_token: Optional[str] = None,
-    jwt: Optional[str] = None,
-) -> Dict[str, str]:
+    oauth_token: str | None = None,
+    jwt: str | None = None,
+) -> dict[str, str]:
     """Create a dict representing GitHub-specific header fields.
 
     The user agent is set according to who the requester is. GitHub asks it be
@@ -275,7 +276,7 @@ class RateLimit:
         return f"< {self.remaining:,}/{self.limit:,} until {self.reset_datetime} >"
 
     @classmethod
-    def from_http(cls, headers: Mapping[str, str]) -> Optional["RateLimit"]:
+    def from_http(cls, headers: Mapping[str, str]) -> RateLimit | None:
         """Gather rate limit information from HTTP headers.
 
         The mapping providing the headers is expected to support lowercase
@@ -296,22 +297,20 @@ _link_re = re.compile(
 )
 
 
-def _next_link(link: Optional[str]) -> Optional[str]:
+def _next_link(link: str | None) -> str | None:
     # https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api#pagination
     # https://tools.ietf.org/html/rfc5988
     if link is None:
         return None
     for match in _link_re.finditer(link):
-        if match.group("param_type") == "rel":
-            if match.group("param_value") == "next":
-                return match.group("uri")
-    else:
-        return None
+        if match.group("param_type") == "rel" and match.group("param_value") == "next":
+            return match.group("uri")
+    return None
 
 
 def decipher_response(
     status_code: int, headers: Mapping[str, str], body: bytes
-) -> Tuple[Any, Optional[RateLimit], Optional[str]]:
+) -> tuple[Any, RateLimit | None, str | None]:
     """Decipher an HTTP response for a GitHub API request.
 
     The mapping providing the headers is expected to support lowercase keys.
@@ -340,7 +339,7 @@ def decipher_response(
             message = data["message"]
         except (TypeError, KeyError):
             message = None
-        exc_type: Type[HTTPException]
+        exc_type: type[HTTPException]
         if status_code >= 500:
             exc_type = GitHubBroken
         elif status_code >= 400:
@@ -381,7 +380,7 @@ def decipher_response(
         else:
             exc_type = HTTPException
         status_code_enum = http.HTTPStatus(status_code)
-        args: Union[Tuple[http.HTTPStatus, str], Tuple[http.HTTPStatus]]
+        args: tuple[http.HTTPStatus, str] | tuple[http.HTTPStatus]
         if message:
             args = status_code_enum, message
         else:
@@ -394,7 +393,7 @@ DOMAIN = "https://api.github.com"
 
 def format_url(
     url: str,
-    url_vars: Optional[Mapping[str, variable.VariableValue]],
+    url_vars: Mapping[str, variable.VariableValue] | None,
     *,
     base_url: str = DOMAIN,
 ) -> str:

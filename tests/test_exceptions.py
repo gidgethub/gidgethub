@@ -9,11 +9,11 @@ from gidgethub import (
     GraphQLException,
     HTTPException,
     InvalidField,
+    QueryError,
     RateLimitExceeded,
     RedirectionException,
-    QueryError,
+    sansio,
 )
-from gidgethub import sansio
 
 
 class TestHTTPException:

@@ -1,5 +1,7 @@
 """Provide an abstract base class for easier requests."""
 
+from __future__ import annotations
+
 import abc
 import http
 import json
@@ -34,23 +36,23 @@ class GitHubAPI(abc.ABC):
     """Provide an idiomatic API for making calls to GitHub's API."""
 
     requester: str
-    oauth_token: Optional[str]
-    _cache: Optional[CACHE_TYPE]
+    oauth_token: str | None
+    _cache: CACHE_TYPE | None
     base_url: str
-    rate_limit: Optional[sansio.RateLimit]
+    rate_limit: sansio.RateLimit | None
 
     def __init__(
         self,
         requester: str,
         *,
-        oauth_token: Optional[str] = None,
-        cache: Optional[CACHE_TYPE] = None,
+        oauth_token: str | None = None,
+        cache: CACHE_TYPE | None = None,
         base_url: str = sansio.DOMAIN,
     ) -> None:
         self.requester = requester
         self.oauth_token = oauth_token
         self._cache = cache
-        self.rate_limit: Optional[sansio.RateLimit] = None
+        self.rate_limit: sansio.RateLimit | None = None
         self.base_url = base_url
 
     @abc.abstractmethod
@@ -67,14 +69,14 @@ class GitHubAPI(abc.ABC):
         self,
         method: str,
         url: str,
-        url_vars: Optional[Mapping[str, variable.VariableValue]],
+        url_vars: Mapping[str, variable.VariableValue] | None,
         data: Any,
         accept: str,
-        jwt: Optional[str] = None,
-        oauth_token: Optional[str] = None,
+        jwt: str | None = None,
+        oauth_token: str | None = None,
         content_type: str = JSON_CONTENT_TYPE,
-        extra_headers: Optional[dict[str, str]] = None,
-    ) -> tuple[bytes, Optional[str], int]:
+        extra_headers: dict[str, str] | None = None,
+    ) -> tuple[bytes, str | None, int]:
         """Construct and make an HTTP request."""
         if oauth_token is not None and jwt is not None:
             raise ValueError("Cannot pass both oauth_token and jwt.")
@@ -95,7 +97,7 @@ class GitHubAPI(abc.ABC):
         if extra_headers is not None:
             request_headers.update(extra_headers)
         cached = cacheable = False
-        more: Optional[str] = None
+        more: str | None = None
         # Can't use None as a "no body" sentinel as it's a legitimate JSON type.
         if data == b"":
             body = b""
@@ -137,12 +139,12 @@ class GitHubAPI(abc.ABC):
     async def getitem(
         self,
         url: str,
-        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
+        url_vars: Mapping[str, variable.VariableValue] | None = {},
         *,
         accept: str = sansio.accept_format(),
-        jwt: Optional[str] = None,
-        oauth_token: Optional[str] = None,
-        extra_headers: Optional[dict[str, str]] = None,
+        jwt: str | None = None,
+        oauth_token: str | None = None,
+        extra_headers: dict[str, str] | None = None,
     ) -> Any:
         """Send a GET request for a single item to the specified endpoint."""
 
@@ -161,11 +163,11 @@ class GitHubAPI(abc.ABC):
     async def getstatus(
         self,
         url: str,
-        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
+        url_vars: Mapping[str, variable.VariableValue] | None = {},
         *,
         accept: str = sansio.accept_format(),
-        jwt: Optional[str] = None,
-        oauth_token: Optional[str] = None,
+        jwt: str | None = None,
+        oauth_token: str | None = None,
     ) -> int:
         """Send a GET request for a single item to the specifie endpoint and return its status code."""
 
@@ -181,16 +183,16 @@ class GitHubAPI(abc.ABC):
     async def getiter(
         self,
         url: str,
-        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
+        url_vars: Mapping[str, variable.VariableValue] | None = {},
         *,
         accept: str = sansio.accept_format(),
-        jwt: Optional[str] = None,
-        oauth_token: Optional[str] = None,
-        extra_headers: Optional[dict[str, str]] = None,
-        iterable_key: Optional[str] = ITERABLE_KEY,
+        jwt: str | None = None,
+        oauth_token: str | None = None,
+        extra_headers: dict[str, str] | None = None,
+        iterable_key: str | None = ITERABLE_KEY,
     ) -> AsyncGenerator[Any, None]:
         """Return an async iterable for all the items at a specified endpoint."""
-        current_url: Optional[str] = url
+        current_url: str | None = url
         while current_url:
             data, current_url, _ = await self._make_request(
                 "GET",
@@ -211,13 +213,13 @@ class GitHubAPI(abc.ABC):
     async def post(
         self,
         url: str,
-        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
+        url_vars: Mapping[str, variable.VariableValue] | None = {},
         *,
         data: Any,
         accept: str = sansio.accept_format(),
-        jwt: Optional[str] = None,
-        oauth_token: Optional[str] = None,
-        extra_headers: Optional[dict[str, str]] = None,
+        jwt: str | None = None,
+        oauth_token: str | None = None,
+        extra_headers: dict[str, str] | None = None,
         content_type: str = JSON_CONTENT_TYPE,
     ) -> Any:
         data, _, _ = await self._make_request(
@@ -236,13 +238,13 @@ class GitHubAPI(abc.ABC):
     async def patch(
         self,
         url: str,
-        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
+        url_vars: Mapping[str, variable.VariableValue] | None = {},
         *,
         data: Any,
         accept: str = sansio.accept_format(),
-        jwt: Optional[str] = None,
-        oauth_token: Optional[str] = None,
-        extra_headers: Optional[dict[str, str]] = None,
+        jwt: str | None = None,
+        oauth_token: str | None = None,
+        extra_headers: dict[str, str] | None = None,
     ) -> Any:
         data, _, _ = await self._make_request(
             "PATCH",
@@ -259,13 +261,13 @@ class GitHubAPI(abc.ABC):
     async def put(
         self,
         url: str,
-        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
+        url_vars: Mapping[str, variable.VariableValue] | None = {},
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
-        jwt: Optional[str] = None,
-        oauth_token: Optional[str] = None,
-        extra_headers: Optional[dict[str, str]] = None,
+        jwt: str | None = None,
+        oauth_token: str | None = None,
+        extra_headers: dict[str, str] | None = None,
     ) -> Any:
         data, _, _ = await self._make_request(
             "PUT",
@@ -282,13 +284,13 @@ class GitHubAPI(abc.ABC):
     async def delete(
         self,
         url: str,
-        url_vars: Optional[Mapping[str, variable.VariableValue]] = {},
+        url_vars: Mapping[str, variable.VariableValue] | None = {},
         *,
         data: Any = b"",
         accept: str = sansio.accept_format(),
-        jwt: Optional[str] = None,
-        oauth_token: Optional[str] = None,
-        extra_headers: Optional[dict[str, str]] = None,
+        jwt: str | None = None,
+        oauth_token: str | None = None,
+        extra_headers: dict[str, str] | None = None,
     ) -> None:
         await self._make_request(
             "DELETE",

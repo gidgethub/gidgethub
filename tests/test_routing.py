@@ -2,8 +2,7 @@ from typing import cast
 
 import pytest
 
-from gidgethub import routing
-from gidgethub import sansio
+from gidgethub import routing, sansio
 
 
 class Callback:

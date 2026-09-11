@@ -1,6 +1,7 @@
 import http
 import json
 import re
+from typing import ClassVar
 
 import importlib_resources
 import pytest
@@ -22,7 +23,7 @@ from .samples import GraphQL as graphql_samples
 
 
 class MockGitHubAPI(gh_abc.GitHubAPI):
-    DEFAULT_HEADERS = {
+    DEFAULT_HEADERS: ClassVar = {
         "x-ratelimit-limit": "2",
         "x-ratelimit-remaining": "1",
         "x-ratelimit-reset": "0",
@@ -926,7 +927,7 @@ class TestGraphQL:
 
     @pytest.mark.asyncio
     async def test_response_content_type_parsing_gh121(self):
-        gh, response_data = self.gh_and_response("success-200.json")
+        gh, _response_data = self.gh_and_response("success-200.json")
         # Test that a JSON content type still works if formatted without spaces.
         gh.response_headers["content-type"] = "application/json;charset=utf-8"
         # Should not fail.
@@ -940,7 +941,7 @@ class TestGraphQL:
 
     @pytest.mark.asyncio
     async def test_unknown_response_content_type_gh121(self):
-        gh, response_data = self.gh_and_response("success-200.json")
+        gh, _response_data = self.gh_and_response("success-200.json")
         # A non-JSON response should raise an exception.
         gh.response_headers["content-type"] = "application/gidget;charset=utf-8"
         with pytest.raises(GraphQLResponseTypeError):
@@ -948,7 +949,7 @@ class TestGraphQL:
 
     @pytest.mark.asyncio
     async def test_no_response_content_type_gh121(self):
-        gh, response_data = self.gh_and_response("success-200.json")
+        gh, _response_data = self.gh_and_response("success-200.json")
         # An empty content type should raise an exception.
         gh.response_headers["content-type"] = ""
         with pytest.raises(GraphQLException):

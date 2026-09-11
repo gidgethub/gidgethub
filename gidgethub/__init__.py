@@ -1,9 +1,12 @@
 """An async GitHub API library"""
 
+from __future__ import annotations
+
 __version__ = "6.0.0.dev"
 
 import http
-from typing import Any, Mapping, Optional
+from collections.abc import Mapping
+from typing import Any
 
 
 class GitHubException(Exception):
@@ -26,7 +29,7 @@ class HTTPException(GitHubException):
         self,
         status_code: http.HTTPStatus,
         *args: Any,
-        headers: Optional[Mapping[str, str]] = None,
+        headers: Mapping[str, str] | None = None,
     ) -> None:
         self.status_code = status_code
         self.headers = headers or {}
@@ -147,7 +150,7 @@ class QueryError(GraphQLException):
 class GraphQLResponseTypeError(GraphQLException):
     """The GraphQL response has an unexpected content type."""
 
-    def __init__(self, content_type: Optional[str], response: Any) -> None:
+    def __init__(self, content_type: str | None, response: Any) -> None:
         super().__init__(
             f"Response had an unexpected content-type: '{content_type!r}'", response
         )
