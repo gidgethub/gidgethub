@@ -83,6 +83,13 @@ class GitHubAPI(abc.ABC):
         ``rate_limit.reset_datetime``, throttling based on
         *requests_in_flight*, or anything else appropriate for their use
         case.
+
+        Note that *requests_in_flight* (and :attr:`requests_in_flight`) is
+        incremented before this hook is called and decremented only once
+        the underlying HTTP request has completed (or raised an exception).
+        As such, it counts the request as "in flight" for the entire
+        duration of this call, including any time spent waiting inside
+        ``manage_rate_limit()`` itself.
         """
 
     async def _make_request(

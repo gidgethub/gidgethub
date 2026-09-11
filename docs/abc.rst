@@ -96,9 +96,12 @@ experimental APIs without issue.
     .. attribute:: requests_in_flight
 
         The number of requests currently in flight for this
-        :class:`GitHubAPI` instance. It is incremented before a request is
-        made and decremented once the request has completed (whether it
-        succeeded or raised an exception).
+        :class:`GitHubAPI` instance. It is incremented before
+        :meth:`manage_rate_limit` is called and decremented once the
+        request has completed (whether it succeeded or raised an
+        exception). This means it counts the request as "in flight" for
+        the entire duration of :meth:`manage_rate_limit`, including any
+        time spent waiting there.
 
         .. versionadded:: 6.0
 
@@ -143,7 +146,9 @@ experimental APIs without issue.
         current value of :attr:`rate_limit` (or ``None`` if it isn't yet
         known). *requests_in_flight* is the current value of
         :attr:`requests_in_flight`, including the request about to be
-        made.
+        made; note this counts the request as "in flight" for the
+        entire duration of this hook as well, not just the underlying
+        HTTP request.
 
         For example, to sleep until the rate limit resets whenever the
         remaining quota has been exhausted::
