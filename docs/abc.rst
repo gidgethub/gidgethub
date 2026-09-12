@@ -93,6 +93,23 @@ experimental APIs without issue.
         This attribute is automatically updated after every successful
         HTTP request.
 
+    .. attribute:: requests_in_flight
+
+        The number of requests currently in flight for this
+        :class:`GitHubAPI` instance. It is incremented before
+        :meth:`manage_rate_limit` is called and decremented once the
+        request has completed (whether it succeeded or raised an
+        exception, including an exception raised by
+        :meth:`manage_rate_limit` itself before the underlying HTTP
+        request is even made). This means it counts the request as
+        "in flight" for the entire duration of :meth:`manage_rate_limit`,
+        including any time spent waiting there. When a request is retried
+        because :meth:`handle_rate_limit_error` returned ``True``,
+        :attr:`requests_in_flight` is incremented and decremented once per
+        attempt in the same way.
+
+        .. versionadded:: 6.0
+
     .. py:method:: _request(method, url, headers, body=b'')
         :async:
         :abstractmethod:
@@ -118,6 +135,88 @@ experimental APIs without issue.
         .. versionchanged:: 2.0
 
             Renamed from ``_sleep()``.
+
+
+    .. py:method:: manage_rate_limit(*, method, url)
+        :async:
+
+        A :term:`coroutine` which is called before each HTTP request is
+        made, allowing custom rate-limit or backpressure handling (e.g.
+        sleeping until quota resets). The default implementation is a
+        no-op, so overriding it is entirely optional and existing
+        subclasses are unaffected.
+
+        *method* is the HTTP method being used and *url* is the fully
+        formatted URL for the upcoming request. Since this hook is a
+        :term:`coroutine` and requests are not made in parallel, an
+        override can simply read :attr:`rate_limit` and
+        :attr:`requests_in_flight` directly off ``self`` to get the
+        most up-to-date values at the time the hook runs, rather than
+        having them passed in; note that :attr:`requests_in_flight`
+        counts the request as "in flight" for the entire duration of
+        this hook as well, not just the underlying HTTP request.
+
+        For example, to sleep until the rate limit resets whenever the
+        remaining quota has been exhausted::
+
+            class GitHubAPI(gidgethub.abc.GitHubAPI):
+                ...
+
+                async def manage_rate_limit(self, *, method, url):
+                    rate_limit = self.rate_limit
+                    if rate_limit is not None and rate_limit.remaining <= 0:
+                        delta = rate_limit.reset_datetime - datetime.datetime.now(
+                            datetime.timezone.utc
+                        )
+                        await self.sleep(max(delta.total_seconds(), 0))
+
+        .. versionadded:: 6.0
+
+
+    .. py:method:: handle_rate_limit_error(*, method, url, exception, attempt)
+        :async:
+
+        A :term:`coroutine` which is called when a request fails with an
+        :exc:`~gidgethub.HTTPException`, allowing custom *reactive*
+        rate-limit handling (e.g. retrying after a secondary rate limit or
+        abuse-detection response). The default implementation is a no-op
+        which always returns ``False``, so overriding it is entirely
+        optional and existing subclasses are unaffected.
+
+        *method* and *url* describe the request that failed. *exception*
+        is the raised :exc:`~gidgethub.HTTPException` (inspect
+        ``exception.status_code`` and ``exception.headers``, the latter of
+        which may contain ``retry-after`` or ``x-ratelimit-reset``).
+        *attempt* is the 1-based count of attempts made so far for this
+        logical request, including the one that just failed.
+
+        Return ``True`` to have the request retried, or ``False`` (the
+        default) to let *exception* propagate unchanged. This coroutine is
+        responsible for performing any desired delay itself (e.g. via
+        :meth:`sleep`) before returning ``True``; the request is not
+        delayed automatically. It is called for every failed attempt,
+        including retries, and runs before :meth:`manage_rate_limit`'s
+        next invocation for the retried attempt.
+
+        For example, to retry once after waiting for the duration
+        specified by a ``retry-after`` header on a secondary rate limit
+        response::
+
+            class GitHubAPI(gidgethub.abc.GitHubAPI):
+                ...
+
+                async def handle_rate_limit_error(
+                    self, *, method, url, exception, attempt
+                ):
+                    if exception.status_code not in (403, 429) or attempt >= 2:
+                        return False
+                    retry_after = exception.headers.get("retry-after")
+                    if retry_after is not None:
+                        await self.sleep(int(retry_after))
+                        return True
+                    return False
+
+        .. versionadded:: 6.0
 
 
     .. py:method:: getitem(url, url_vars={}, *, accept=sansio.accept_format(), jwt=None, oauth_token=None, extra_headers=None)
