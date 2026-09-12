@@ -9,8 +9,9 @@ maintainers = [{name = "Mariatta", email = "mariatta@mariatta.ca"}]
 dependencies = [
     "uritemplate>=3.0.1",
     "PyJWT[crypto]>=2.4.0",
+    "typing_extensions>=4.0.0",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "Apache-2.0 AND MIT"
 license-files = ["LICENSE", "Third-Party-Notices.md"]
 keywords = ["github", "sans-io", "async"]
@@ -19,7 +20,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Development Status :: 6 - Mature",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

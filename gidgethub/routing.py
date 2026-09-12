@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
-from typing import Any
+from typing import Any, TypeAlias
+
+from typing_extensions import ParamSpec
 
 from . import sansio
 
-AsyncCallback = Callable[..., Awaitable[None]]
+_P = ParamSpec("_P")
+
+AsyncCallback: TypeAlias = Callable[_P, Awaitable[None]]
+_AnyAsyncCallback: TypeAlias = AsyncCallback[...]
 
 
 class Router:
@@ -13,9 +18,9 @@ class Router:
 
     def __init__(self, *other_routers: Router) -> None:
         """Instantiate a new router (possibly from other routers)."""
-        self._shallow_routes: dict[str, list[AsyncCallback]] = {}
+        self._shallow_routes: dict[str, list[_AnyAsyncCallback]] = {}
         # event type -> data key -> data value -> callbacks
-        self._deep_routes: dict[str, dict[str, dict[Any, list[AsyncCallback]]]] = {}
+        self._deep_routes: dict[str, dict[str, dict[Any, list[_AnyAsyncCallback]]]] = {}
         for other_router in other_routers:
             for event_type, callbacks in other_router._shallow_routes.items():
                 for callback in callbacks:
@@ -27,7 +32,7 @@ class Router:
                         for callback in callbacks:
                             self.add(callback, event_type, **detail)
 
-    def add(self, func: AsyncCallback, event_type: str, **data_detail: Any) -> None:
+    def add(self, func: _AnyAsyncCallback, event_type: str, **data_detail: Any) -> None:
         """Add a new route.
 
         After registering 'func' for the specified event_type, an
@@ -53,16 +58,16 @@ class Router:
 
     def register(
         self, event_type: str, **data_detail: Any
-    ) -> Callable[[AsyncCallback], AsyncCallback]:
+    ) -> Callable[[AsyncCallback[_P]], AsyncCallback[_P]]:
         """Decorator to apply the add() method to a function."""
 
-        def decorator(func: AsyncCallback) -> AsyncCallback:
+        def decorator(func: AsyncCallback[_P]) -> AsyncCallback[_P]:
             self.add(func, event_type, **data_detail)
             return func
 
         return decorator
 
-    def fetch(self, event: sansio.Event) -> frozenset[AsyncCallback]:
+    def fetch(self, event: sansio.Event) -> frozenset[_AnyAsyncCallback]:
         """Return a set of function(s) registered to the router that the event would
         be called on."""
         found_callbacks = set()
