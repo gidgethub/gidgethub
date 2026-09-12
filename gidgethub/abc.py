@@ -31,20 +31,21 @@ JSON_CONTENT_TYPE = "application/json"
 UTF_8_CHARSET = "utf-8"
 JSON_UTF_8_CHARSET = f"{JSON_CONTENT_TYPE}; charset={UTF_8_CHARSET}"
 ITERABLE_KEY = "items"
+# GitHub limits app JWTs to 10 minutes. Use shorter durations and monotonic
+# elapsed time so clock adjustments do not delay a refresh.
+_APP_JWT_EXPIRATION = 9 * 60
+_APP_JWT_REFRESH_AFTER = 8 * 60
 
 
 class GitHubAPI(abc.ABC):
     """Provide an idiomatic API for making calls to GitHub's API."""
 
-    # GitHub limits app JWTs to 10 minutes. Use shorter durations and monotonic
-    # elapsed time so clock adjustments do not delay a refresh.
-    _APP_JWT_EXPIRATION = 9 * 60
-    _APP_JWT_REFRESH_AFTER = 8 * 60
-
     requester: str
     oauth_token: str | None
     app_id: str | None
     private_key: str | bytes | None
+    _app_jwt: str | None
+    _app_jwt_refresh_at: float
     _cache: CACHE_TYPE | None
     base_url: str
     rate_limit: sansio.RateLimit | None
@@ -264,9 +265,9 @@ class GitHubAPI(abc.ABC):
             self._app_jwt = get_jwt(
                 app_id=self.app_id,
                 private_key=self.private_key,
-                expiration=self._APP_JWT_EXPIRATION,
+                expiration=_APP_JWT_EXPIRATION,
             )
-            self._app_jwt_refresh_at = now + self._APP_JWT_REFRESH_AFTER
+            self._app_jwt_refresh_at = now + _APP_JWT_REFRESH_AFTER
 
         return self._app_jwt
 

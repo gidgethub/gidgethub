@@ -90,13 +90,14 @@ experimental APIs without issue.
 
     .. attribute:: app_id
 
-        The provided GitHub App ID (if any). Must be used with *private_key*.
+        The provided GitHub App ID (if any). Must be used with
+        :attr:`private_key`.
 
     .. attribute:: private_key
 
         The provided GitHub App private key (if any). Must be used with
-        *app_id*. To authenticate as an installation of a GitHub App, use
-        *oauth_token* instead.
+        :attr:`app_id`. To authenticate as an installation of a GitHub App,
+        use :attr:`oauth_token` instead.
 
     .. attribute:: base_url
 
