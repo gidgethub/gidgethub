@@ -416,6 +416,14 @@ experimental APIs without issue.
         `variables <https://docs.github.com/en/free-pro-team@latest/graphql/guides/forming-calls-with-graphql#working-with-variables>`_
         for the query.
 
+        .. warning::
+            GitHub does not report an error when variable names are misspelled:
+            missing variables are treated as ``null``, while extra variables are
+            ignored.
+
+        The value of the ``"data"`` key of the JSON response is returned upon
+        success.
+
         Exceptions raised directly by this method all subclass
         :exc:`~gidgethub.GraphQLException`.
 

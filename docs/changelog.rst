@@ -31,6 +31,10 @@ Unreleased
   The "httpx" extra was updated to use httpx2 and a new httpx2 extra
   was also added.
 
+- Document that :meth:`gidgethub.abc.GitHubAPI.graphql` returns the value of
+  the ``"data"`` key from the JSON response
+  (`Issue #127 <https://github.com/gidgethub/gidgethub/issues/127>`_)
+
 5.4.0
 -----
 

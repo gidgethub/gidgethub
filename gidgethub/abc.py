@@ -405,6 +405,11 @@ class GitHubAPI(abc.ABC):
 
         The *endpoint* argument specifies the endpoint URL to use. The
         *variables* kwargs-style argument collects all variables for the query.
+
+        GitHub does not report an error when variable names are misspelled:
+        missing variables are treated as ``null``, while extra variables are ignored.
+
+        Returns the value of the ``"data"`` key from the JSON response.
         """
         payload: dict[str, Any] = {"query": query}
         if variables:
