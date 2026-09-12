@@ -5,6 +5,7 @@ from __future__ import annotations
 import abc
 import http
 import json
+import time
 from collections.abc import AsyncGenerator, Mapping, MutableMapping
 from typing import Any, Optional
 
@@ -35,8 +36,13 @@ ITERABLE_KEY = "items"
 class GitHubAPI(abc.ABC):
     """Provide an idiomatic API for making calls to GitHub's API."""
 
+    _APP_JWT_EXPIRATION = 9 * 60
+    _APP_JWT_REFRESH_AFTER = 8 * 60
+
     requester: str
     oauth_token: str | None
+    app_id: str | None
+    private_key: str | bytes | None
     _cache: CACHE_TYPE | None
     base_url: str
     rate_limit: sansio.RateLimit | None
@@ -47,11 +53,24 @@ class GitHubAPI(abc.ABC):
         requester: str,
         *,
         oauth_token: str | None = None,
+        app_id: str | None = None,
+        private_key: str | bytes | None = None,
         cache: CACHE_TYPE | None = None,
         base_url: str = sansio.DOMAIN,
     ) -> None:
+        if oauth_token is not None and (app_id is not None or private_key is not None):
+            raise ValueError(
+                "oauth_token cannot be combined with app_id or private_key."
+            )
+        if (app_id is None) != (private_key is None):
+            raise ValueError("app_id and private_key must be provided together.")
+
         self.requester = requester
         self.oauth_token = oauth_token
+        self.app_id = app_id
+        self.private_key = private_key
+        self._app_jwt: str | None = None
+        self._app_jwt_refresh_at = 0.0
         self._cache = cache
         self.rate_limit: sansio.RateLimit | None = None
         self.base_url = base_url
@@ -156,9 +175,12 @@ class GitHubAPI(abc.ABC):
                 self.requester, accept=accept, oauth_token=oauth_token
             )
         else:
-            # fallback to using oauth_token
+            # fallback to using configured credentials
             request_headers = sansio.create_headers(
-                self.requester, accept=accept, oauth_token=self.oauth_token
+                self.requester,
+                accept=accept,
+                oauth_token=self.oauth_token,
+                jwt=self._get_app_jwt(),
             )
         if extra_headers is not None:
             request_headers.update(extra_headers)
@@ -226,6 +248,23 @@ class GitHubAPI(abc.ABC):
                 )
                 if not should_retry:
                     raise
+
+    def _get_app_jwt(self) -> str | None:
+        if self.app_id is None or self.private_key is None:
+            return None
+
+        now = time.monotonic()
+        if self._app_jwt is None or now >= self._app_jwt_refresh_at:
+            from .apps import get_jwt
+
+            self._app_jwt = get_jwt(
+                app_id=self.app_id,
+                private_key=self.private_key,
+                expiration=self._APP_JWT_EXPIRATION,
+            )
+            self._app_jwt_refresh_at = now + self._APP_JWT_REFRESH_AFTER
+
+        return self._app_jwt
 
     async def getitem(
         self,
