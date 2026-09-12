@@ -395,7 +395,7 @@ class TestGitHubAPIHandleRateLimitError:
 
     @pytest.mark.asyncio
     async def test_attempt_increments_across_retries(self):
-        """The `attempt` argument passed to handle_rate_limit_error()
+        """The 'attempt' argument passed to handle_rate_limit_error()
         reflects the 1-based count of attempts made so far, including
         across multiple retries."""
 
