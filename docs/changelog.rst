@@ -13,6 +13,10 @@ Unreleased
   (`Issue #199 <https://github.com/gidgethub/gidgethub/issues/199>`_). Generated
   JWTs now backdate their issue time by 60 seconds to tolerate clock drift.
 
+- Handle 422 responses whose ``errors`` entries are strings instead of objects,
+  raising :exc:`gidgethub.ValidationError` instead of :exc:`TypeError`
+  (`Issue #139 <https://github.com/gidgethub/gidgethub/issues/139>`_)
+
 - Add :meth:`gidgethub.abc.GitHubAPI.manage_rate_limit` as an overridable
   hook, along with the :attr:`gidgethub.abc.GitHubAPI.requests_in_flight`
   attribute, to let users implement their own rate-limit/backpressure

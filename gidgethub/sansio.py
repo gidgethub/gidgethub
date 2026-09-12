@@ -360,16 +360,22 @@ def decipher_response(
                         exc_type = ValidationError
                         message = f"{message}: {errors}"
                     elif any(
-                        e["code"]
+                        isinstance(e, Mapping)
+                        and e.get("code")
                         in ["missing", "missing_field", "invalid", "already_exists"]
                         for e in errors
                     ):
-                        error_context = ", ".join(repr(e.get("field")) for e in errors)
+                        error_context = ", ".join(
+                            repr(e.get("field"))
+                            for e in errors
+                            if isinstance(e, Mapping)
+                        )
                         message = f"{message} for {error_context}"
                     else:
                         exc_type = ValidationError
                         error_context = ", ".join(
-                            repr(e.get("message")) for e in errors
+                            repr(e if isinstance(e, str) else e.get("message"))
+                            for e in errors
                         )
                         message = f"{message}: {error_context}"
                 else:
