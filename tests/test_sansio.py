@@ -398,6 +398,26 @@ class TestDecipherResponse:
         )
         assert exc_info.value.headers == headers
 
+    def test_422_errors_list_of_strings(self):
+        # https://github.com/brettcannon/gidgethub/issues/139
+        status_code = 422
+        body = json.dumps(
+            {
+                "message": "Unprocessable Entity",
+                "errors": ["Line must be part of the diff"],
+                "documentation_url": "https://docs.github.com/rest/reference/pulls#create-a-review-for-a-pull-request",
+            }
+        ).encode("utf-8")
+        headers = {"content-type": "application/json; charset=utf-8"}
+        with pytest.raises(ValidationError) as exc_info:
+            sansio.decipher_response(status_code, headers, body)
+        assert exc_info.value.status_code == http.HTTPStatus(status_code)
+        assert (
+            str(exc_info.value)
+            == "Unprocessable Entity: 'Line must be part of the diff'"
+        )
+        assert exc_info.value.headers == headers
+
     def test_422_no_errors_object(self):
         status_code = 422
         body = json.dumps(

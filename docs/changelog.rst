@@ -4,6 +4,10 @@ Changelog
 Unreleased
 ----------
 
+- Handle 422 responses whose ``errors`` entries are strings instead of objects,
+  raising :exc:`gidgethub.ValidationError` instead of :exc:`TypeError`
+  (`Issue #139 <https://github.com/gidgethub/gidgethub/issues/139>`_)
+
 - Add :meth:`gidgethub.abc.GitHubAPI.manage_rate_limit` as an overridable
   hook, along with the :attr:`gidgethub.abc.GitHubAPI.requests_in_flight`
   attribute, to let users implement their own rate-limit/backpressure
