@@ -26,8 +26,8 @@ class TestGitHubAppUtils:
 
         result = apps.get_jwt(app_id=app_id, private_key=private_key)
         expected_payload = {
-            "iat": 1587069751,
-            "exp": 1587069751 + (10 * 60),
+            "iat": 1587069751 - 60,
+            "exp": 1587069751 - 60 + (10 * 60),
             "iss": app_id,
         }
 
@@ -50,8 +50,8 @@ class TestGitHubAppUtils:
             app_id=app_id, private_key=private_key, expiration=expiration
         )
         expected_payload = {
-            "iat": 1587069751,
-            "exp": 1587069751 + expiration,
+            "iat": 1587069751 - 60,
+            "exp": 1587069751 - 60 + expiration,
             "iss": app_id,
         }
 

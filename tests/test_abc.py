@@ -2,6 +2,7 @@ import http
 import json
 import re
 from typing import ClassVar
+from unittest import mock
 
 import importlib_resources
 import pytest
@@ -39,6 +40,8 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         *,
         cache=None,
         oauth_token=None,
+        app_id=None,
+        private_key=None,
         base_url=sansio.DOMAIN,
     ):
         self.response_code = status_code
@@ -46,7 +49,12 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         self.response_body = body
         self.call_count = 0
         super().__init__(
-            "test_abc", oauth_token=oauth_token, cache=cache, base_url=base_url
+            "test_abc",
+            oauth_token=oauth_token,
+            app_id=app_id,
+            private_key=private_key,
+            cache=cache,
+            base_url=base_url,
         )
 
     async def _request(self, method, url, headers, body=b""):
@@ -70,6 +78,28 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
 
 
 class TestGeneralGitHubAPI:
+    @pytest.mark.parametrize(
+        ("credentials", "message"),
+        [
+            ({"app_id": "12345"}, "app_id and private_key must be provided together."),
+            (
+                {"private_key": "private key"},
+                "app_id and private_key must be provided together.",
+            ),
+            (
+                {
+                    "oauth_token": "oauth token",
+                    "app_id": "12345",
+                    "private_key": "private key",
+                },
+                "oauth_token cannot be combined with app_id or private_key.",
+            ),
+        ],
+    )
+    def test_constructor_credentials(self, credentials, message):
+        with pytest.raises(ValueError, match=message):
+            MockGitHubAPI(**credentials)
+
     @pytest.mark.asyncio
     async def test_url_formatted(self):
         """The URL is appropriately formatted."""
@@ -105,6 +135,63 @@ class TestGeneralGitHubAPI:
         assert gh.headers["user-agent"] == "test_abc"
         assert gh.headers["accept"] == accept
         assert gh.headers["authorization"] == "token oauth token"
+
+    @pytest.mark.asyncio
+    @mock.patch("gidgethub.apps.get_jwt", return_value="managed token")
+    @mock.patch("time.monotonic", side_effect=[1000, 1419, 1420])
+    async def test_managed_app_jwt_is_cached_and_refreshed(
+        self, monotonic_mock, get_jwt_mock
+    ):
+        gh = MockGitHubAPI(app_id="12345", private_key=b"private key")
+
+        await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
+        assert gh.headers["authorization"] == "bearer managed token"
+        get_jwt_mock.assert_called_once_with(
+            app_id="12345", private_key=b"private key", expiration=9 * 60
+        )
+
+        await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
+        get_jwt_mock.assert_called_once()
+
+        get_jwt_mock.return_value = "refreshed token"
+        await gh._make_request("GET", "/rate_limit", {}, "", sansio.accept_format())
+        assert gh.headers["authorization"] == "bearer refreshed token"
+        assert get_jwt_mock.call_count == 2
+        assert monotonic_mock.call_count == 3
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        ("credentials", "request_credentials", "authorization"),
+        [
+            (
+                {"app_id": "12345", "private_key": "private key"},
+                {"jwt": "explicit jwt"},
+                "bearer explicit jwt",
+            ),
+            (
+                {"app_id": "12345", "private_key": "private key"},
+                {"oauth_token": "explicit oauth token"},
+                "token explicit oauth token",
+            ),
+            ({}, {}, None),
+        ],
+    )
+    @mock.patch("gidgethub.apps.get_jwt")
+    async def test_managed_app_jwt_overrides_and_unauthenticated_requests(
+        self, get_jwt_mock, credentials, request_credentials, authorization
+    ):
+        gh = MockGitHubAPI(**credentials)
+        await gh._make_request(
+            "GET",
+            "/rate_limit",
+            {},
+            "",
+            sansio.accept_format(),
+            **request_credentials,
+        )
+
+        assert gh.headers.get("authorization") == authorization
+        get_jwt_mock.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_auth_headers_with_passed_token(self):

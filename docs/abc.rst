@@ -24,12 +24,16 @@ does not require an update to the library, allowing one to use
 experimental APIs without issue.
 
 
-.. class:: GitHubAPI(requester, *, oauth_token=None, cache=None, base_url=sansio.DOMAIN)
+.. class:: GitHubAPI(requester, *, oauth_token=None, app_id=None, private_key=None, cache=None, base_url=sansio.DOMAIN)
 
     Provide an :py:term:`abstract base class` which abstracts out the
     HTTP library being used to send requests to GitHub. The class is
     initialized with the requester's name and optionally their
-    OAuth token and a cache object.
+    OAuth token and a cache object. Alternatively, *app_id* and *private_key*
+    can be provided together to automatically generate, cache, and refresh
+    JWTs for authenticating as a GitHub App. An OAuth token cannot be combined
+    with app credentials. Explicit per-request *jwt* and *oauth_token*
+    arguments override the managed app credentials.
 
     To allow for
     `conditional requests <https://docs.github.com/en/free-pro-team@latest/rest/overview/resources-in-the-rest-api>`_,
@@ -71,6 +75,9 @@ experimental APIs without issue.
     .. versionchanged:: 4.0
         Introduced the *base_url* argument to the constructor.
 
+    .. versionchanged:: 6.0
+        Introduced the *app_id* and *private_key* arguments to the constructor.
+
     .. attribute:: requester
 
         The requester's name (typically a GitHub username or project
@@ -80,6 +87,17 @@ experimental APIs without issue.
     .. attribute:: oauth_token
 
         The provided OAuth token (if any).
+
+    .. attribute:: app_id
+
+        The provided GitHub App ID (if any). Must be used with
+        :attr:`private_key`.
+
+    .. attribute:: private_key
+
+        The provided GitHub App private key (if any). Must be used with
+        :attr:`app_id`. To authenticate as an installation of a GitHub App,
+        use :attr:`oauth_token` instead.
 
     .. attribute:: base_url
 
