@@ -193,7 +193,7 @@ experimental APIs without issue.
         Return ``True`` to have the request retried, or ``False`` (the
         default) to let *exception* propagate unchanged. This coroutine is
         responsible for performing any desired delay itself (e.g. via
-        :meth:`sleep`) before returning ``True``; :meth:`_make_request`
+        :meth:`sleep`) before returning ``True``; ``_make_request()``
         does not sleep on its own. It is called for every failed attempt,
         including retries, and runs before :meth:`manage_rate_limit`'s
         next invocation for the retried attempt.
