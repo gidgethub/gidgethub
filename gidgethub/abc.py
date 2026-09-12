@@ -36,7 +36,8 @@ ITERABLE_KEY = "items"
 class GitHubAPI(abc.ABC):
     """Provide an idiomatic API for making calls to GitHub's API."""
 
-    # GitHub limits app JWTs to 10 minutes; expire and refresh conservatively.
+    # GitHub limits app JWTs to 10 minutes. Use shorter durations and monotonic
+    # elapsed time so clock adjustments do not delay a refresh.
     _APP_JWT_EXPIRATION = 9 * 60
     _APP_JWT_REFRESH_AFTER = 8 * 60
 
