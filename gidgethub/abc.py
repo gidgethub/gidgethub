@@ -36,6 +36,7 @@ ITERABLE_KEY = "items"
 class GitHubAPI(abc.ABC):
     """Provide an idiomatic API for making calls to GitHub's API."""
 
+    # GitHub limits app JWTs to 10 minutes; expire and refresh conservatively.
     _APP_JWT_EXPIRATION = 9 * 60
     _APP_JWT_REFRESH_AFTER = 8 * 60
 
@@ -250,11 +251,13 @@ class GitHubAPI(abc.ABC):
                     raise
 
     def _get_app_jwt(self) -> str | None:
+        """Return a cached app JWT, refreshing it before expiration if configured."""
         if self.app_id is None or self.private_key is None:
             return None
 
         now = time.monotonic()
         if self._app_jwt is None or now >= self._app_jwt_refresh_at:
+            # Import lazily to avoid a circular import with gidgethub.apps.
             from .apps import get_jwt
 
             self._app_jwt = get_jwt(
