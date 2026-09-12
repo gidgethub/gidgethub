@@ -229,6 +229,7 @@ class TestGitHubAPIManageRateLimit:
             headers=headers, body=json.dumps(original_data).encode("utf8")
         )
         assert gh.rate_limit is None
+        assert not gh.requests_in_flight
         await gh.getitem("/fake")
 
         assert len(calls) == 1
@@ -259,13 +260,22 @@ class TestGitHubAPIManageRateLimit:
         gh = RecordingGitHubAPI(
             headers=headers, body=b'[{"hello": "world"}, {"hello": "world 2"}]'
         )
+        assert not gh.requests_in_flight
 
+        # Each of the 2 pages returns 2 items, for 4 items total, but
+        # manage_rate_limit() is only called once per HTTP request (i.e.
+        # once per page), not once per item.
         results = [item async for item in gh.getiter("/fake")]
 
         assert len(results) == 4
         assert len(gh.manage_rate_limit_calls) == 2
         assert gh.manage_rate_limit_calls[0][1] == sansio.format_url("/fake", {})
         assert gh.manage_rate_limit_calls[1][1] == "https://api.github.com/fake?page=2"
+        # requests_in_flight is 1 during each call (one request at a time)...
+        assert gh.manage_rate_limit_calls[0][3] == 1
+        assert gh.manage_rate_limit_calls[1][3] == 1
+        # ...and back to 0 once both requests have completed.
+        assert not gh.requests_in_flight
 
     @pytest.mark.asyncio
     async def test_requests_in_flight_tracked_on_success(self):
@@ -385,8 +395,9 @@ class TestGitHubAPIHandleRateLimitError:
 
     @pytest.mark.asyncio
     async def test_attempt_increments_across_retries(self):
-        """attempt reflects the 1-based count of attempts made so far,
-        including across multiple retries."""
+        """The `attempt` argument passed to handle_rate_limit_error()
+        reflects the 1-based count of attempts made so far, including
+        across multiple retries."""
 
         class RecordingGitHubAPI(MockGitHubAPI):
             def __init__(self, *args, **kwargs):
