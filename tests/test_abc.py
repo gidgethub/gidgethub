@@ -138,7 +138,7 @@ class TestGeneralGitHubAPI:
 
     @pytest.mark.asyncio
     @mock.patch("gidgethub.apps.get_jwt", return_value="managed token")
-    @mock.patch("time.monotonic", side_effect=[1000, 1479, 1480])
+    @mock.patch("time.monotonic", side_effect=[1000, 1419, 1420])
     async def test_managed_app_jwt_is_cached_and_refreshed(
         self, monotonic_mock, get_jwt_mock
     ):

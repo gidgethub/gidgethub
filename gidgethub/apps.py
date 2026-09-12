@@ -14,10 +14,10 @@ _CLOCK_SKEW_SECONDS = 60
 
 def get_jwt(*, app_id: str, private_key: str | bytes, expiration: int = 10 * 60) -> str:
     """Construct a GitHub App JWT, backdating its issue time for clock drift."""
-    time_int = int(time.time())
+    issued_at = int(time.time()) - _CLOCK_SKEW_SECONDS
     payload = {
-        "iat": time_int - _CLOCK_SKEW_SECONDS,
-        "exp": time_int + expiration,
+        "iat": issued_at,
+        "exp": issued_at + expiration,
         "iss": app_id,
     }
     bearer_token = jwt.encode(payload, private_key, algorithm="RS256")

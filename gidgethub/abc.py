@@ -32,9 +32,11 @@ UTF_8_CHARSET = "utf-8"
 JSON_UTF_8_CHARSET = f"{JSON_CONTENT_TYPE}; charset={UTF_8_CHARSET}"
 ITERABLE_KEY = "items"
 # GitHub limits app JWTs to 10 minutes. Use shorter durations and monotonic
-# elapsed time so clock adjustments do not delay a refresh.
+# elapsed time so clock adjustments do not delay a refresh. The expiration is
+# measured from the backdated issue time, so a JWT is usable for
+# _APP_JWT_EXPIRATION minus the backdating; refresh sooner than that.
 _APP_JWT_EXPIRATION = 9 * 60
-_APP_JWT_REFRESH_AFTER = 8 * 60
+_APP_JWT_REFRESH_AFTER = 7 * 60
 
 
 class GitHubAPI(abc.ABC):
