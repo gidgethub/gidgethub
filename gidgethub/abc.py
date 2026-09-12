@@ -72,7 +72,7 @@ class GitHubAPI(abc.ABC):
         self.oauth_token = oauth_token
         self.app_id = app_id
         self.private_key = private_key
-        self._app_jwt: str | None = None
+        self._app_jwt = None
         self._app_jwt_refresh_at = 0.0
         self._cache = cache
         self.rate_limit: sansio.RateLimit | None = None
