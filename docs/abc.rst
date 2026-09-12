@@ -103,7 +103,10 @@ experimental APIs without issue.
         :meth:`manage_rate_limit` itself before the underlying HTTP
         request is even made). This means it counts the request as
         "in flight" for the entire duration of :meth:`manage_rate_limit`,
-        including any time spent waiting there.
+        including any time spent waiting there. When a request is retried
+        because :meth:`handle_rate_limit_error` returned ``True``,
+        :attr:`requests_in_flight` is incremented and decremented once per
+        attempt in the same way.
 
         .. versionadded:: 6.0
 
@@ -166,6 +169,52 @@ experimental APIs without issue.
                             datetime.timezone.utc
                         )
                         await self.sleep(max(delta.total_seconds(), 0))
+
+        .. versionadded:: 6.0
+
+
+    .. py:method:: handle_rate_limit_error(*, method, url, exception, attempt)
+        :async:
+
+        A :term:`coroutine` which is called when a request fails with an
+        :exc:`~gidgethub.HTTPException`, allowing custom *reactive*
+        rate-limit handling (e.g. retrying after a secondary rate limit or
+        abuse-detection response). The default implementation is a no-op
+        which always returns ``False``, so overriding it is entirely
+        optional and existing subclasses are unaffected.
+
+        *method* and *url* describe the request that failed. *exception*
+        is the raised :exc:`~gidgethub.HTTPException` (inspect
+        ``exception.status_code`` and ``exception.headers``, the latter of
+        which may contain ``retry-after`` or ``x-ratelimit-reset``).
+        *attempt* is the 1-based count of attempts made so far for this
+        logical request, including the one that just failed.
+
+        Return ``True`` to have the request retried, or ``False`` (the
+        default) to let *exception* propagate unchanged. This coroutine is
+        responsible for performing any desired delay itself (e.g. via
+        :meth:`sleep`) before returning ``True``; :meth:`_make_request`
+        does not sleep on its own. It is called for every failed attempt,
+        including retries, and runs before :meth:`manage_rate_limit`'s
+        next invocation for the retried attempt.
+
+        For example, to retry once after waiting for the duration
+        specified by a ``retry-after`` header on a secondary rate limit
+        response::
+
+            class GitHubAPI(gidgethub.abc.GitHubAPI):
+                ...
+
+                async def handle_rate_limit_error(
+                    self, *, method, url, exception, attempt
+                ):
+                    if exception.status_code not in (403, 429) or attempt >= 2:
+                        return False
+                    retry_after = exception.headers.get("retry-after")
+                    if retry_after is not None:
+                        await self.sleep(int(retry_after))
+                        return True
+                    return False
 
         .. versionadded:: 6.0
 

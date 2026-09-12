@@ -96,6 +96,41 @@ class GitHubAPI(abc.ABC):
         called in that case.
         """
 
+    async def handle_rate_limit_error(
+        self,
+        *,
+        method: str,
+        url: str,
+        exception: HTTPException,
+        attempt: int,
+    ) -> bool:
+        """Hook called when a request fails with an :exc:`HTTPException`,
+        to allow custom reactive rate-limit handling (e.g. retrying after
+        a secondary rate limit or abuse-detection response).
+
+        The default implementation is a no-op which always returns
+        ``False``, so overriding it is entirely optional and existing
+        subclasses are unaffected.
+
+        *method* and *url* describe the request that failed. *exception*
+        is the raised :exc:`HTTPException` (e.g. inspect
+        ``exception.status_code`` and ``exception.headers``, the latter of
+        which may contain ``retry-after`` or ``x-ratelimit-reset``).
+        *attempt* is the 1-based count of attempts made so far for this
+        logical request, including the one that just failed.
+
+        Return ``True`` to have the request retried, or ``False`` (the
+        default) to let *exception* propagate unchanged. This coroutine is
+        responsible for performing any desired delay itself (e.g. via
+        :meth:`sleep`) before returning ``True``; :meth:`_make_request`
+        does not sleep on its own.
+
+        This hook is called for every failed attempt, including retries,
+        and it runs *before* :meth:`manage_rate_limit`'s next invocation
+        for the retried attempt.
+        """
+        return False
+
     async def _make_request(
         self,
         method: str,
@@ -155,25 +190,42 @@ class GitHubAPI(abc.ABC):
                 body = json.dumps(data).encode(UTF_8_CHARSET)
                 request_headers["content-type"] = JSON_UTF_8_CHARSET
             request_headers["content-length"] = str(len(body))
-        if self.rate_limit is not None:
-            self.rate_limit.remaining -= 1
-        self.requests_in_flight += 1
-        try:
-            await self.manage_rate_limit(
-                method=method,
-                url=filled_url,
-            )
-            response = await self._request(method, filled_url, request_headers, body)
-        finally:
-            self.requests_in_flight -= 1
-        if not (response[0] == 304 and cached):
-            data, self.rate_limit, more = sansio.decipher_response(*response)
-            has_cache_details = "etag" in response[1] or "last-modified" in response[1]
-            if self._cache is not None and cacheable and has_cache_details:
-                etag = response[1].get("etag")
-                last_modified = response[1].get("last-modified")
-                self._cache[filled_url] = etag, last_modified, data, more
-        return data, more, response[0]
+        attempt = 0
+        while True:
+            attempt += 1
+            if self.rate_limit is not None:
+                self.rate_limit.remaining -= 1
+            self.requests_in_flight += 1
+            try:
+                await self.manage_rate_limit(
+                    method=method,
+                    url=filled_url,
+                )
+                response = await self._request(
+                    method, filled_url, request_headers, body
+                )
+            finally:
+                self.requests_in_flight -= 1
+            try:
+                if not (response[0] == 304 and cached):
+                    data, self.rate_limit, more = sansio.decipher_response(*response)
+                    has_cache_details = (
+                        "etag" in response[1] or "last-modified" in response[1]
+                    )
+                    if self._cache is not None and cacheable and has_cache_details:
+                        etag = response[1].get("etag")
+                        last_modified = response[1].get("last-modified")
+                        self._cache[filled_url] = etag, last_modified, data, more
+                return data, more, response[0]
+            except HTTPException as exc:
+                should_retry = await self.handle_rate_limit_error(
+                    method=method,
+                    url=filled_url,
+                    exception=exc,
+                    attempt=attempt,
+                )
+                if not should_retry:
+                    raise
 
     async def getitem(
         self,

@@ -10,6 +10,12 @@ Unreleased
   strategies
   (`Issue #19 <https://github.com/gidgethub/gidgethub/issues/19>`_)
 
+- Add :meth:`gidgethub.abc.GitHubAPI.handle_rate_limit_error` as an
+  overridable hook, allowing requests that fail with an
+  :exc:`~gidgethub.HTTPException` to be retried (e.g. after a secondary
+  rate limit or abuse-detection response)
+  (`Issue #19 <https://github.com/gidgethub/gidgethub/issues/19>`_)
+
 - Add :attr:`gidgethub.HTTPException.headers` attribute
   (`PR #227 <https://github.com/gidgethub/gidgethub/pull/227>`_)
 

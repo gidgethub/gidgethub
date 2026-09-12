@@ -8,6 +8,7 @@ import pytest
 
 from gidgethub import (
     BadGraphQLRequest,
+    BadRequest,
     GitHubBroken,
     GraphQLAuthorizationFailure,
     GraphQLException,
@@ -43,12 +44,14 @@ class MockGitHubAPI(gh_abc.GitHubAPI):
         self.response_code = status_code
         self.response_headers = headers
         self.response_body = body
+        self.call_count = 0
         super().__init__(
             "test_abc", oauth_token=oauth_token, cache=cache, base_url=base_url
         )
 
     async def _request(self, method, url, headers, body=b""):
         """Make an HTTP request."""
+        self.call_count += 1
         self.method = method
         self.url = url
         self.headers = headers
@@ -175,7 +178,7 @@ class TestGeneralGitHubAPI:
     async def test_more(self):
         """The 'next' link is returned appropriately."""
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
-        headers["link"] = "<https://api.github.com/fake?page=2>; " 'rel="next"'
+        headers["link"] = '<https://api.github.com/fake?page=2>; rel="next"'
         gh = MockGitHubAPI(headers=headers)
         _, more, _ = await gh._make_request(
             "GET", "/fake", {}, "", sansio.accept_format()
@@ -186,7 +189,7 @@ class TestGeneralGitHubAPI:
     async def test_status_code(self):
         """The status code is returned appropriately."""
         headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
-        headers["link"] = "<https://api.github.com/fake?page=2>; " 'rel="next"'
+        headers["link"] = '<https://api.github.com/fake?page=2>; rel="next"'
         gh = MockGitHubAPI(headers=headers)
         _, _, status_code = await gh._make_request(
             "GET", "/fake", {}, "", sansio.accept_format()
@@ -293,6 +296,119 @@ class TestGitHubAPIManageRateLimit:
         with pytest.raises(RuntimeError):
             await gh.getitem("/fake")
         assert gh.requests_in_flight == 0
+
+
+class TestGitHubAPIHandleRateLimitError:
+    @pytest.mark.asyncio
+    async def test_default_does_not_retry(self):
+        """The default handle_rate_limit_error() is a no-op that doesn't
+        retry, so the original exception propagates."""
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        gh = MockGitHubAPI(status_code=403, headers=headers)
+
+        with pytest.raises(BadRequest):
+            await gh.getitem("/fake")
+        # Only the single, non-retried attempt was made.
+        assert gh.call_count == 1
+
+    @pytest.mark.asyncio
+    async def test_called_with_correct_arguments(self):
+        """handle_rate_limit_error() is called with the expected
+        arguments when a request fails."""
+        calls = []
+
+        class RecordingGitHubAPI(MockGitHubAPI):
+            async def handle_rate_limit_error(self, *, method, url, exception, attempt):
+                calls.append((method, url, exception, attempt))
+                return False
+
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        gh = RecordingGitHubAPI(status_code=403, headers=headers)
+
+        with pytest.raises(BadRequest) as exc_info:
+            await gh.getitem("/fake")
+
+        assert len(calls) == 1
+        method, url, exception, attempt = calls[0]
+        assert method == "GET"
+        assert url == sansio.format_url("/fake", {})
+        assert exception is exc_info.value
+        assert attempt == 1
+
+    @pytest.mark.asyncio
+    async def test_returning_true_retries_the_request(self):
+        """Returning True from handle_rate_limit_error() causes the
+        request to be retried, and eventually succeeds."""
+
+        class RetryingGitHubAPI(MockGitHubAPI):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.attempts_seen = []
+
+            async def handle_rate_limit_error(self, *, method, url, exception, attempt):
+                self.attempts_seen.append(attempt)
+                if attempt < 2:
+                    # Succeed on the second attempt.
+                    self.response_code = 200
+                    return True
+                return False
+
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        original_data = {"hello": "world"}
+        gh = RetryingGitHubAPI(
+            status_code=403,
+            headers=headers,
+            body=json.dumps(original_data).encode("utf8"),
+        )
+
+        data = await gh.getitem("/fake")
+
+        assert data == original_data
+        assert gh.attempts_seen == [1]
+        assert gh.call_count == 2
+
+    @pytest.mark.asyncio
+    async def test_returning_false_reraises_exception(self):
+        """Returning False from handle_rate_limit_error() lets the
+        original exception propagate without retrying."""
+
+        class NonRetryingGitHubAPI(MockGitHubAPI):
+            async def handle_rate_limit_error(self, *, method, url, exception, attempt):
+                return False
+
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        gh = NonRetryingGitHubAPI(status_code=403, headers=headers)
+
+        with pytest.raises(BadRequest):
+            await gh.getitem("/fake")
+        assert gh.call_count == 1
+
+    @pytest.mark.asyncio
+    async def test_attempt_increments_across_retries(self):
+        """attempt reflects the 1-based count of attempts made so far,
+        including across multiple retries."""
+
+        class RecordingGitHubAPI(MockGitHubAPI):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.attempts_seen = []
+
+            async def handle_rate_limit_error(self, *, method, url, exception, attempt):
+                self.attempts_seen.append(attempt)
+                if attempt < 3:
+                    return True
+                self.response_code = 200
+                return True
+
+        headers = MockGitHubAPI.DEFAULT_HEADERS.copy()
+        gh = RecordingGitHubAPI(
+            status_code=403, headers=headers, body=b'{"hello": "world"}'
+        )
+
+        await gh.getitem("/fake")
+
+        assert gh.attempts_seen == [1, 2, 3]
+        assert gh.call_count == 4
 
 
 class TestGitHubAPIGetitem:
