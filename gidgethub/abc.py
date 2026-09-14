@@ -7,7 +7,7 @@ import http
 import json
 import time
 from collections.abc import AsyncGenerator, Mapping, MutableMapping
-from typing import Any, Optional
+from typing import Any
 
 from uritemplate import variable
 
@@ -23,9 +23,7 @@ from . import (
 )
 
 # Value represents etag, last-modified, data, and next page.
-CACHE_TYPE = MutableMapping[
-    str, tuple[Optional[str], Optional[str], Any, Optional[str]]
-]
+CACHE_TYPE = MutableMapping[str, tuple[str | None, str | None, Any, str | None]]
 
 JSON_CONTENT_TYPE = "application/json"
 UTF_8_CHARSET = "utf-8"
