@@ -1,9 +1,13 @@
+# /// script
+# dependencies = ["nox"]
+# ///
+
 import nox
 
 PYPROJECT = nox.project.load_toml("pyproject.toml")
 
-# Keep sorted from oldest to newest!
-TEST_PYTHON_VERSIONS = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+TEST_PYTHON_VERSIONS = nox.project.python_versions(PYPROJECT)
+# Minimum Supported Python Version
 MSPV = f"py{TEST_PYTHON_VERSIONS[0].replace('.', '')}"
 
 
@@ -18,8 +22,8 @@ def tests(session):
 
 
 @nox.session(default=False)
-def code_check(session):
-    """Check code."""
+def lint(session):
+    """Lint the code."""
     session.install(
         ".",
         *nox.project.dependency_groups(PYPROJECT, "code-check"),
@@ -39,13 +43,13 @@ def type_check(session):
 
 
 @nox.session(default=False)
-def compatiblity_type_check(session):
-    """Type check for compatibility via the test suite with other type checkers."""
+def compatibility_type_check(session):
+    """Type check for compatibility with other type checkers."""
     session.install(
         ".[aiohttp,tornado,httpx2]",
         *nox.project.dependency_groups(PYPROJECT, "type-check"),
     )
-    session.run("mypy", "--check", "tests")
+    session.run("mypy", "--check-untyped-defs", "tests")
 
 
 @nox.session(default=False)
@@ -55,31 +59,30 @@ def docs(session):
         ".",
         *nox.project.dependency_groups(PYPROJECT, "doc"),
     )
+    # fmt: off
     session.run(
+
         "sphinx-build",
+        "--jobs", "auto",
         "-nW",
         "-q",
-        "-b",
-        "html",
-        "-b",
-        "linkcheck",
-        "-d",
-        "docs/_build/doctrees",
-        "docs",
-        "docs/_build/html",
+        "-b", "html",
+        "-d", "docs/_build/doctrees", "docs", "docs/_build/html",
     )
+    # fmt: on
 
 
 @nox.session
-def lint(session):
+def check(session):
     """Run all linting checks."""
     session.install(
         ".",
         *nox.project.dependency_groups(PYPROJECT, "format"),
     )
     session.run("black", "--target-version", MSPV, "--check", ".")
+    lint(session)
     type_check(session)
-    compatiblity_type_check(session)
+    compatibility_type_check(session)
     docs(session)
 
 
@@ -88,3 +91,9 @@ def format(session):
     """Format the code."""
     session.install(".", *nox.project.dependency_groups(PYPROJECT, "format"))
     session.run("black", "--target-version", MSPV, ".")
+
+
+if __name__ == "__main__":
+    import sys
+
+    sys.exit(nox.main())

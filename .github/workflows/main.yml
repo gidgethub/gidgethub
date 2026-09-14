@@ -65,4 +65,4 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - run: pip install nox
-      - run: nox --session lint
+      - run: nox --session check
