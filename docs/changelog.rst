@@ -46,6 +46,9 @@ Unreleased
   the ``"data"`` key from the JSON response
   (`Issue #127 <https://github.com/gidgethub/gidgethub/issues/127>`_)
 
+- Add support for Python 3.14 and 3.15, and drop support for Python 3.8 and
+  3.9. The minimum supported Python version is now 3.10.
+
 5.4.0
 -----
 
