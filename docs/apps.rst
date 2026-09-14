@@ -46,7 +46,10 @@ Example on how you would obtain the access token for authenticating as a GitHub 
 .. function:: get_jwt(*, app_id, private_key, expiration = 10 * 60)
 
    Construct the JWT (JSON Web Token), that can be used to access endpoints
-   that require it. Default expiration period is 10 minutes.
+   that require it. Default expiration period is 10 minutes. The issue time
+   is backdated by 60 seconds to tolerate clock drift, and the expiration is
+   measured from that backdated issue time (GitHub rejects JWTs whose
+   expiration is more than 10 minutes after their issue time).
 
    Example::
 

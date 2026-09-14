@@ -4,6 +4,17 @@ Changelog
 Unreleased
 ----------
 
+- Add managed GitHub App authentication to :class:`gidgethub.abc.GitHubAPI`
+  through new ``app_id`` and ``private_key`` constructor arguments. JWTs are
+  generated, cached, and refreshed automatically while explicit per-request
+  credentials continue to take precedence. This design was inspired by
+  Jonathan Sick's (@jonathansick) earlier implementation in
+  `PR #201 <https://github.com/gidgethub/gidgethub/pull/201>`_
+  (`Issue #199 <https://github.com/gidgethub/gidgethub/issues/199>`_). Generated
+  JWTs now backdate their issue time by 60 seconds to tolerate clock drift,
+  with their expiration measured from that backdated issue time so GitHub's
+  10 minute limit on the time between issue and expiration is respected.
+
 - Handle 422 responses whose ``errors`` entries are strings instead of objects,
   raising :exc:`gidgethub.ValidationError` instead of :exc:`TypeError`
   (`Issue #139 <https://github.com/gidgethub/gidgethub/issues/139>`_)
