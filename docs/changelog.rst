@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Unreleased
-----------
+6.0.0
+-----
 
 - Add managed GitHub App authentication to :class:`gidgethub.abc.GitHubAPI`
   through new ``app_id`` and ``private_key`` constructor arguments. JWTs are
