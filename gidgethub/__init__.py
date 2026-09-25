@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-__version__ = "6.0.0.dev"
+__version__ = "6.0.0"
 
 import http
 from collections.abc import Mapping
