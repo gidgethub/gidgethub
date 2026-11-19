@@ -2,9 +2,22 @@ gidgethub
 =========
 An asynchronous `GitHub API <https://docs.github.com/>`_ library.
 
+.. important::
+
+   **As of v6.0.0 (September 25, 2026), this project is in maintenance-only
+   mode.** We welcome bug reports and will make a best-effort attempt at fixing
+   them. We do **not** accept feature requests or pull requests from external
+   contributors. See the
+   `Contributing and Maintenance Guide <https://github.com/gidgethub/gidgethub/blob/main/CONTRIBUTING.rst>`_
+   for details.
+
 
 Development status
 ------------------
+
+.. image:: https://img.shields.io/badge/status-maintenance--only-yellow
+    :target: https://github.com/gidgethub/gidgethub/blob/main/CONTRIBUTING.rst
+    :alt: Project Status: Maintenance only
 
 .. image:: https://github.com/gidgethub/gidgethub/actions/workflows/main.yml/badge.svg
     :target: https://github.com/gidgethub/gidgethub/actions/workflows/main.yml
@@ -46,14 +59,6 @@ Alternative libraries
 
 If you think you want a different approach to the GitHub API,
 `GitHub maintains a list of libraries <https://docs.github.com/en/free-pro-team@latest/rest/overview/libraries>`_.
-
-
-Project status
---------------
-
-This project is in maintenance mode. We welcome bug reports and will make a
-best-effort at fixing them. We do **not** accept features requests or pull requests
-from external contributors.
 
 
 *Aside*: what's with the name?

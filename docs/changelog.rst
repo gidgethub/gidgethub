@@ -4,6 +4,12 @@ Changelog
 Unreleased
 ----------
 
+- Document more prominently that the project is in maintenance-only mode:
+  bug reports are welcome and fixed on a best-effort basis, but feature
+  requests and pull requests from external contributors are not accepted.
+  This has been the case since the 6.0.0 release.
+  (`Issue #255 <https://github.com/gidgethub/gidgethub/issues/255>`_)
+
 6.0.0
 -----
 

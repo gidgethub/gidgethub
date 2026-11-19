@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Project status and contribution policy
+    url: https://github.com/gidgethub/gidgethub/blob/main/CONTRIBUTING.rst
+    about: gidgethub is in maintenance-only mode. Bug reports are welcome; feature requests and external pull requests are not accepted.
