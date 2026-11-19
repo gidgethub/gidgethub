@@ -17,7 +17,7 @@ Development status
 
 .. image:: https://img.shields.io/badge/status-maintenance--only-yellow
     :target: https://github.com/gidgethub/gidgethub/blob/main/CONTRIBUTING.rst
-    :alt: Project Status: Maintenance only
+    :alt: Project Status: Maintenance-only
 
 .. image:: https://github.com/gidgethub/gidgethub/actions/workflows/main.yml/badge.svg
     :target: https://github.com/gidgethub/gidgethub/actions/workflows/main.yml

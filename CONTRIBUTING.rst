@@ -1,9 +1,10 @@
 Contributing and Maintenance Guide
 ==================================
 
-This project is in maintenance mode. We welcome bug reports and will do
-a best-effort attempt to fix them. We do **not** accept feature requests
-or pull requests from external contributors.
+As of v6.0.0 (September 25, 2026), this project is in maintenance-only mode.
+We welcome bug reports and will make a best-effort attempt at fixing them.
+We do **not** accept feature requests or pull requests from external
+contributors.
 
 Maintenance Guide
 -----------------
