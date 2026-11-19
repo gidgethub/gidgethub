@@ -10,6 +10,9 @@ best-effort attempt at fixing them. We do not accept feature requests or pull
 requests from external contributors. Feature requests will be closed.
 -->
 
+**Why are you reporting this bug?**
+<!-- E.g., "Ran up against this in production", "AI found it", etc. -->
+
 **Describe the bug**
 
 **Steps to reproduce**
