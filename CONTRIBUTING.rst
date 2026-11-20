@@ -48,7 +48,7 @@ Preparing for a release:
 
 - Publish the package to PyPI. Use the "release" GitHub Actions workflow.
 
-- `Create a new release <https://github.com/brettcannon/gidgethub/releases/new>`_
+- `Create a new release <https://github.com/gidgethub/gidgethub/releases/new>`_
   on GitHub, targeting the "release" branch. Include the changelog, and attach
   the binaries.
 
