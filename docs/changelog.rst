@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Unreleased
-----------
+6.0.1
+-----
 
 - Document more prominently that the project is in maintenance-only mode:
   bug reports are welcome and fixed on a best-effort basis, but feature
