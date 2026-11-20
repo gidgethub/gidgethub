@@ -6,6 +6,15 @@
 gidgethub --- An async library for calling GitHub's API
 =======================================================
 
+.. important::
+
+   **As of v6.0.0 (September 25, 2026), this project is in maintenance-only
+   mode.** We welcome bug reports and will make a best-effort attempt at fixing
+   them. We do **not** accept feature requests or pull requests from external
+   contributors. See the
+   `Contributing and Maintenance Guide <https://github.com/gidgethub/gidgethub/blob/main/CONTRIBUTING.rst>`_
+   for details.
+
 While there are many
 `GitHub libraries <https://docs.github.com/en/free-pro-team@latest/rest/overview/libraries>`_ for
 Python, when this library was created there were none oriented towards
