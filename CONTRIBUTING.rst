@@ -42,15 +42,20 @@ Pre-release:
 
 Preparing for a release:
 
-- Create a new branch for the release.
+- Create a new branch for the release. Remove the ``.dev`` suffix from
+  ``__version__`` and rename the "Unreleased" changelog section to the new
+  version number.
 
-- Push the "release" branch to remote.
+- Open a pull request for the release branch, and merge it into ``main`` once
+  the checks pass.
 
-- Publish the package to PyPI. Use the "release" GitHub Actions workflow.
+- Publish the package to PyPI. Run the "Release" GitHub Actions workflow from
+  the ``main`` branch. Only ``main`` is allowed to deploy to the ``release``
+  environment, and a maintainer must approve the deployment.
 
 - `Create a new release <https://github.com/gidgethub/gidgethub/releases/new>`_
-  on GitHub, targeting the "release" branch. Include the changelog, and attach
-  the binaries.
+  on GitHub, with a ``vX.Y.Z`` tag targeting the release commit on ``main``.
+  Include the changelog, and attach the binaries.
 
 Post-release:
 
