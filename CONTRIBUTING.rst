@@ -58,8 +58,9 @@ Preparing for a release:
 
 - `Create a new release <https://github.com/gidgethub/gidgethub/releases/new>`_
   on GitHub, with a ``vX.Y.Z`` tag targeting the squash-merge commit of the
-  release pull request. Include the changelog, and attach the binaries (the
-  ``Packages`` artifact from the "Release" workflow run).
+  release pull request. Include the changelog, and attach the wheel and sdist
+  (download and unzip the ``Packages`` artifact from the "Release" workflow
+  run).
 
 Post-release:
 
