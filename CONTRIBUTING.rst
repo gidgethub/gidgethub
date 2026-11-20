@@ -36,28 +36,37 @@ Pre-release:
 
 - Ensure that the changelog is up-to-date.
 
-- Ensure that the ``__version__`` number in ``gidgethub/__init__.py`` is up to date.
+- Ensure that the ``__version__`` number in ``gidgethub/__init__.py``, ignoring
+  the ``.dev`` suffix, is the version you intend to release.
 
 - Ensure the tests have passed and that coverage is at 100%.
 
 Preparing for a release:
 
-- Create a new branch for the release.
+- Create a new branch for the release. Remove the ``.dev`` suffix from
+  ``__version__`` and rename the "Unreleased" changelog section to the new
+  version number.
 
-- Push the "release" branch to remote.
+- Open a pull request for the release branch, and merge it into ``main`` once
+  the checks pass.
 
-- Publish the package to PyPI. Use the "release" GitHub Actions workflow.
+- Publish the package to PyPI. Run the "Release" GitHub Actions workflow from
+  the ``main`` branch, before anything else is merged into ``main``, since the
+  workflow builds whatever ``main`` points to. Only ``main`` is allowed to
+  deploy to the ``release`` environment, and a maintainer must approve the
+  deployment.
 
 - `Create a new release <https://github.com/gidgethub/gidgethub/releases/new>`_
-  on GitHub, targeting the "release" branch. Include the changelog, and attach
-  the binaries.
+  on GitHub, with a ``vX.Y.Z`` tag targeting the squash-merge commit of the
+  release pull request. Include the changelog, and attach the wheel and sdist
+  (download and unzip the ``Packages`` artifact from the "Release" workflow
+  run).
 
 Post-release:
 
-- Bump the ``__version__`` number in ``gidgethub/__init__.py`` to include a
-  ``.dev`` or a ``.post`` suffix.
-
-- Update the changelog with an "Unreleased" section.
+- In a pull request, bump the ``__version__`` number in
+  ``gidgethub/__init__.py`` to the next version with a ``.dev`` suffix, and add
+  an "Unreleased" section to the changelog.
 
 - Announce the release. (optional).
 
